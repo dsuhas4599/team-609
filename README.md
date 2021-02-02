@@ -29,10 +29,9 @@ We have mutually decided with the client to meet once a week to make sure the ga
 Name That Tune is a simple, yet entertaining new addition to the elderly care industry. Our application will provide a fun way for patients to enjoy music while exercising their minds to guess artists and titles. With this product, we aim to provide a meaningful method for seniors to practice and engage cognitive function using the power of music.
 
 ## Planned technology
-Frontend: Flutter
-Backend: Firebase
-APIs: Spotify Web API
-__________________________________________________________________________
+- Frontend: Flutter
+- Backend: Firebase
+- APIs: Spotify Web API
 
 ## Report on meeting with client
 
