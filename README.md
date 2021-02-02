@@ -1,9 +1,9 @@
 ## Team Roles
-Client and Instructor Manager - Tommy
-Project Manager - Sneha
-Editor - handled by everyone depending on what is being edited
-Game Architect - Grant
-Software Architect - Suhas
+- Client and Instructor Manager - Tommy
+- Project Manager - Sneha
+- Editor - handled by everyone depending on what is being edited
+- Game Architect - Grant
+- Software Architect - Suhas
 
 ## Team Rules
 ### Meeting attendance
@@ -15,10 +15,10 @@ Notify the group of any major changes to be pushed that might result in a merge 
 
 ## Contact Information
 Emails
-tomy@live.unc.edu - Tommy
-ssneha@live.unc.edu - Sneha
-gdmcgrew@live.unc.edu - Grant
-dsuhas@live.unc.edu - Suhas
+- tomy@live.unc.edu - Tommy
+- ssneha@live.unc.edu - Sneha
+- gdmcgrew@live.unc.edu - Grant
+- dsuhas@live.unc.edu - Suhas
 
 We also have a team GroupMe to share quick messages about the project and meetings.
 
@@ -37,19 +37,19 @@ Name That Tune is a simple, yet entertaining new addition to the elderly care in
 
 ### Potential features
 
-Being able to build a playlist
-Like/Dislike songs
-Game be able to learn what kind of songs they like
-Somehow encourage elders to get physically active (Dancing)
-Multiplayer (Can be synchronous/asynchronous) - Just some form of socialization
-Dance mode/Game mode
+- Being able to build a playlist
+- Like/Dislike songs
+- Game be able to learn what kind of songs they like
+- Somehow encourage elders to get physically active (Dancing)
+- Multiplayer (Can be synchronous/asynchronous) - Just some form of socialization
+- Dance mode/Game mode
 
 ### Things to keep in mind while developing the game:
 
-Mobile development would be more useful
-Preferred path of development: MVP as soon as possible, then implement additional functionalities
-Caregiver will be engaging with the elder
-Make the assumption that the service (Caregiver finding app) is being launched in the triangle area
-Another assumption: Most likely the user will be 75-80 years old
-The elder’s family most likely knows what kind of music they like/listened to the most
-How can you make this game engaging?
+- Mobile development would be more useful
+- Preferred path of development: MVP as soon as possible, then implement additional functionalities
+- Caregiver will be engaging with the elder
+- Make the assumption that the service (Caregiver finding app) is being launched in the triangle area
+- Another assumption: Most likely the user will be 75-80 years old
+- The elder’s family most likely knows what kind of music they like/listened to the most
+- How can you make this game engaging?
