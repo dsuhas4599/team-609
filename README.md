@@ -23,10 +23,14 @@ Emails
 We also have a team GroupMe to share quick messages about the project and meetings.
 
 ## Meeting schedule
-We have mutually decided with the client to meet once a week to make sure the game is on track. We do not have a current schedule, but our team is generally flexible with times. We have been meeting a lot after classes on Tuesday and Thursday, and our first meeting with the client was from 4:00-5:00pm on Monday.
+We do not have a current schedule, but our team is generally flexible with times. We have been meeting a lot after classes on Tuesday and Thursday, and our first meeting with the client was from 4:00-5:00pm on Monday.
+
+We have mutually decided with the client to meet twice a week to make sure the game is on track. We meet with the client every Tuesday and Friday from 3:30pm - 4:30pm.
 
 ## Concept
 Name That Tune is a simple, yet entertaining new addition to the elderly care industry. Our application will provide a fun way for patients to enjoy music while exercising their minds to guess artists and titles. With this product, we aim to provide a meaningful method for seniors to practice and engage cognitive function using the power of music.
+
+Screenflow: https://www.figma.com/file/8PmXa4xvVAqPfPykQEOtqE/Name-That-Tune?node-id=0%3A1
 
 ## Planned technology
 - Frontend: Flutter
