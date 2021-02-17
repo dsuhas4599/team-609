@@ -49,6 +49,7 @@ Game Design Doc: https://docs.google.com/document/d/1y_aIvonFN3CT7ceD7wBIuLUn1hk
 - Somehow encourage elders to get physically active (Dancing)
 - Multiplayer (Can be synchronous/asynchronous) - Just some form of socialization
 - Dance mode/Game mode
+- Elements of luck during gameplay
 
 ### Things to keep in mind while developing the game:
 
