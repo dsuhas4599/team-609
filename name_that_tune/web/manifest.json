@@ -1,8 +1,8 @@
 {
-    "name": "name_that_tune",
-    "short_name": "name_that_tune",
+    "name": "flutter_starter",
+    "short_name": "flutter_starter",
     "start_url": ".",
-    "display": "standalone",
+    "display": "minimal-ui",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
     "description": "A new Flutter project.",
