@@ -19,19 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dd8dddb-722f-49f9-bb71-5468c1924f99" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/name_that_tune/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Flutter/Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Flutter/Generated.xcconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Podfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Podfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Podfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/lib/controllers/auth_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/lib/controllers/auth_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/name_that_tune/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/pubspec.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="6dd8dddb-722f-49f9-bb71-5468c1924f99" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -102,22 +90,22 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="352" y="193" key="#main.dart/0.0.1440.900@0.0.1440.900" timestamp="1614364837258" />
-    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1614365996158">
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1614366401562">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1614365996158" />
-    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1614365996157">
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1614366401562" />
+    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1614366401560">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1614365996157" />
-    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1614365996156">
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1614366401560" />
+    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1614366401560">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1614365996156" />
-    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1614365996157">
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1614366401560" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1614366401561">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1614365996157" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1614366401561" />
     <state x="221" y="89" key="SettingsEditor" timestamp="1614364157983">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
