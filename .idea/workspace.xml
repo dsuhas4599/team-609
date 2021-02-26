@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6dd8dddb-722f-49f9-bb71-5468c1924f99" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/name_that_tune/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Flutter/Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Flutter/Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Podfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Podfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Podfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/lib/controllers/auth_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/lib/controllers/auth_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/name_that_tune/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/name_that_tune/pubspec.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1p1vSye0lR5vmQXIn4P4mqmeZU8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
+    <property name="settings.editor.selected.configurable" value="dart.settings" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="FlutterRunConfigurationType" factoryName="Flutter" editBeforeRun="true">
+      <option name="filePath" value="name_that_tune/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" nameIsGenerated="true">
+      <option name="filePath" value="$PROJECT_DIR$/name_that_tune/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6dd8dddb-722f-49f9-bb71-5468c1924f99" name="Default Changelist" comment="" />
+      <created>1614363414271</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1614363414271</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="242" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1614364043337">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="242" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1614364043337" />
+    <state x="457" y="247" key="#com.intellij.ide.util.TreeFileChooserDialog" timestamp="1614364703489">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="457" y="247" key="#com.intellij.ide.util.TreeFileChooserDialog/0.0.1440.900@0.0.1440.900" timestamp="1614364703489" />
+    <state x="352" y="193" key="#main.dart" timestamp="1614364837258">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="352" y="193" key="#main.dart/0.0.1440.900@0.0.1440.900" timestamp="1614364837258" />
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1614365996158">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1614365996158" />
+    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1614365996157">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1614365996157" />
+    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1614365996156">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1614365996156" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1614365996157">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1614365996157" />
+    <state x="221" y="89" key="SettingsEditor" timestamp="1614364157983">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1614364157983" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1614364914191">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1614364914191" />
+  </component>
+</project>

@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'localizations.dart';
-import 'package:flutter_starter/controllers/controllers.dart';
 import 'package:flutter_starter/constants/constants.dart';
+import 'package:flutter_starter/controllers/controllers.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+
+import 'localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
