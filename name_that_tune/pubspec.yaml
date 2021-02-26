@@ -37,3 +37,6 @@ flutter:
   assets:
     - assets/images/default.png
     - assets/images/defaultDark.png
+
+dependency_overrides:
+  intl: ^0.17.0-nullsafety.2
