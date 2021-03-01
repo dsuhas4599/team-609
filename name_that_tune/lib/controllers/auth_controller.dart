@@ -49,7 +49,8 @@ class AuthController extends GetxController {
     }
 
     if (_firebaseUser == null) {
-      Get.offAll(SignInUI());
+      // Get.offAll(SignInUI());
+      Get.offAll(SongUI());
     } else {
       Get.offAll(HomeUI());
     }
