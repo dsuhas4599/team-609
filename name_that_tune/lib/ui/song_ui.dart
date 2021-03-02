@@ -18,7 +18,11 @@ class SongUI extends StatelessWidget {
         body: Center(
             child: ListView(
       children: <Widget>[
-        PrimaryButton(labelText: "Press to play song", onPressed: () async {}),
+        PrimaryButton(
+            labelText: "Press to play song",
+            onPressed: () async {
+              _controller.play();
+            }),
         YoutubePlayerIFrame(
           controller: _controller,
           aspectRatio: 16 / 9,
