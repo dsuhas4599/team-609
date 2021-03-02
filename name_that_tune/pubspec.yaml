@@ -17,6 +17,8 @@ dependencies:
   firebase_auth: "^0.20.1"
   cloud_firestore: "^0.16.0+1"
 
+  youtube_player_iframe: ^1.2.0+2
+
   # google_sign_in:
   # apple_sign_in:
   get: ^3.17.1
