@@ -12,5 +12,6 @@ class AppRoutes {
     GetPage(name: '/settings', page: () => SettingsUI()),
     GetPage(name: '/reset-password', page: () => ResetPasswordUI()),
     GetPage(name: '/update-profile', page: () => UpdateProfileUI()),
+    GetPage(name: '/play-a-song', page: () => SongUI()),
   ];
 }
