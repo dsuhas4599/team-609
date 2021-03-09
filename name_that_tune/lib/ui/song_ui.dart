@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:flutter_starter/models/models.dart';
+
+SongModel song1 = SongModel(
+  id: 1,
+  name: 'Song',
+  artist: 'Artist',
+  api: 'IC5PL0XImjw');
+
+SongModel song2 = SongModel(
+  id: 2,
+  name: 'Song',
+  artist: 'Artist',
+  api: 'AOMyS78o5YI'); 
+
+PlaylistModel playlist1 = PlaylistModel(
+  id: 1,
+  name: 'simple playlist',
+  songs: [song1.api, song2.api]);
 
 class SongUI extends StatelessWidget {
   final YoutubePlayerController _controller = YoutubePlayerController(
     initialVideoId: '',
     params: YoutubePlayerParams(
-      playlist: [
-        'IC5PL0XImjw',
-        'AOMyS78o5YI',
-        'plcmqP3b-Qg',
-        'TWoFl_0UtjQ',
-      ], // Defining custom playlist
+      playlist: playlist1.songs, // Defining custom playlist
       showControls: true,
       showFullscreenButton: true,
       autoPlay: true,
