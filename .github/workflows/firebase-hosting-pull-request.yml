@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: >-
-          sudo snap install flutter --classic && flutter channel beta && flutter
+          cd name_that_tune/ && sudo snap install flutter --classic && flutter channel beta && flutter
           config --enable-web && flutter build web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
