@@ -16,5 +16,6 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CAREYAYA_NAME_THAT_TUNE }}'
           projectId: careyaya-name-that-tune
+          entryPoint: "./name_that_tune"
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
