@@ -59,6 +59,38 @@ class SongUI extends StatelessWidget {
             ),
           ),
         ),
+        new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              PrimaryButton(
+                  labelText: "Brown Eyed Girl",
+                  onPressed: () async {
+                    _controller.pause();
+                  }),
+              PrimaryButton(
+                  labelText: "Ain't No Mountain High Enough",
+                  onPressed: () async {
+                    _controller.pause();
+                  }),
+            ]),
+        new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              PrimaryButton(
+                  labelText: "God Only Knows",
+                  onPressed: () async {
+                    _controller.pause();
+                  }),
+              PrimaryButton(
+                  labelText: "My Girl",
+                  onPressed: () async {
+                    _controller.pause();
+                  }),
+            ]),
       ],
     )));
   }
