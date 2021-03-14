@@ -1,20 +1,20 @@
 class SongModel {
-  int id;
+  String date;
   String name;
   String artist;
-  String api;
+  String videoID;
 
-  SongModel({this.id, this.name, this.artist, this.api});
+  SongModel({this.date, this.name, this.artist, this.videoID});
 
   factory SongModel.fromMap(Map data) {
     return SongModel(
-      id: data['id'],
+      date: data['date'],
       name: data['name'] ?? '',
       artist: data['artist'] ?? '',
-      api: data['api'] ?? '',
+      videoID: data['videoID'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() =>
-      {"id": id, "name": name, "artist": artist, "api": api};
+      {"date": date, "name": name, "artist": artist, "videoID": videoID};
 }
