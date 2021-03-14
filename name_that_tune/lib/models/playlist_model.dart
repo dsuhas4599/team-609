@@ -7,7 +7,7 @@ class PlaylistModel {
 
   factory PlaylistModel.fromMap(Map data) {
     return PlaylistModel(
-      id: data['id'],
+      id: data['id'] ?? '',
       name: data['name'] ?? '',
       songs: data['songs'] ?? '',
     );

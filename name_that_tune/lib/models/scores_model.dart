@@ -8,7 +8,7 @@ class ScoreModel {
 
   factory ScoreModel.fromMap(Map data) {
     return ScoreModel(
-      date: data['date'],
+      date: data['date'] ?? '',
       game: data['game'] ?? '',
       score: data['score'] ?? '',
       user: data['user'] ?? '',

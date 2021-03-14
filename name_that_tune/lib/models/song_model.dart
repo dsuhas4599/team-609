@@ -8,7 +8,7 @@ class SongModel {
 
   factory SongModel.fromMap(Map data) {
     return SongModel(
-      date: data['date'],
+      date: data['date'] ?? '',
       name: data['name'] ?? '',
       artist: data['artist'] ?? '',
       videoID: data['videoID'] ?? '',

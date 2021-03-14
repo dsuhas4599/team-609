@@ -8,7 +8,7 @@ class RoundModel {
 
   factory RoundModel.fromMap(Map data) {
     return RoundModel(
-      guesses: data['guesses'],
+      guesses: data['guesses'] ?? '',
       song: data['song'] ?? '',
       time: data['time'] ?? '',
       user: data['user'] ?? '',
