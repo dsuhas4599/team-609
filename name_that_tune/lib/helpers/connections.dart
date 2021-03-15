@@ -39,7 +39,7 @@ Future getAllPlaylists() async {
   await playlists.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
           var data = {
-            'id': 1, // to be updated once IDs are added into firestore
+            'user': doc['user'],
             'name': doc['name'],
             'songs': List<String>.from(doc['songs'])
           };
