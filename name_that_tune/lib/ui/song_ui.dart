@@ -3,7 +3,18 @@ import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
 
-class SongUI extends StatelessWidget {
+class SongUI extends StatefulWidget {
+  @override
+  _SongPageState createState() => _SongPageState();
+}
+
+class _SongPageState extends State<SongUI> {
+  @override
+  void initState() {
+    super.initState();
+    _hideInfo();
+  }
+
   final YoutubePlayerController _controller = YoutubePlayerController(
     initialVideoId: '',
     params: YoutubePlayerParams(
@@ -25,7 +36,22 @@ class SongUI extends StatelessWidget {
             child: ListView(
       children: <Widget>[
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            // Expanded(
+            //   child: PrimaryButton(
+            //       labelText: "Play",
+            //       onPressed: () async {
+            //         _controller.play();
+            //       }),
+            // ),
+            // Expanded(
+            //   child: PrimaryButton(
+            //       labelText: "Pause",
+            //       onPressed: () async {
+            //         _controller.pause();
+            //       }),
+            // ),
             PrimaryButton(
                 labelText: "Play",
                 onPressed: () async {
@@ -51,48 +77,56 @@ class SongUI extends StatelessWidget {
             }),
         Align(
           alignment: Alignment.center,
-          child: Container(
-            width: 300,
-            height: 300,
-            child: YoutubePlayerIFrame(
-              controller: _controller,
-              aspectRatio: 16 / 9,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              width: 300,
+              height: 300,
+              child: YoutubePlayerIFrame(
+                controller: _controller,
+                aspectRatio: 16 / 9,
+              ),
             ),
           ),
         ),
-        new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              PrimaryButton(
-                  labelText: "Brown Eyed Girl",
-                  onPressed: () async {
-                    _controller.pause();
-                  }),
-              PrimaryButton(
-                  labelText: "Ain't No Mountain High Enough",
-                  onPressed: () async {
-                    _controller.pause();
-                  }),
-            ]),
-        new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              PrimaryButton(
-                  labelText: "God Only Knows",
-                  onPressed: () async {
-                    _controller.pause();
-                  }),
-              PrimaryButton(
-                  labelText: "My Girl",
-                  onPressed: () async {
-                    _controller.pause();
-                  }),
-            ]),
+        new Row(children: <Widget>[
+          Expanded(
+            child: PrimaryButton(
+                labelText: "Brown Eyed Girl",
+                onPressed: () async {
+                  _controller.pause();
+                }),
+          ),
+          Expanded(
+            child: PrimaryButton(
+                labelText: "Ain't No Mountain High Enough",
+                onPressed: () async {
+                  _controller.pause();
+                }),
+          ),
+        ]),
+        new Row(children: <Widget>[
+          Expanded(
+            child: PrimaryButton(
+                labelText: "God Only Knows",
+                onPressed: () async {
+                  _controller.pause();
+                }),
+          ),
+          Expanded(
+            child: PrimaryButton(
+                labelText: "My Girl",
+                onPressed: () async {
+                  _controller.pause();
+                }),
+          ),
+        ]),
       ],
     )));
+  }
+
+  _hideInfo() {
+    _controller.hideTopMenu();
+    _controller.hidePauseOverlay();
   }
 }
