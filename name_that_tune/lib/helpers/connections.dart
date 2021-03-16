@@ -7,7 +7,7 @@ CollectionReference playlists = FirebaseFirestore.instance.collection('playlists
 CollectionReference songs = FirebaseFirestore.instance.collection('songs');
 
 // Song functions
-Future getAllSongs() async {
+Future getAllSongs() async { // returns all songs in a list of song models
   List<SongModel> songObjects = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
@@ -23,7 +23,7 @@ Future getAllSongs() async {
    return songObjects;
 }
 
-Future getAllSongNames() async {
+Future getAllSongNames() async { // returns a list of all song names
   List<String> songNames = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
@@ -33,8 +33,19 @@ Future getAllSongNames() async {
   return songNames;
 }
 
+Future createAnswerChoices(String videoID) async { // returns 4 answer choices with the first one being the answer
+  List<SongModel> allSongs = await getAllSongs();
+  List<String> answerChoices = [];
+  String correctChoice = allSongs.firstWhere((song) => song.videoID == videoID).name;
+  answerChoices.add(correctChoice);
+  allSongs.removeWhere((song) => song.videoID == videoID);
+  allSongs.shuffle();
+  allSongs.take(3).forEach((song) {answerChoices.add(song.name);});
+  print(answerChoices);
+}
+
 // Playlist functions
-Future getAllPlaylists() async {
+Future getAllPlaylists() async { // returns a list of all playlists in firestore
   List<PlaylistModel> playlistObjects = [];
   await playlists.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
