@@ -41,7 +41,7 @@ Future createAnswerChoices(String videoID) async { // returns 4 answer choices w
   allSongs.removeWhere((song) => song.videoID == videoID);
   allSongs.shuffle();
   allSongs.take(3).forEach((song) {answerChoices.add(song.name);});
-  print(answerChoices);
+  return answerChoices;
 }
 
 // Playlist functions
