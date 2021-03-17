@@ -12,7 +12,7 @@ class _SongPageState extends State<SongUI> {
   @override
   void initState() {
     super.initState();
-    _hideInfo();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _hideInfo());
   }
 
   final YoutubePlayerController _controller = YoutubePlayerController(
