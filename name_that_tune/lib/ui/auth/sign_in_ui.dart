@@ -38,6 +38,10 @@ class SignInUI extends StatelessWidget {
                     onChanged: (value) => null,
                     onSaved: (value) =>
                         authController.emailController.text = value,
+                    onFieldSubmitted: (value) => {
+                      if (_formKey.currentState.validate())
+                        {authController.signInWithEmailAndPassword(context)}
+                    },
                   ),
                   FormVerticalSpace(),
                   FormInputFieldWithIcon(
@@ -49,6 +53,10 @@ class SignInUI extends StatelessWidget {
                     onChanged: (value) => null,
                     onSaved: (value) =>
                         authController.passwordController.text = value,
+                    onFieldSubmitted: (value) => {
+                      if (_formKey.currentState.validate())
+                        {authController.signInWithEmailAndPassword(context)}
+                    },
                     maxLines: 1,
                   ),
                   FormVerticalSpace(),

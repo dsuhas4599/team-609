@@ -35,6 +35,14 @@ class SignUpUI extends StatelessWidget {
                     onChanged: (value) => null,
                     onSaved: (value) =>
                         authController.nameController.text = value,
+                    onFieldSubmitted: (value) => {
+                      if (_formKey.currentState.validate())
+                        {
+                          SystemChannels.textInput.invokeMethod(
+                              'TextInput.hide'), //to hide the keyboard - if any
+                          authController.registerWithEmailAndPassword(context),
+                        }
+                    },
                   ),
                   FormVerticalSpace(),
                   FormInputFieldWithIcon(
@@ -46,6 +54,14 @@ class SignUpUI extends StatelessWidget {
                     onChanged: (value) => null,
                     onSaved: (value) =>
                         authController.emailController.text = value,
+                    onFieldSubmitted: (value) => {
+                      if (_formKey.currentState.validate())
+                        {
+                          SystemChannels.textInput.invokeMethod(
+                              'TextInput.hide'), //to hide the keyboard - if any
+                          authController.registerWithEmailAndPassword(context),
+                        }
+                    },
                   ),
                   FormVerticalSpace(),
                   FormInputFieldWithIcon(
@@ -57,6 +73,14 @@ class SignUpUI extends StatelessWidget {
                     onChanged: (value) => null,
                     onSaved: (value) =>
                         authController.passwordController.text = value,
+                    onFieldSubmitted: (value) => {
+                      if (_formKey.currentState.validate())
+                        {
+                          SystemChannels.textInput.invokeMethod(
+                              'TextInput.hide'), //to hide the keyboard - if any
+                          authController.registerWithEmailAndPassword(context),
+                        }
+                    },
                     maxLines: 1,
                   ),
                   FormVerticalSpace(),

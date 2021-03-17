@@ -23,7 +23,8 @@ class FormInputFieldWithIcon extends StatelessWidget {
       this.minLines = 1,
       this.maxLines,
       this.onChanged,
-      this.onSaved});
+      this.onSaved,
+      this.onFieldSubmitted});
 
   final TextEditingController controller;
   final IconData iconPrefix;
@@ -35,6 +36,7 @@ class FormInputFieldWithIcon extends StatelessWidget {
   final int maxLines;
   final void Function(String) onChanged;
   final void Function(String) onSaved;
+  final void Function(String) onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class FormInputFieldWithIcon extends StatelessWidget {
       controller: controller,
       onSaved: onSaved,
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
       keyboardType: keyboardType,
       obscureText: obscureText,
       maxLines: maxLines,

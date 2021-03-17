@@ -7,7 +7,7 @@ class Validator {
   Validator(this.labels);
 
   String email(String value) {
-    Pattern pattern = r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
+    Pattern pattern = r'^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value))
       return labels.validator.email;

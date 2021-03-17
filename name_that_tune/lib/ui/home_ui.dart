@@ -60,8 +60,14 @@ class HomeUI extends StatelessWidget {
                                 ': ' +
                                 controller.admin.value.toString(),
                             style: TextStyle(fontSize: 16)),
+                        FormVerticalSpace(),
                       ],
                     ),
+                    PrimaryButton(
+                        labelText: 'Play the Game',
+                        onPressed: () async {
+                          Get.to(SongUI());
+                        }),
                   ],
                 ),
               ),
