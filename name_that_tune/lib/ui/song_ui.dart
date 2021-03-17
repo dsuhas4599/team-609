@@ -31,6 +31,8 @@ class _SongPageState extends State<SongUI> {
   );
 
   Widget build(BuildContext context) {
+    Future answerChoices = createAnswerChoices(_controller.initialVideoId);
+
     return Scaffold(
         body: Center(
             child: ListView(
@@ -92,7 +94,7 @@ class _SongPageState extends State<SongUI> {
         new Row(children: <Widget>[
           Expanded(
             child: PrimaryButton(
-                labelText: "Brown Eyed Girl",
+                labelText: answerChoices.toString(), //"Brown Eyed Girl",
                 onPressed: () async {
                   _controller.pause();
                 }),
