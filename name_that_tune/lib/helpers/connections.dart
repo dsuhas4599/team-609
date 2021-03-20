@@ -44,6 +44,10 @@ Future createAnswerChoices(String videoID) async { // returns 4 answer choices w
   return answerChoices;
 }
 
+Future createAnswerChoicesFromPlaylist(String videoID, String playlist) { // returns 4 answer choices from a given playlist
+
+}
+
 // Playlist functions
 Future getAllPlaylists() async { // returns a list of all playlists in firestore
   List<PlaylistModel> playlistObjects = [];
@@ -58,4 +62,8 @@ Future getAllPlaylists() async { // returns a list of all playlists in firestore
         })
       });
   return playlistObjects;
+}
+
+Future getSpecificPlaylist(String playlistName) async { // given a playlist name will return that playlist object
+
 }
