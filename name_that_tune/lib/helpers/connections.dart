@@ -47,6 +47,12 @@ Future createAnswerChoices(String videoID) async { // returns 4 answer choices w
 Future createAnswerChoicesFromPlaylist(String videoID, String playlist) async { // returns 4 answer choices from a given playlist
   List<SongModel> playlistSongs = await playlistToSongs(playlist);
   List<String> answerChoices = [];
+  String correctChoice = playlistSongs.firstWhere((song) => song.videoID == videoID).name;
+  answerChoices.add(correctChoice);
+  playlistSongs.removeWhere((song) => song.videoID == videoID);
+  playlistSongs.shuffle();
+  playlistSongs.take(3).forEach((song) {answerChoices.add(song.name);});
+  return answerChoices;
 }
 
 Future playlistToSongs(String playlist) async { // given a playlist object, will retrieve the list of songs from document ID
