@@ -65,5 +65,7 @@ Future getAllPlaylists() async { // returns a list of all playlists in firestore
 }
 
 Future getSpecificPlaylist(String playlistName) async { // given a playlist name will return that playlist object
-
+  List<PlaylistModel> allPlaylists = await getAllPlaylists();
+  PlaylistModel currentPlaylist = allPlaylists.firstWhere((playlist) => playlist.name == playlistName);
+  return currentPlaylist;
 }
