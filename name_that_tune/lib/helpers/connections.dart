@@ -44,8 +44,27 @@ Future createAnswerChoices(String videoID) async { // returns 4 answer choices w
   return answerChoices;
 }
 
-Future createAnswerChoicesFromPlaylist(String videoID, String playlist) { // returns 4 answer choices from a given playlist
+Future createAnswerChoicesFromPlaylist(String videoID, String playlist) async { // returns 4 answer choices from a given playlist
+  List<SongModel> playlistSongs = await playlistToSongs(playlist);
+  List<String> answerChoices = [];
+}
 
+Future playlistToSongs(String playlist) async { // given a playlist object, will retrieve the list of songs from document ID
+  PlaylistModel currentPlaylist = await getSpecificPlaylist(playlist);
+  List<SongModel> playlistSongs = [];
+
+  for (String songID in currentPlaylist.songs) {
+    await songs.doc(songID).get().then((DocumentSnapshot documentSnapshot) {
+      var data = {
+            'artist': documentSnapshot.data()['artist'],
+            'date': documentSnapshot.data()['date'],
+            'name': documentSnapshot.data()['name'],
+            'videoID': documentSnapshot.data()['videoID'],
+          };
+          playlistSongs.add(SongModel.fromMap(data));
+    });
+  }
+  return playlistSongs;
 }
 
 // Playlist functions
