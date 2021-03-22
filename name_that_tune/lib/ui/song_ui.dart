@@ -31,9 +31,7 @@ class _SongPageState extends State<SongUI> {
   );
 
   Widget build(BuildContext context) {
-    List<String> answerChoices;
-
-    createAnswerChoices('IC5PL0XImjw').then((answerChoices) {});
+    var answerChoices = createAnswers();
 
     return Scaffold(
         body: Center(
@@ -96,7 +94,7 @@ class _SongPageState extends State<SongUI> {
         new Row(children: <Widget>[
           Expanded(
             child: PrimaryButton(
-                labelText: answerChoices[0], //"Brown Eyed Girl",
+                labelText: "Brown Eyed Girl",
                 onPressed: () async {
                   _controller.pause();
                 }),
@@ -132,5 +130,11 @@ class _SongPageState extends State<SongUI> {
   _hideInfo() {
     _controller.hideTopMenu();
     _controller.hidePauseOverlay();
+  }
+
+  createAnswers() async {
+    List<String> answerChoices = await createAnswerChoices('IC5PL0XImjw');
+    print(answerChoices);
+    return answerChoices;
   }
 }
