@@ -80,11 +80,22 @@ class _SongPageState extends State<SongUI> {
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Container(
-              width: 300,
               height: 300,
-              child: YoutubePlayerIFrame(
-                controller: _controller,
-                aspectRatio: 16 / 9,
+              child: Stack(
+                children: [
+                  Container(
+                    child: Center(
+                        child: YoutubePlayerIFrame(
+                      controller: _controller,
+                      aspectRatio: 16 / 9,
+                    )),
+                    height: 0,
+                    width: 0,
+                  ),
+                  Center(child: Image.network(
+                      // Replace this image with a chosen one from the database
+                      'https://imgs.smoothradio.com/images/44478?width=3193&crop=16_9&signature=kQwgrAvrUNQMRPaLn5ca3QZIrf4=')),
+                ],
               ),
             ),
           ),
