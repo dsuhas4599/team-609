@@ -56,6 +56,8 @@ class _SongPageState extends State<SongUI> {
                 labelText: "Play",
                 onPressed: () async {
                   _controller.play();
+                  List<String> links = await yearToImages(1967);
+                  print(links);
                 }),
             PrimaryButton(
                 labelText: "Pause",

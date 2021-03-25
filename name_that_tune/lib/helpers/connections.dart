@@ -101,11 +101,12 @@ Future playlistToSongs(String playlist) async { // given a playlist object, will
 }
 
 Future yearToImages(int year) async { // given a year, returns a list of image links
-  List<String> imageLinks = [];
+  List<dynamic> imageLinks = [];
   await images.where('year', isEqualTo: year).get().then((QuerySnapshot querySnapshot) {
     querySnapshot.docs.forEach((doc) {
       imageLinks.add(doc['links']);
     });
   });
-  return imageLinks;
+  List<String> _imageLinks = imageLinks.cast<String>();
+  return _imageLinks;
 }
