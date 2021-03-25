@@ -1,6 +1,4 @@
 // Functions for getting data from firebase
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_starter/models/models.dart';
@@ -101,12 +99,11 @@ Future playlistToSongs(String playlist) async { // given a playlist object, will
 }
 
 Future yearToImages(int year) async { // given a year, returns a list of image links
-  List<dynamic> imageLinks = [];
+  var imageLinks = [];
   await images.where('year', isEqualTo: year).get().then((QuerySnapshot querySnapshot) {
     querySnapshot.docs.forEach((doc) {
       imageLinks.add(doc['links']);
     });
   });
-  List<String> _imageLinks = imageLinks.cast<String>();
-  return _imageLinks;
+  return imageLinks;
 }
