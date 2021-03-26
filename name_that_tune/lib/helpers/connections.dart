@@ -65,7 +65,7 @@ Future<void> addGame(var rounds, var user) {
 }
 
 Future<void> addRound(int guesses, var user, var time, var song) {
-  return game
+  return rounds
     .add({
       'user': user,
       'guesses': guesses,
@@ -77,7 +77,7 @@ Future<void> addRound(int guesses, var user, var time, var song) {
 }
 
 Future<void> addScores(var game, var user, var date, var score) {
-  return game
+  return scores
     .add({
       'game': game,
       'user': user,
