@@ -107,13 +107,13 @@ class UpdateProfileUI extends StatelessWidget {
         maxLines: 1,
       ),
       actions: <Widget>[
-        new FlatButton(
+        new TextButton(
           child: new Text(labels.auth.cancel.toUpperCase()),
           onPressed: () {
             Get.back();
           },
         ),
-        new FlatButton(
+        new TextButton(
           child: new Text(labels.auth.submit.toUpperCase()),
           onPressed: () async {
             Get.back();

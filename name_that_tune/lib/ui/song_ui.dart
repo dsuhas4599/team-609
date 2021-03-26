@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
+import 'package:flutter_starter/models/models.dart';
+import 'package:get/get.dart';
 
 class SongUI extends StatefulWidget {
   @override
@@ -9,27 +11,60 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
+  var data = Get.arguments;
+  PlaylistModel _playlist;
+  Future<dynamic> _playlistFuture;
+  List<dynamic> _images;
+  Future<dynamic> _imagesFuture;
+  List<String> _answerChoices;
+  Future<dynamic> _answersFuture;
+  YoutubePlayerController _controller;
+
   @override
   void initState() {
     super.initState();
-    _hideInfo();
+    print(Get.arguments);
+    _playlistFuture = getSpecificPlaylist(data).then((playlist) {
+      print('finished playlist');
+      print(playlist.songs.toString());
+      _playlist = playlist;
+      _controller = YoutubePlayerController(
+        initialVideoId: '',
+        params: YoutubePlayerParams(
+          playlist: _playlist.songs,
+          showControls: true,
+          showFullscreenButton: true,
+          autoPlay: true,
+        ),
+      );
+      _answersFuture =
+          createAnswerChoicesFromPlaylist(_playlist.songs[0], _playlist.name)
+              .then((answers) {
+        print('finished answers');
+        print(answers.toString());
+        _answerChoices = answers;
+        return answers;
+      }).onError((error, stackTrace) {
+        print(error);
+        return error;
+      });
+      return playlist;
+    }).onError((error, stackTrace) {
+      print(error);
+      return error;
+    });
+    _imagesFuture = yearToImages(1967).then((images) {
+      print('finished images');
+      print(images.toString());
+      _images = images[0];
+      return images;
+    }).onError((error, stackTrace) {
+      print(error);
+      return error;
+    });
   }
 
-  final YoutubePlayerController _controller = YoutubePlayerController(
-    initialVideoId: '',
-    params: YoutubePlayerParams(
-      playlist: [
-        'IC5PL0XImjw',
-        'AOMyS78o5YI',
-        'plcmqP3b-Qg',
-        'TWoFl_0UtjQ',
-      ], // Defining custom playlist
-      showControls: true,
-      showFullscreenButton: true,
-      autoPlay: true,
-    ),
-  );
-
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
@@ -38,20 +73,6 @@ class _SongPageState extends State<SongUI> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            // Expanded(
-            //   child: PrimaryButton(
-            //       labelText: "Play",
-            //       onPressed: () async {
-            //         _controller.play();
-            //       }),
-            // ),
-            // Expanded(
-            //   child: PrimaryButton(
-            //       labelText: "Pause",
-            //       onPressed: () async {
-            //         _controller.pause();
-            //       }),
-            // ),
             PrimaryButton(
                 labelText: "Play",
                 onPressed: () async {
@@ -69,12 +90,6 @@ class _SongPageState extends State<SongUI> {
             onPressed: () async {
               _controller.nextVideo();
             }),
-        PrimaryButton(
-            labelText: "Hide info",
-            onPressed: () async {
-              _controller.hideTopMenu();
-              _controller.hidePauseOverlay();
-            }),
         Align(
           alignment: Alignment.center,
           child: Padding(
@@ -83,61 +98,108 @@ class _SongPageState extends State<SongUI> {
               height: 300,
               child: Stack(
                 children: [
-                  Container(
-                    child: Center(
-                        child: YoutubePlayerIFrame(
-                      controller: _controller,
-                      aspectRatio: 16 / 9,
-                    )),
-                    height: 0,
-                    width: 0,
+                  Center(
+                    child: FutureBuilder(
+                      future: _playlistFuture,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          print('progress indicator');
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          print('youtube widget');
+                          print(_controller.params.playlist.toString());
+                          return Container(
+                              height: 300 /* change back to 0 */,
+                              width: 300 /* change back to 0 */,
+                              child: YoutubePlayerIFrame(
+                                controller: _controller,
+                                aspectRatio: 16 / 9,
+                              ));
+                        } else {
+                          print('empty');
+                          return Container();
+                        }
+                      },
+                    ),
                   ),
-                  Center(child: Image.network(
-                      // Replace this image with a chosen one from the database
-                      'https://imgs.smoothradio.com/images/44478?width=3193&crop=16_9&signature=kQwgrAvrUNQMRPaLn5ca3QZIrf4=')),
+                  Center(
+                    child: FutureBuilder(
+                      future: _imagesFuture,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          print('progress indicator');
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          print('images widget');
+                          print(_images.toString());
+                          return Image.network(_images[0]);
+                        } else {
+                          print('empty');
+                          return Container();
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-        new Row(children: <Widget>[
-          Expanded(
-            child: PrimaryButton(
-                labelText: "Brown Eyed Girl",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-          Expanded(
-            child: PrimaryButton(
-                labelText: "Ain't No Mountain High Enough",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-        ]),
-        new Row(children: <Widget>[
-          Expanded(
-            child: PrimaryButton(
-                labelText: "God Only Knows",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-          Expanded(
-            child: PrimaryButton(
-                labelText: "My Girl",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-        ]),
+        new Center(
+          child: FutureBuilder(
+              future: _answersFuture,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  print('answers waiting');
+                  return Container();
+                } else if (snapshot.hasData) {
+                  print('answers widget');
+                  print(_answerChoices.toString());
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: "Temp Replacement for Null",
+                                  onPressed: () async {
+                                    _controller.pause();
+                                  })),
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[1],
+                                  onPressed: () async {
+                                    _controller.pause();
+                                  })),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[2],
+                                  onPressed: () async {
+                                    _controller.pause();
+                                  })),
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[0],
+                                  onPressed: () async {
+                                    _controller.pause();
+                                  })),
+                        ],
+                      )
+                    ],
+                  );
+                } else {
+                  print('answers empty');
+                  return Container();
+                }
+              }),
+        )
       ],
     )));
-  }
-
-  _hideInfo() {
-    _controller.hideTopMenu();
-    _controller.hidePauseOverlay();
   }
 }

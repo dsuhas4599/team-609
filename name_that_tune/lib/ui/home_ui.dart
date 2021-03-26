@@ -64,9 +64,9 @@ class HomeUI extends StatelessWidget {
                       ],
                     ),
                     PrimaryButton(
-                        labelText: 'Play the Game',
+                        labelText: 'Pick a playlist',
                         onPressed: () async {
-                          Get.to(SongUI());
+                          Get.to(PlaylistUI());
                         }),
                   ],
                 ),
