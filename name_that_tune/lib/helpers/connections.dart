@@ -1,5 +1,6 @@
 // Functions for getting data from firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_starter/models/models.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -8,6 +9,7 @@ CollectionReference songs = FirebaseFirestore.instance.collection('songs');
 CollectionReference game = FirebaseFirestore.instance.collection('game');
 CollectionReference rounds = FirebaseFirestore.instance.collection('rounds');
 CollectionReference scores = FirebaseFirestore.instance.collection('scores');
+CollectionReference images = FirebaseFirestore.instance.collection('images');
 
 // Answer choices
 Future createAnswerChoices(String videoID) async { // returns 4 answer choices with the first one being the answer
@@ -97,6 +99,16 @@ Future playlistToSongs(String playlist) async { // given a playlist object, will
     });
   }
   return playlistSongs;
+}
+
+Future yearToImages(int year) async { // given a year, returns a list of image links
+  var imageLinks = [];
+  await images.where('year', isEqualTo: year).get().then((QuerySnapshot querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      imageLinks.add(doc['links']);
+    });
+  });
+  return imageLinks;
 }
 
 //Functions to write to firestore
