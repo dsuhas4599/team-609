@@ -24,7 +24,7 @@ class _SongPageState extends State<SongUI> {
   void initState() {
     super.initState();
     print(Get.arguments);
-    _playlistFuture = getSpecificPlaylist(data).then((playlist) {
+    _playlistFuture = convertPlaylistToUsable(data).then((playlist) {
       print('finished playlist');
       print(playlist.songs.toString());
       _playlist = playlist;

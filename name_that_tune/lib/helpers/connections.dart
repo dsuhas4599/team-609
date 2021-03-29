@@ -118,6 +118,25 @@ Future playlistToSongs(String playlist) async {
   return playlistSongs;
 }
 
+Future convertPlaylistToUsable(String playlist) async { // given a playlist of songs doc references will return the same thing except with songs as videoIDs
+  PlaylistModel currentPlaylist = await getSpecificPlaylist(playlist);
+  PlaylistModel convertedPlaylist = currentPlaylist;
+  List<String> convertedSongIDs = [];
+  // set up initial playlist
+  convertedPlaylist.name = currentPlaylist.name;
+  convertedPlaylist.user = currentPlaylist.user;
+
+  // convert song docs playlist into song videoID playlist
+  for (String songID in currentPlaylist.songs) {
+    await songs.doc(songID).get().then((DocumentSnapshot documentSnapshot) {
+        convertedSongIDs.add(documentSnapshot.data()['videoID']);
+    });
+  }
+
+  convertedPlaylist.songs = convertedSongIDs;
+  return convertedPlaylist;
+}
+
 Future yearToImages(int year) async {
   // given a year, returns a list of image links
   var imageLinks = [];
