@@ -1,6 +1,9 @@
+import 'package:flutter_starter/models/models.dart';
+
 class PlaylistModel {
   String user;
   String name;
+  // List<SongModel>
   List<String> songs;
 
   PlaylistModel({this.user, this.name, this.songs});
@@ -13,6 +16,5 @@ class PlaylistModel {
     );
   }
 
-  Map<String, dynamic> toJson() =>
-      {"user": user, "name": name, "songs": songs};
+  Map<String, dynamic> toJson() => {"user": user, "name": name, "songs": songs};
 }
