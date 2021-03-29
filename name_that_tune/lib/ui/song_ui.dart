@@ -13,6 +13,7 @@ class SongUI extends StatefulWidget {
 class _SongPageState extends State<SongUI> {
   var data = Get.arguments;
   String correctAnswer = "";
+  int score = 0;
   PlaylistModel _playlist;
   Future<dynamic> _playlistFuture;
   List<dynamic> _images;
@@ -166,18 +167,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[3],
                                   onPressed: () async {
-                                    /* if (_answerChoices[3] === correctanswervar) {
-                                      // score increment 
-                                    } */
+                                    if (_answerChoices[0] == correctAnswer) {
+                                      score++;
+                                    }
                                     _controller.pause();
                                   })),
                           Expanded(
                               child: PrimaryButton(
                                   labelText: _answerChoices[1],
                                   onPressed: () async {
-                                    /* if (_answerChoices[1] === correctanswervar) {
-                                      // score increment 
-                                    } */
+                                    if (_answerChoices[1] == correctAnswer) {
+                                      score++;
+                                    }
                                     _controller.pause();
                                   })),
                         ],
@@ -188,18 +189,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[2],
                                   onPressed: () async {
-                                    /* if (_answerChoices[2] === correctanswervar) {
-                                      // score increment 
-                                    } */
+                                    if (_answerChoices[2] == correctAnswer) {
+                                      score++;
+                                    }
                                     _controller.pause();
                                   })),
                           Expanded(
                               child: PrimaryButton(
                                   labelText: _answerChoices[0],
                                   onPressed: () async {
-                                    /* if (_answerChoices[0] === correctanswervar) {
-                                      // score increment 
-                                    } */
+                                    if (_answerChoices[3] == correctAnswer) {
+                                      score++;
+                                    }
                                     _controller.pause();
                                   })),
                         ],
