@@ -165,12 +165,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: "Temp Replacement for Null",
                                   onPressed: () async {
+                                    /* if (_answerChoices[3] === correctanswervar) {
+                                      // score increment 
+                                    } */
                                     _controller.pause();
                                   })),
                           Expanded(
                               child: PrimaryButton(
                                   labelText: _answerChoices[1],
                                   onPressed: () async {
+                                    /* if (_answerChoices[1] === correctanswervar) {
+                                      // score increment 
+                                    } */
                                     _controller.pause();
                                   })),
                         ],
@@ -181,12 +187,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[2],
                                   onPressed: () async {
+                                    /* if (_answerChoices[2] === correctanswervar) {
+                                      // score increment 
+                                    } */
                                     _controller.pause();
                                   })),
                           Expanded(
                               child: PrimaryButton(
                                   labelText: _answerChoices[0],
                                   onPressed: () async {
+                                    /* if (_answerChoices[0] === correctanswervar) {
+                                      // score increment 
+                                    } */
                                     _controller.pause();
                                   })),
                         ],
