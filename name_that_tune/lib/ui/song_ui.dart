@@ -53,6 +53,17 @@ class _SongPageState extends State<SongUI> {
       print(error);
       return error;
     });
+    // _answersFuture =
+    //     createAnswerChoicesFromPlaylist(_playlist.songs[0], _playlist.name)
+    //         .then((answers) {
+    //   print('finished answers');
+    //   print(answers.toString());
+    //   _answerChoices = answers;
+    //   return answers;
+    // }).onError((error, stackTrace) {
+    //   print(error);
+    //   return error;
+    // });
     _imagesFuture = yearToImages(1967).then((images) {
       print('finished images');
       print(images.toString());
@@ -104,14 +115,14 @@ class _SongPageState extends State<SongUI> {
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          print('progress indicator');
+                          print('progress indicator for yt');
                           return CircularProgressIndicator();
                         } else if (snapshot.hasData) {
                           print('youtube widget');
                           print(_controller.params.playlist.toString());
                           return Container(
-                              height: 0 /* change back to 0 */,
-                              width: 0 /* change back to 0 */,
+                              height: 1 /* change back to 0 */,
+                              width: 1 /* change back to 0 */,
                               child: YoutubePlayerIFrame(
                                 controller: _controller,
                                 aspectRatio: 16 / 9,
@@ -129,7 +140,7 @@ class _SongPageState extends State<SongUI> {
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          print('progress indicator');
+                          print('progress indicator for image');
                           return CircularProgressIndicator();
                         } else if (snapshot.hasData) {
                           print('images widget');
