@@ -110,8 +110,8 @@ class _SongPageState extends State<SongUI> {
                           print('youtube widget');
                           print(_controller.params.playlist.toString());
                           return Container(
-                              height: 300 /* change back to 0 */,
-                              width: 300 /* change back to 0 */,
+                              height: 0 /* change back to 0 */,
+                              width: 0 /* change back to 0 */,
                               child: YoutubePlayerIFrame(
                                 controller: _controller,
                                 aspectRatio: 16 / 9,
