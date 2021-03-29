@@ -24,6 +24,11 @@ class _SongPageState extends State<SongUI> {
   void initState() {
     super.initState();
     print(Get.arguments);
+    initializePlaylist();
+    getImages();
+  }
+
+  void initializePlaylist() {
     _playlistFuture = convertPlaylistToUsable(data).then((playlist) {
       print('finished playlist');
       print(playlist.songs.toString());
@@ -37,27 +42,36 @@ class _SongPageState extends State<SongUI> {
           autoPlay: true,
         ),
       );
-      _answersFuture =
-          createAnswerChoicesFromPlaylist(_playlist.songs[0], _playlist.name)
-              .then((answers) {
-        print('finished answers');
-        print(answers.toString());
-        _answerChoices = answers;
-        return answers;
-      }).onError((error, stackTrace) {
-        print(error);
-        return error;
-      });
+      getAnswers();
+      // maybe call images with year from here
       return playlist;
     }).onError((error, stackTrace) {
       print(error);
       return error;
     });
+  }
+
+  void getImages() {
     _imagesFuture = yearToImages(1967).then((images) {
       print('finished images');
       print(images.toString());
       _images = images[0];
+      _images.shuffle();
       return images;
+    }).onError((error, stackTrace) {
+      print(error);
+      return error;
+    });
+  }
+
+  void getAnswers() {
+    _answersFuture =
+        createAnswerChoicesFromPlaylist(_playlist.songs[0], _playlist.name)
+            .then((answers) {
+      print('finished answers');
+      print(answers.toString());
+      _answerChoices = answers;
+      return answers;
     }).onError((error, stackTrace) {
       print(error);
       return error;
@@ -110,8 +124,8 @@ class _SongPageState extends State<SongUI> {
                           print('youtube widget');
                           print(_controller.params.playlist.toString());
                           return Container(
-                              height: 0 /* change back to 0 */,
-                              width: 0 /* change back to 0 */,
+                              height: 0 /* change to 1 for android? */,
+                              width: 0 /* change to 1 for android? */,
                               child: YoutubePlayerIFrame(
                                 controller: _controller,
                                 aspectRatio: 16 / 9,
@@ -163,7 +177,7 @@ class _SongPageState extends State<SongUI> {
                         children: [
                           Expanded(
                               child: PrimaryButton(
-                                  labelText: "Temp Replacement for Null",
+                                  labelText: _answerChoices[3],
                                   onPressed: () async {
                                     /* if (_answerChoices[3] === correctanswervar) {
                                       // score increment 
