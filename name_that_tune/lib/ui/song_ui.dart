@@ -12,6 +12,7 @@ class SongUI extends StatefulWidget {
 
 class _SongPageState extends State<SongUI> {
   var data = Get.arguments;
+  String correctAnswer = "";
   PlaylistModel _playlist;
   Future<dynamic> _playlistFuture;
   List<dynamic> _images;
@@ -24,14 +25,13 @@ class _SongPageState extends State<SongUI> {
   void initState() {
     super.initState();
     print(Get.arguments);
-    initializePlaylist();
-    getImages();
+    _playlistFuture = initializePlaylist();
+    _imagesFuture = getImages();
+    _answersFuture = getAnswers();
   }
 
-  void initializePlaylist() {
-    _playlistFuture = convertPlaylistToUsable(data).then((playlist) {
-      print('finished playlist');
-      print(playlist.songs.toString());
+  Future initializePlaylist() async {
+    return await convertPlaylistToUsable(data).then((playlist) {
       _playlist = playlist;
       _controller = YoutubePlayerController(
         initialVideoId: '',
@@ -42,8 +42,6 @@ class _SongPageState extends State<SongUI> {
           autoPlay: true,
         ),
       );
-      getAnswers();
-      // maybe call images with year from here
       return playlist;
     }).onError((error, stackTrace) {
       print(error);
@@ -51,10 +49,10 @@ class _SongPageState extends State<SongUI> {
     });
   }
 
-  void getImages() {
-    _imagesFuture = yearToImages(1967).then((images) {
-      print('finished images');
-      print(images.toString());
+  Future getImages() async {
+    dynamic pl = await initializePlaylist();
+    // eventually use playlist and song to plug in the year
+    return yearToImages(1967).then((images) {
       _images = images[0];
       _images.shuffle();
       return images;
@@ -64,13 +62,13 @@ class _SongPageState extends State<SongUI> {
     });
   }
 
-  void getAnswers() {
-    _answersFuture =
-        createAnswerChoicesFromPlaylist(_playlist.songs[0], _playlist.name)
-            .then((answers) {
-      print('finished answers');
-      print(answers.toString());
+  Future getAnswers() async {
+    dynamic pl = await initializePlaylist();
+    return createAnswerChoicesFromPlaylist(pl.songs[0], pl.name)
+        .then((answers) {
       _answerChoices = answers;
+      correctAnswer = _answerChoices[0];
+      _answerChoices.shuffle();
       return answers;
     }).onError((error, stackTrace) {
       print(error);
@@ -118,11 +116,8 @@ class _SongPageState extends State<SongUI> {
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          print('progress indicator');
                           return CircularProgressIndicator();
                         } else if (snapshot.hasData) {
-                          print('youtube widget');
-                          print(_controller.params.playlist.toString());
                           return Container(
                               height: 0 /* change to 1 for android? */,
                               width: 0 /* change to 1 for android? */,
@@ -131,7 +126,6 @@ class _SongPageState extends State<SongUI> {
                                 aspectRatio: 16 / 9,
                               ));
                         } else {
-                          print('empty');
                           return Container();
                         }
                       },
@@ -143,14 +137,10 @@ class _SongPageState extends State<SongUI> {
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          print('progress indicator');
                           return CircularProgressIndicator();
                         } else if (snapshot.hasData) {
-                          print('images widget');
-                          print(_images.toString());
                           return Image.network(_images[0]);
                         } else {
-                          print('empty');
                           return Container();
                         }
                       },
@@ -161,16 +151,13 @@ class _SongPageState extends State<SongUI> {
             ),
           ),
         ),
-        new Center(
+        Center(
           child: FutureBuilder(
               future: _answersFuture,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  print('answers waiting');
                   return Container();
                 } else if (snapshot.hasData) {
-                  print('answers widget');
-                  print(_answerChoices.toString());
                   return Column(
                     children: [
                       Row(
@@ -220,7 +207,6 @@ class _SongPageState extends State<SongUI> {
                     ],
                   );
                 } else {
-                  print('answers empty');
                   return Container();
                 }
               }),
