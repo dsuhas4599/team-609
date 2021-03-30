@@ -15,9 +15,8 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
+    return ElevatedButton(
       onPressed: onPressed,
-      padding: EdgeInsets.all(22),
       child: Text(
         labelText.toUpperCase(),
         style: TextStyle(fontWeight: FontWeight.bold),

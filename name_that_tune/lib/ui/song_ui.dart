@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
+import 'package:flutter_starter/models/models.dart';
+import 'package:get/get.dart';
 
 class SongUI extends StatefulWidget {
   @override
@@ -9,27 +11,73 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
+  var data = Get.arguments;
+  String correctAnswer = "";
+  int score = 0;
+  PlaylistModel _playlist;
+  Future<dynamic> _playlistFuture;
+  List<dynamic> _images;
+  Future<dynamic> _imagesFuture;
+  List<String> _answerChoices;
+  Future<dynamic> _answersFuture;
+  YoutubePlayerController _controller;
+
   @override
   void initState() {
     super.initState();
-    _hideInfo();
+    print(Get.arguments);
+    _playlistFuture = initializePlaylist();
+    _imagesFuture = getImages();
+    _answersFuture = getAnswers();
   }
 
-  final YoutubePlayerController _controller = YoutubePlayerController(
-    initialVideoId: '',
-    params: YoutubePlayerParams(
-      playlist: [
-        'IC5PL0XImjw',
-        'AOMyS78o5YI',
-        'plcmqP3b-Qg',
-        'TWoFl_0UtjQ',
-      ], // Defining custom playlist
-      showControls: true,
-      showFullscreenButton: true,
-      autoPlay: true,
-    ),
-  );
+  Future initializePlaylist() async {
+    return await convertPlaylistToUsable(data).then((playlist) {
+      _playlist = playlist;
+      _controller = YoutubePlayerController(
+        initialVideoId: '',
+        params: YoutubePlayerParams(
+          playlist: _playlist.songs,
+          showControls: true,
+          showFullscreenButton: true,
+          autoPlay: true,
+        ),
+      );
+      return playlist;
+    }).onError((error, stackTrace) {
+      print(error);
+      return error;
+    });
+  }
 
+  Future getImages() async {
+    dynamic pl = await initializePlaylist();
+    // eventually use playlist and song to plug in the year
+    return yearToImages(1967).then((images) {
+      _images = images[0];
+      _images.shuffle();
+      return images;
+    }).onError((error, stackTrace) {
+      print(error);
+      return error;
+    });
+  }
+
+  Future getAnswers() async {
+    dynamic pl = await initializePlaylist();
+    return createAnswerChoicesFromPlaylist(pl.songs[0], pl.name)
+        .then((answers) {
+      _answerChoices = answers;
+      correctAnswer = _answerChoices[0];
+      _answerChoices.shuffle();
+      return answers;
+    }).onError((error, stackTrace) {
+      print(error);
+      return error;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
@@ -38,20 +86,6 @@ class _SongPageState extends State<SongUI> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            // Expanded(
-            //   child: PrimaryButton(
-            //       labelText: "Play",
-            //       onPressed: () async {
-            //         _controller.play();
-            //       }),
-            // ),
-            // Expanded(
-            //   child: PrimaryButton(
-            //       labelText: "Pause",
-            //       onPressed: () async {
-            //         _controller.pause();
-            //       }),
-            // ),
             PrimaryButton(
                 labelText: "Play",
                 onPressed: () async {
@@ -69,12 +103,6 @@ class _SongPageState extends State<SongUI> {
             onPressed: () async {
               _controller.nextVideo();
             }),
-        PrimaryButton(
-            labelText: "Hide info",
-            onPressed: () async {
-              _controller.hideTopMenu();
-              _controller.hidePauseOverlay();
-            }),
         Align(
           alignment: Alignment.center,
           child: Padding(
@@ -83,61 +111,108 @@ class _SongPageState extends State<SongUI> {
               height: 300,
               child: Stack(
                 children: [
-                  Container(
-                    child: Center(
-                        child: YoutubePlayerIFrame(
-                      controller: _controller,
-                      aspectRatio: 16 / 9,
-                    )),
-                    height: 0,
-                    width: 0,
+                  Center(
+                    child: FutureBuilder(
+                      future: _playlistFuture,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          return Container(
+                              height: 1 /* change back to 0 */,
+                              width: 1 /* change back to 0 */,
+                              child: YoutubePlayerIFrame(
+                                controller: _controller,
+                                aspectRatio: 16 / 9,
+                              ));
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
                   ),
-                  Center(child: Image.network(
-                      // Replace this image with a chosen one from the database
-                      'https://imgs.smoothradio.com/images/44478?width=3193&crop=16_9&signature=kQwgrAvrUNQMRPaLn5ca3QZIrf4=')),
+                  Center(
+                    child: FutureBuilder(
+                      future: _imagesFuture,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          return Image.network(_images[0]);
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-        new Row(children: <Widget>[
-          Expanded(
-            child: PrimaryButton(
-                labelText: "Brown Eyed Girl",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-          Expanded(
-            child: PrimaryButton(
-                labelText: "Ain't No Mountain High Enough",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-        ]),
-        new Row(children: <Widget>[
-          Expanded(
-            child: PrimaryButton(
-                labelText: "God Only Knows",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-          Expanded(
-            child: PrimaryButton(
-                labelText: "My Girl",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ),
-        ]),
+        Center(
+          child: FutureBuilder(
+              future: _answersFuture,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container();
+                } else if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[3],
+                                  onPressed: () async {
+                                    if (_answerChoices[0] == correctAnswer) {
+                                      score++;
+                                    }
+                                    _controller.pause();
+                                  })),
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[1],
+                                  onPressed: () async {
+                                    if (_answerChoices[1] == correctAnswer) {
+                                      score++;
+                                    }
+                                    _controller.pause();
+                                  })),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[2],
+                                  onPressed: () async {
+                                    if (_answerChoices[2] == correctAnswer) {
+                                      score++;
+                                    }
+                                    _controller.pause();
+                                  })),
+                          Expanded(
+                              child: PrimaryButton(
+                                  labelText: _answerChoices[0],
+                                  onPressed: () async {
+                                    if (_answerChoices[3] == correctAnswer) {
+                                      score++;
+                                    }
+                                    _controller.pause();
+                                  })),
+                        ],
+                      )
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              }),
+        )
       ],
     )));
-  }
-
-  _hideInfo() {
-    _controller.hideTopMenu();
-    _controller.hidePauseOverlay();
   }
 }
