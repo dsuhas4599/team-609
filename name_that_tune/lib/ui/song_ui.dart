@@ -3,6 +3,7 @@ import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
+import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 
 class SongUI extends StatefulWidget {
@@ -12,6 +13,7 @@ class SongUI extends StatefulWidget {
 
 class _SongPageState extends State<SongUI> {
   var data = Get.arguments;
+  int round = 0;
   String correctAnswer = "";
   int score = 0;
   PlaylistModel _playlist;
@@ -27,8 +29,8 @@ class _SongPageState extends State<SongUI> {
     super.initState();
     print(Get.arguments);
     _playlistFuture = initializePlaylist();
-    _imagesFuture = getImages();
-    _answersFuture = getAnswers();
+    _imagesFuture = getImages('init');
+    _answersFuture = getAnswers('init');
   }
 
   Future initializePlaylist() async {
@@ -50,8 +52,10 @@ class _SongPageState extends State<SongUI> {
     });
   }
 
-  Future getImages() async {
-    dynamic pl = await initializePlaylist();
+  Future getImages(String method) async {
+    if (method == 'init') {
+      dynamic pl = await initializePlaylist();
+    }
     // eventually use playlist and song to plug in the year
     return yearToImages(1967).then((images) {
       _images = images[0];
@@ -63,9 +67,12 @@ class _SongPageState extends State<SongUI> {
     });
   }
 
-  Future getAnswers() async {
-    dynamic pl = await initializePlaylist();
-    return createAnswerChoicesFromPlaylist(pl.songs[0], pl.name)
+  Future getAnswers(String method) async {
+    if (method == 'init') {
+      dynamic pl = await initializePlaylist();
+    }
+    return createAnswerChoicesFromPlaylist(
+            _playlist.songs[round], _playlist.name)
         .then((answers) {
       _answerChoices = answers;
       correctAnswer = _answerChoices[0];
@@ -75,6 +82,20 @@ class _SongPageState extends State<SongUI> {
       print(error);
       return error;
     });
+  }
+
+  void progressRound() {
+    round++;
+    // other stuff
+    if (round <= 4) {
+      _controller.nextVideo();
+      setState(() {
+        _imagesFuture = getImages('update');
+        _answersFuture = getAnswers('update');
+      });
+    } else {
+      Get.to(GameRecapUI());
+    }
   }
 
   @override
@@ -101,7 +122,8 @@ class _SongPageState extends State<SongUI> {
         PrimaryButton(
             labelText: "Skip song",
             onPressed: () async {
-              _controller.nextVideo();
+              // _controller.nextVideo();
+              progressRound();
             }),
         Align(
           alignment: Alignment.center,
@@ -165,12 +187,13 @@ class _SongPageState extends State<SongUI> {
                         children: [
                           Expanded(
                               child: PrimaryButton(
-                                  labelText: _answerChoices[3],
+                                  labelText: _answerChoices[0],
                                   onPressed: () async {
                                     if (_answerChoices[0] == correctAnswer) {
                                       score++;
+                                      progressRound();
                                     }
-                                    _controller.pause();
+                                    // _controller.pause();
                                   })),
                           Expanded(
                               child: PrimaryButton(
@@ -178,8 +201,9 @@ class _SongPageState extends State<SongUI> {
                                   onPressed: () async {
                                     if (_answerChoices[1] == correctAnswer) {
                                       score++;
+                                      progressRound();
                                     }
-                                    _controller.pause();
+                                    // _controller.pause();
                                   })),
                         ],
                       ),
@@ -191,17 +215,19 @@ class _SongPageState extends State<SongUI> {
                                   onPressed: () async {
                                     if (_answerChoices[2] == correctAnswer) {
                                       score++;
+                                      progressRound();
                                     }
-                                    _controller.pause();
+                                    // _controller.pause();
                                   })),
                           Expanded(
                               child: PrimaryButton(
-                                  labelText: _answerChoices[0],
+                                  labelText: _answerChoices[3],
                                   onPressed: () async {
                                     if (_answerChoices[3] == correctAnswer) {
                                       score++;
+                                      progressRound();
                                     }
-                                    _controller.pause();
+                                    // _controller.pause();
                                   })),
                         ],
                       )
