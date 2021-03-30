@@ -1,9 +1,6 @@
-import 'package:flutter_starter/models/models.dart';
-
 class PlaylistModel {
   String user;
   String name;
-  // List<SongModel>
   List<String> songs;
 
   PlaylistModel({this.user, this.name, this.songs});

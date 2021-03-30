@@ -128,16 +128,11 @@ Future convertPlaylistToUsable(String playlist) async {
   convertedPlaylist.user = currentPlaylist.user;
 
   // convert song docs playlist into song videoID playlist
-  // instead: convert song docs playlist into song model playlist
   for (String songID in currentPlaylist.songs) {
     await songs.doc(songID).get().then((DocumentSnapshot documentSnapshot) {
       convertedSongIDs.add(documentSnapshot.data()['videoID']);
     });
   }
-
-  /* for (SongModel song in currentPlaylist.songs) {
-    await songs.where()
-  } */
 
   convertedPlaylist.songs = convertedSongIDs;
   return convertedPlaylist;
