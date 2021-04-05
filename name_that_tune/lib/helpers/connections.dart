@@ -83,7 +83,8 @@ Future getAllPlaylists() async {
           var data = {
             'user': doc['user'],
             'name': doc['name'],
-            'songs': List<String>.from(doc['songs'])
+            'songs': List<String>.from(doc['songs']),
+            'image': doc['image']
           };
           playlistObjects.add(PlaylistModel.fromMap(data));
         })
