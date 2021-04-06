@@ -8,10 +8,11 @@ PrimaryButton(
 */
 
 class PrimaryButton extends StatelessWidget {
-  PrimaryButton({this.labelText, this.onPressed});
+  PrimaryButton({this.labelText, this.onPressed, this.color});
 
   final String labelText;
   final void Function() onPressed;
+  final color;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,7 @@ class PrimaryButton extends StatelessWidget {
         labelText.toUpperCase(),
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
+      style: ButtonStyle(backgroundColor: color),
     );
   }
 }
