@@ -6,6 +6,8 @@ import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 
+enum ButtonStatus { correct, incorrect, nil }
+
 class SongUI extends StatefulWidget {
   @override
   _SongPageState createState() => _SongPageState();
@@ -23,6 +25,10 @@ class _SongPageState extends State<SongUI> {
   List<String> _answerChoices;
   Future<dynamic> _answersFuture;
   YoutubePlayerController _controller;
+  ButtonStatus buttonOne = ButtonStatus.nil;
+  ButtonStatus buttonTwo = ButtonStatus.nil;
+  ButtonStatus buttonThree = ButtonStatus.nil;
+  ButtonStatus buttonFour = ButtonStatus.nil;
 
   @override
   void initState() {
@@ -86,6 +92,10 @@ class _SongPageState extends State<SongUI> {
 
   void progressRound() {
     round++;
+    buttonOne = ButtonStatus.nil;
+    buttonTwo = ButtonStatus.nil;
+    buttonThree = ButtonStatus.nil;
+    buttonFour = ButtonStatus.nil;
     // other stuff
     if (round <= 4) {
       _controller.nextVideo();
@@ -95,6 +105,46 @@ class _SongPageState extends State<SongUI> {
       });
     } else {
       Get.to(GameRecapUI());
+    }
+  }
+
+  Color getColorOne(Set<MaterialState> states) {
+    if (buttonOne == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonOne == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getColorTwo(Set<MaterialState> states) {
+    if (buttonTwo == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonTwo == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getColorThree(Set<MaterialState> states) {
+    if (buttonThree == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonThree == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getColorFour(Set<MaterialState> states) {
+    if (buttonFour == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonFour == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
     }
   }
 
@@ -186,51 +236,79 @@ class _SongPageState extends State<SongUI> {
                       Row(
                         children: [
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[0],
-                                  onPressed: () async {
-                                    if (_answerChoices[0] == correctAnswer) {
-                                      score++;
-                                      progressRound();
-                                    }
-                                    // _controller.pause();
-                                  })),
+                            child: PrimaryButton(
+                              labelText: _answerChoices[0],
+                              onPressed: () async {
+                                if (_answerChoices[0] == correctAnswer) {
+                                  score++;
+                                  buttonOne = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  progressRound();
+                                } else {
+                                  buttonOne = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorOne),
+                            ),
+                          ),
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[1],
-                                  onPressed: () async {
-                                    if (_answerChoices[1] == correctAnswer) {
-                                      score++;
-                                      progressRound();
-                                    }
-                                    // _controller.pause();
-                                  })),
+                            child: PrimaryButton(
+                              labelText: _answerChoices[1],
+                              onPressed: () async {
+                                if (_answerChoices[1] == correctAnswer) {
+                                  score++;
+                                  buttonTwo = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  progressRound();
+                                } else {
+                                  buttonTwo = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorTwo),
+                            ),
+                          ),
                         ],
                       ),
                       Row(
                         children: [
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[2],
-                                  onPressed: () async {
-                                    if (_answerChoices[2] == correctAnswer) {
-                                      score++;
-                                      progressRound();
-                                    }
-                                    // _controller.pause();
-                                  })),
+                            child: PrimaryButton(
+                              labelText: _answerChoices[2],
+                              onPressed: () async {
+                                if (_answerChoices[2] == correctAnswer) {
+                                  score++;
+                                  buttonThree = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  progressRound();
+                                } else {
+                                  buttonThree = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorThree),
+                            ),
+                          ),
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[3],
-                                  onPressed: () async {
-                                    if (_answerChoices[3] == correctAnswer) {
-                                      score++;
-                                      progressRound();
-                                    }
-                                    // _controller.pause();
-                                  })),
+                            child: PrimaryButton(
+                              labelText: _answerChoices[3],
+                              onPressed: () async {
+                                if (_answerChoices[3] == correctAnswer) {
+                                  score++;
+                                  buttonFour = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  progressRound();
+                                } else {
+                                  buttonFour = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorFour),
+                            ),
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   );
                 } else {
