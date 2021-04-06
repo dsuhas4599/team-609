@@ -19,7 +19,7 @@ class _SongPageState extends State<SongUI> {
   var time = "";
   var songs = [];
   var gameid = "";
-  DateTime now = new DateTime.now();
+  DateTime date = new DateTime.now();
   
   var data = Get.arguments;
   int round = 0;
@@ -202,12 +202,16 @@ class _SongPageState extends State<SongUI> {
                                   onPressed: () async {
                                     guesses++;
                                     if (_answerChoices[0] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round + 1]).then((value) {
+                                      addRound(guesses, user, time, songs[round]).then((value) {
                                         rounds.add(value);
                                         guesses = 0;
                                         print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
                                       });
-                                      score++;
                                       progressRound();
                                     }
                                     // _controller.pause();
@@ -218,12 +222,16 @@ class _SongPageState extends State<SongUI> {
                                   onPressed: () async {
                                     guesses++;
                                     if (_answerChoices[1] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round + 1]).then((value) {
+                                      addRound(guesses, user, time, songs[round]).then((value) {
                                         rounds.add(value);
                                         guesses = 0;
                                         print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
                                       });
-                                      score++;
                                       progressRound();
                                     }
                                     // _controller.pause();
@@ -238,12 +246,16 @@ class _SongPageState extends State<SongUI> {
                                   onPressed: () async {
                                     guesses++;
                                     if (_answerChoices[2] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round + 1]).then((value) {
+                                      addRound(guesses, user, time, songs[round]).then((value) {
                                         rounds.add(value);
                                         guesses = 0;
                                         print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
                                       });
-                                      score++;
                                       progressRound();
                                     }
                                     // _controller.pause();
@@ -254,12 +266,16 @@ class _SongPageState extends State<SongUI> {
                                   onPressed: () async {
                                     guesses++;
                                     if (_answerChoices[3] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round + 1]).then((value) {
+                                      addRound(guesses, user, time, songs[round]).then((value) {
                                         rounds.add(value);
                                         guesses = 0;
                                         print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
                                       });
-                                      score++;
                                       progressRound();
                                     }
                                     // _controller.pause();

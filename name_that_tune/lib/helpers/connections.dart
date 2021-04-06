@@ -172,10 +172,9 @@ Future addRound(int guesses, var user, var time, var song) async {
   return valueid;
 }
 
-Future addScore(var game, var user, var date, var score) async {
-  var valueid = "";
-  await scores
+Future<void> addScore(var game, var user, var date, var score) {
+  return scores
       .add({'game': game, 'user': user, 'date': date, 'score': score})
-      .then((value) => valueid = value.id);
-  return valueid;
+      .then((value) => print("sccore added"))
+      .catchError((error) => print("failed to add score"));
 }
