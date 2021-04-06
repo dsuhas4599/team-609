@@ -12,6 +12,15 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
+
+  var rounds = [];
+  var user = "";
+  int guesses = 0;
+  var time = "";
+  var songs = [];
+  var gameid = "";
+  DateTime date = new DateTime.now();
+  
   var data = Get.arguments;
   int round = 0;
   String correctAnswer = "";
@@ -36,6 +45,7 @@ class _SongPageState extends State<SongUI> {
   Future initializePlaylist() async {
     return await convertPlaylistToUsable(data).then((playlist) {
       _playlist = playlist;
+      songs = _playlist.songs;
       _controller = YoutubePlayerController(
         initialVideoId: '',
         params: YoutubePlayerParams(
@@ -110,6 +120,7 @@ class _SongPageState extends State<SongUI> {
             PrimaryButton(
                 labelText: "Play",
                 onPressed: () async {
+                  print(songs);
                   _controller.play();
                 }),
             PrimaryButton(
@@ -189,8 +200,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[0],
                                   onPressed: () async {
+                                    guesses++;
                                     if (_answerChoices[0] == correctAnswer) {
-                                      score++;
+                                      addRound(guesses, user, time, songs[round]).then((value) {
+                                        rounds.add(value);
+                                        guesses = 0;
+                                        print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
+                                      });
                                       progressRound();
                                     }
                                     // _controller.pause();
@@ -199,8 +220,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[1],
                                   onPressed: () async {
+                                    guesses++;
                                     if (_answerChoices[1] == correctAnswer) {
-                                      score++;
+                                      addRound(guesses, user, time, songs[round]).then((value) {
+                                        rounds.add(value);
+                                        guesses = 0;
+                                        print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
+                                      });
                                       progressRound();
                                     }
                                     // _controller.pause();
@@ -213,8 +244,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[2],
                                   onPressed: () async {
+                                    guesses++;
                                     if (_answerChoices[2] == correctAnswer) {
-                                      score++;
+                                      addRound(guesses, user, time, songs[round]).then((value) {
+                                        rounds.add(value);
+                                        guesses = 0;
+                                        print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
+                                      });
                                       progressRound();
                                     }
                                     // _controller.pause();
@@ -223,8 +264,18 @@ class _SongPageState extends State<SongUI> {
                               child: PrimaryButton(
                                   labelText: _answerChoices[3],
                                   onPressed: () async {
+                                    guesses++;
                                     if (_answerChoices[3] == correctAnswer) {
-                                      score++;
+                                      addRound(guesses, user, time, songs[round]).then((value) {
+                                        rounds.add(value);
+                                        guesses = 0;
+                                        print(rounds);
+                                        if (round > 4) {
+                                          addGame(rounds, user).then((value) {
+                                            addScore(value, user, date, score);
+                                          });
+                                        }
+                                      });
                                       progressRound();
                                     }
                                     // _controller.pause();
