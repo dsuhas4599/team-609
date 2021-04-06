@@ -4,8 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_starter/models/models.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
-CollectionReference playlists =
-    FirebaseFirestore.instance.collection('playlists');
+CollectionReference playlists = FirebaseFirestore.instance.collection('playlists');
 CollectionReference songs = FirebaseFirestore.instance.collection('songs');
 CollectionReference game = FirebaseFirestore.instance.collection('game');
 CollectionReference rounds = FirebaseFirestore.instance.collection('rounds');
