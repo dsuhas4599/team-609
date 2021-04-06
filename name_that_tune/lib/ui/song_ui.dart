@@ -6,13 +6,14 @@ import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 
+enum ButtonStatus { correct, incorrect, nil }
+
 class SongUI extends StatefulWidget {
   @override
   _SongPageState createState() => _SongPageState();
 }
 
 class _SongPageState extends State<SongUI> {
-
   var rounds = [];
   var user = "";
   int guesses = 0;
@@ -20,7 +21,7 @@ class _SongPageState extends State<SongUI> {
   var songs = [];
   var gameid = "";
   DateTime date = new DateTime.now();
-  
+
   var data = Get.arguments;
   int round = 0;
   String correctAnswer = "";
@@ -33,10 +34,14 @@ class _SongPageState extends State<SongUI> {
   Future<dynamic> _answersFuture;
   YoutubePlayerController _controller;
 
+  ButtonStatus buttonOne = ButtonStatus.nil;
+  ButtonStatus buttonTwo = ButtonStatus.nil;
+  ButtonStatus buttonThree = ButtonStatus.nil;
+  ButtonStatus buttonFour = ButtonStatus.nil;
+
   @override
   void initState() {
     super.initState();
-    print(Get.arguments);
     _playlistFuture = initializePlaylist();
     _imagesFuture = getImages('init');
     _answersFuture = getAnswers('init');
@@ -96,6 +101,10 @@ class _SongPageState extends State<SongUI> {
 
   void progressRound() {
     round++;
+    buttonOne = ButtonStatus.nil;
+    buttonTwo = ButtonStatus.nil;
+    buttonThree = ButtonStatus.nil;
+    buttonFour = ButtonStatus.nil;
     // other stuff
     if (round <= 4) {
       _controller.nextVideo();
@@ -105,6 +114,46 @@ class _SongPageState extends State<SongUI> {
       });
     } else {
       Get.to(GameRecapUI());
+    }
+  }
+
+  Color getColorOne(Set<MaterialState> states) {
+    if (buttonOne == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonOne == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getColorTwo(Set<MaterialState> states) {
+    if (buttonTwo == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonTwo == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getColorThree(Set<MaterialState> states) {
+    if (buttonThree == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonThree == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getColorFour(Set<MaterialState> states) {
+    if (buttonFour == ButtonStatus.correct) {
+      return Colors.green;
+    } else if (buttonFour == ButtonStatus.incorrect) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
     }
   }
 
@@ -120,7 +169,6 @@ class _SongPageState extends State<SongUI> {
             PrimaryButton(
                 labelText: "Play",
                 onPressed: () async {
-                  print(songs);
                   _controller.play();
                 }),
             PrimaryButton(
@@ -197,89 +245,117 @@ class _SongPageState extends State<SongUI> {
                       Row(
                         children: [
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[0],
-                                  onPressed: () async {
-                                    guesses++;
-                                    if (_answerChoices[0] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round]).then((value) {
-                                        rounds.add(value);
-                                        guesses = 0;
-                                        print(rounds);
-                                        if (round > 4) {
-                                          addGame(rounds, user).then((value) {
-                                            addScore(value, user, date, score);
-                                          });
-                                        }
+                            child: PrimaryButton(
+                              labelText: _answerChoices[0],
+                              onPressed: () async {
+                                guesses++;
+                                if (_answerChoices[0] == correctAnswer) {
+                                  buttonOne = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  addRound(guesses, user, time, songs[round])
+                                      .then((value) {
+                                    rounds.add(value);
+                                    guesses = 0;
+                                    if (round > 4) {
+                                      addGame(rounds, user).then((value) {
+                                        addScore(value, user, date, score);
                                       });
-                                      progressRound();
                                     }
-                                    // _controller.pause();
-                                  })),
+                                  });
+                                  progressRound();
+                                } else {
+                                  buttonOne = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorOne),
+                            ),
+                          ),
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[1],
-                                  onPressed: () async {
-                                    guesses++;
-                                    if (_answerChoices[1] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round]).then((value) {
-                                        rounds.add(value);
-                                        guesses = 0;
-                                        print(rounds);
-                                        if (round > 4) {
-                                          addGame(rounds, user).then((value) {
-                                            addScore(value, user, date, score);
-                                          });
-                                        }
+                            child: PrimaryButton(
+                              labelText: _answerChoices[1],
+                              onPressed: () async {
+                                guesses++;
+                                if (_answerChoices[1] == correctAnswer) {
+                                  buttonTwo = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  addRound(guesses, user, time, songs[round])
+                                      .then((value) {
+                                    rounds.add(value);
+                                    guesses = 0;
+                                    if (round > 4) {
+                                      addGame(rounds, user).then((value) {
+                                        addScore(value, user, date, score);
                                       });
-                                      progressRound();
                                     }
-                                    // _controller.pause();
-                                  })),
+                                  });
+                                  progressRound();
+                                } else {
+                                  buttonTwo = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorTwo),
+                            ),
+                          ),
                         ],
                       ),
                       Row(
                         children: [
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[2],
-                                  onPressed: () async {
-                                    guesses++;
-                                    if (_answerChoices[2] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round]).then((value) {
-                                        rounds.add(value);
-                                        guesses = 0;
-                                        print(rounds);
-                                        if (round > 4) {
-                                          addGame(rounds, user).then((value) {
-                                            addScore(value, user, date, score);
-                                          });
-                                        }
+                            child: PrimaryButton(
+                              labelText: _answerChoices[2],
+                              onPressed: () async {
+                                guesses++;
+                                if (_answerChoices[2] == correctAnswer) {
+                                  buttonThree = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  addRound(guesses, user, time, songs[round])
+                                      .then((value) {
+                                    rounds.add(value);
+                                    guesses = 0;
+                                    if (round > 4) {
+                                      addGame(rounds, user).then((value) {
+                                        addScore(value, user, date, score);
                                       });
-                                      progressRound();
                                     }
-                                    // _controller.pause();
-                                  })),
+                                  });
+                                  progressRound();
+                                } else {
+                                  buttonThree = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorThree),
+                            ),
+                          ),
                           Expanded(
-                              child: PrimaryButton(
-                                  labelText: _answerChoices[3],
-                                  onPressed: () async {
-                                    guesses++;
-                                    if (_answerChoices[3] == correctAnswer) {
-                                      addRound(guesses, user, time, songs[round]).then((value) {
-                                        rounds.add(value);
-                                        guesses = 0;
-                                        print(rounds);
-                                        if (round > 4) {
-                                          addGame(rounds, user).then((value) {
-                                            addScore(value, user, date, score);
-                                          });
-                                        }
+                            child: PrimaryButton(
+                              labelText: _answerChoices[3],
+                              onPressed: () async {
+                                guesses++;
+                                if (_answerChoices[3] == correctAnswer) {
+                                  buttonFour = ButtonStatus.correct;
+                                  await Future.delayed(Duration(seconds: 3));
+                                  addRound(guesses, user, time, songs[round])
+                                      .then((value) {
+                                    rounds.add(value);
+                                    guesses = 0;
+                                    if (round > 4) {
+                                      addGame(rounds, user).then((value) {
+                                        addScore(value, user, date, score);
                                       });
-                                      progressRound();
                                     }
-                                    // _controller.pause();
-                                  })),
+                                  });
+                                  progressRound();
+                                } else {
+                                  buttonFour = ButtonStatus.incorrect;
+                                }
+                              },
+                              color: MaterialStateProperty.resolveWith(
+                                  getColorFour),
+                            ),
+                          ),
                         ],
                       )
                     ],
