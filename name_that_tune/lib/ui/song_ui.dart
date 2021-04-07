@@ -18,7 +18,7 @@ class _SongPageState extends State<SongUI> {
   var rounds = [];
   String user = "";
   int guesses = 0;
-  var time = "";
+  Stopwatch s = new Stopwatch();
   var songs = [];
   var gameid = "";
   DateTime date = new DateTime.now();
@@ -116,6 +116,7 @@ class _SongPageState extends State<SongUI> {
         _imagesFuture = getImages('update');
         _answersFuture = getAnswers('update');
       });
+      s.start();
     } else {
       Get.to(GameRecapUI());
     }
@@ -254,9 +255,12 @@ class _SongPageState extends State<SongUI> {
                               onPressed: () async {
                                 guesses++;
                                 if (_answerChoices[0] == correctAnswer) {
+                                  s.stop();
+                                  var time = s.elapsedMilliseconds;
+                                  s.reset();
                                   buttonOne = ButtonStatus.correct;
                                   await Future.delayed(Duration(seconds: 3));
-                                  addRound(guesses, user, time, songs[round])
+                                  addRound(guesses, user, time/1000, songs[round])
                                       .then((value) {
                                     rounds.add(value);
                                     switch(guesses) {
@@ -295,9 +299,12 @@ class _SongPageState extends State<SongUI> {
                               onPressed: () async {
                                 guesses++;
                                 if (_answerChoices[1] == correctAnswer) {
+                                  s.stop();
+                                  var time = s.elapsedMilliseconds.toInt();
+                                  s.reset();
                                   buttonTwo = ButtonStatus.correct;
                                   await Future.delayed(Duration(seconds: 3));
-                                  addRound(guesses, user, time, songs[round])
+                                  addRound(guesses, user, time/1000, songs[round])
                                       .then((value) {
                                     rounds.add(value);
                                     switch(guesses) {
@@ -340,9 +347,12 @@ class _SongPageState extends State<SongUI> {
                               onPressed: () async {
                                 guesses++;
                                 if (_answerChoices[2] == correctAnswer) {
+                                  s.stop();
+                                  var time = s.elapsedMilliseconds;
+                                  s.reset();
                                   buttonThree = ButtonStatus.correct;
                                   await Future.delayed(Duration(seconds: 3));
-                                  addRound(guesses, user, time, songs[round])
+                                  addRound(guesses, user, time/1000, songs[round])
                                       .then((value) {
                                     rounds.add(value);
                                     switch(guesses) {
@@ -381,9 +391,12 @@ class _SongPageState extends State<SongUI> {
                               onPressed: () async {
                                 guesses++;
                                 if (_answerChoices[3] == correctAnswer) {
+                                  s.stop();
+                                  var time = s.elapsedMilliseconds;
+                                  s.reset();
                                   buttonFour = ButtonStatus.correct;
                                   await Future.delayed(Duration(seconds: 3));
-                                  addRound(guesses, user, time, songs[round])
+                                  addRound(guesses, user, time/1000, songs[round])
                                       .then((value) {
                                     rounds.add(value);
                                     switch(guesses) {
