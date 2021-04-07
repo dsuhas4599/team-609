@@ -4,6 +4,7 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 enum ButtonStatus { correct, incorrect, nil }
@@ -15,7 +16,7 @@ class SongUI extends StatefulWidget {
 
 class _SongPageState extends State<SongUI> {
   var rounds = [];
-  var user = "";
+  String user = "";
   int guesses = 0;
   var time = "";
   var songs = [];
@@ -25,7 +26,7 @@ class _SongPageState extends State<SongUI> {
   var data = Get.arguments;
   int round = 0;
   String correctAnswer = "";
-  int score = 0;
+  var scores = [];
   PlaylistModel _playlist;
   Future<dynamic> _playlistFuture;
   List<dynamic> _images;
@@ -33,6 +34,7 @@ class _SongPageState extends State<SongUI> {
   List<String> _answerChoices;
   Future<dynamic> _answersFuture;
   YoutubePlayerController _controller;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   ButtonStatus buttonOne = ButtonStatus.nil;
   ButtonStatus buttonTwo = ButtonStatus.nil;
@@ -45,6 +47,8 @@ class _SongPageState extends State<SongUI> {
     _playlistFuture = initializePlaylist();
     _imagesFuture = getImages('init');
     _answersFuture = getAnswers('init');
+    final User u = auth.currentUser;
+    user = u.email.toString();
   }
 
   Future initializePlaylist() async {
@@ -255,10 +259,24 @@ class _SongPageState extends State<SongUI> {
                                   addRound(guesses, user, time, songs[round])
                                       .then((value) {
                                     rounds.add(value);
+                                    switch(guesses) {
+                                      case 1: {
+                                        scores.add(100);
+                                      } break;
+                                      case 2: {
+                                        scores.add(75);
+                                      } break;
+                                      case 3: {
+                                        scores.add(50);
+                                      } break;
+                                      case 4: {
+                                        scores.add(25);
+                                      } break;
+                                    }
                                     guesses = 0;
                                     if (round > 4) {
                                       addGame(rounds, user).then((value) {
-                                        addScore(value, user, date, score);
+                                        addScore(value, user, date, scores.reduce((a, b) => a + b));
                                       });
                                     }
                                   });
@@ -282,10 +300,24 @@ class _SongPageState extends State<SongUI> {
                                   addRound(guesses, user, time, songs[round])
                                       .then((value) {
                                     rounds.add(value);
+                                    switch(guesses) {
+                                      case 1: {
+                                        scores.add(100);
+                                      } break;
+                                      case 2: {
+                                        scores.add(75);
+                                      } break;
+                                      case 3: {
+                                        scores.add(50);
+                                      } break;
+                                      case 4: {
+                                        scores.add(25);
+                                      } break;
+                                    }
                                     guesses = 0;
                                     if (round > 4) {
                                       addGame(rounds, user).then((value) {
-                                        addScore(value, user, date, score);
+                                        addScore(value, user, date, scores.reduce((a, b) => a + b));
                                       });
                                     }
                                   });
@@ -313,10 +345,24 @@ class _SongPageState extends State<SongUI> {
                                   addRound(guesses, user, time, songs[round])
                                       .then((value) {
                                     rounds.add(value);
+                                    switch(guesses) {
+                                      case 1: {
+                                        scores.add(100);
+                                      } break;
+                                      case 2: {
+                                        scores.add(75);
+                                      } break;
+                                      case 3: {
+                                        scores.add(50);
+                                      } break;
+                                      case 4: {
+                                        scores.add(25);
+                                      } break;
+                                    }
                                     guesses = 0;
                                     if (round > 4) {
                                       addGame(rounds, user).then((value) {
-                                        addScore(value, user, date, score);
+                                        addScore(value, user, date, scores.reduce((a, b) => a + b));
                                       });
                                     }
                                   });
@@ -340,10 +386,24 @@ class _SongPageState extends State<SongUI> {
                                   addRound(guesses, user, time, songs[round])
                                       .then((value) {
                                     rounds.add(value);
+                                    switch(guesses) {
+                                      case 1: {
+                                        scores.add(100);
+                                      } break;
+                                      case 2: {
+                                        scores.add(75);
+                                      } break;
+                                      case 3: {
+                                        scores.add(50);
+                                      } break;
+                                      case 4: {
+                                        scores.add(25);
+                                      } break;
+                                    }
                                     guesses = 0;
                                     if (round > 4) {
                                       addGame(rounds, user).then((value) {
-                                        addScore(value, user, date, score);
+                                        addScore(value, user, date, scores.reduce((a, b) => a + b));
                                       });
                                     }
                                   });
