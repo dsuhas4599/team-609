@@ -30,44 +30,34 @@ class HomeUI extends StatelessWidget {
               body: Center(
                 child: Column(
                   children: <Widget>[
-                    // SizedBox(height: 120),
-                    // Avatar(controller.firestoreUser.value),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        // FormVerticalSpace(),
-                        // Text(
-                        //     labels.home.uidLabel +
-                        //         ': ' +
-                        //         controller.firestoreUser.value.uid,
-                        //     style: TextStyle(fontSize: 16)),
-                        FormVerticalSpace(),
-                        Text(
-                            labels.home.nameLabel +
-                                ': ' +
-                                controller.firestoreUser.value.name,
-                            style: TextStyle(fontSize: 16)),
-                        FormVerticalSpace(),
-                        // Text(
-                        //     labels.home.emailLabel +
-                        //         ': ' +
-                        //         controller.firestoreUser.value.email,
-                        //     style: TextStyle(fontSize: 16)),
-                        // FormVerticalSpace(),
-                        // Text(
-                        //     labels.home.adminUserLabel +
-                        //         ': ' +
-                        //         controller.admin.value.toString(),
-                        //     style: TextStyle(fontSize: 16)),
-                        // FormVerticalSpace(),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                      child: Text(
+                        'Name That Tune, ' +
+                            controller.firestoreUser.value.name.split(' ')[0] +
+                            '!',
+                        textScaleFactor: 4,
+                      ),
                     ),
-                    PrimaryButton(
-                        labelText: 'Pick a playlist',
-                        onPressed: () async {
-                          Get.to(PlaylistUI());
-                        }),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            PrimaryButton(
+                                labelText: 'Game Mode',
+                                onPressed: () async {
+                                  Get.to(PlaylistUI());
+                                }),
+                            PrimaryButton(
+                                labelText: 'Dance Mode',
+                                onPressed: () async {
+                                  Get.to(PlaylistUI());
+                                }),
+                          ],
+                        )
+                      ],
+                    )
                   ],
                 ),
               ),
