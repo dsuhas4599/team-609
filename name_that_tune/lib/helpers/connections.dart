@@ -4,7 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_starter/models/models.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
-CollectionReference playlists = FirebaseFirestore.instance.collection('playlists');
+CollectionReference playlists =
+    FirebaseFirestore.instance.collection('playlists');
 CollectionReference songs = FirebaseFirestore.instance.collection('songs');
 CollectionReference game = FirebaseFirestore.instance.collection('game');
 CollectionReference rounds = FirebaseFirestore.instance.collection('rounds');
@@ -155,25 +156,24 @@ Future yearToImages(int year) async {
 //Functions to write to firestore
 Future addGame(var rounds, var user) async {
   var valueid = "";
-  await game
-      .add({'rounds': rounds, 'user': user})
-      .then((value) => valueid = value.id);
+  await game.add({'rounds': rounds, 'user': user}).then(
+      (value) => valueid = value.id);
   return valueid;
 }
 
 Future addRound(int guesses, var user, var time, var song) async {
   var valueid = "";
   await rounds
-      .add({'user': user, 'guesses': guesses, 'song': song, 'time': time})
-      .then((value) {
-        valueid = value.id;
-      });
+      .add({'user': user, 'guesses': guesses, 'song': song, 'time': time}).then(
+          (value) {
+    valueid = value.id;
+  });
   return valueid;
 }
 
 Future<void> addScore(var game, var user, var date, var score) {
   return scores
       .add({'game': game, 'user': user, 'date': date, 'score': score})
-      .then((value) => print("sccore added"))
+      .then((value) => print("score added"))
       .catchError((error) => print("failed to add score"));
 }
