@@ -27,6 +27,18 @@ class SignInUI extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                        child: Text(
+                          'Name That Tune',
+                          textScaleFactor: 4,
+                        ),
+                      ),
+                    ],
+                  ),
                   LogoGraphicHeader(),
                   SizedBox(height: 48.0),
                   FormInputFieldWithIcon(

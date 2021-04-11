@@ -29,9 +29,10 @@ class HomeUI extends StatelessWidget {
               ),
               body: Center(
                 child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
                       child: Text(
                         'Name That Tune, ' +
                             controller.firestoreUser.value.name.split(' ')[0] +
@@ -40,6 +41,7 @@ class HomeUI extends StatelessWidget {
                       ),
                     ),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
