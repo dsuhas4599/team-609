@@ -177,3 +177,32 @@ Future<void> addScore(var game, var user, var date, var score) {
       .then((value) => print("score added"))
       .catchError((error) => print("failed to add score"));
 }
+
+// All functions that are related to custom playlists
+Future getCustomGlobalPlaylists(String user) async {
+  List<PlaylistModel> customGlobalPlaylists = [];
+  await playlists.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'user': doc['user'],
+            'name': doc['name'],
+            'songs': List<String>.from(doc['songs']),
+            'image': doc['image']
+          };
+          if(data['user'] == 'global' || data['user'] == user) {
+            customGlobalPlaylists.add(PlaylistModel.fromMap(data));
+          }
+        })
+      });
+  return customGlobalPlaylists;
+}
+
+Future createEmptyPlaylist(String playlistName, String user) {
+  var data = {
+    'user': user,
+    'songs': [],
+    'name': playlistName,
+    'image': ''
+  };
+  return playlists.add(data);
+}
