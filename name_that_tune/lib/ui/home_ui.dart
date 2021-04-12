@@ -17,8 +17,10 @@ class HomeUI extends StatelessWidget {
               child: CircularProgressIndicator(),
             )
           : Scaffold(
+              backgroundColor: Colors.black,
               appBar: AppBar(
-                title: Text(labels?.home?.title),
+                backgroundColor: Colors.black12, //Colors.amber.shade700,
+                // title: // Text("Welcome, " + controller.firestoreUser.value.name.split(' ')[0]),
                 actions: [
                   IconButton(
                       icon: Icon(Icons.settings),
@@ -29,30 +31,34 @@ class HomeUI extends StatelessWidget {
               ),
               body: Center(
                 child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                      padding: EdgeInsets.fromLTRB(0, 20, 0, 60),
                       child: Text(
-                        'Name That Tune, ' +
-                            controller.firestoreUser.value.name.split(' ')[0] +
-                            '!',
-                        textScaleFactor: 4,
-                      ),
+                          'Name That Tune, ' +
+                              controller.firestoreUser.value.name
+                                  .split(' ')[0] +
+                              '!',
+                          textScaleFactor: 4,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        //Image.network('https://steamuserimages-a.akamaihd.net/ugc/844839873131070481/AB66503A189DA5B9547557C82E13CB5E6061EEC1/'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            PrimaryButton(
-                                labelText: 'Game Mode',
+                            ElevatedButton(
+                                child: Text('Game Mode'),
                                 onPressed: () async {
                                   Get.to(PlaylistUI());
                                 }),
-                            PrimaryButton(
-                                labelText: 'Dance Mode',
+                            ElevatedButton(
+                                child: Text('Dance Mode'),
                                 onPressed: () async {
                                   Get.to(PlaylistUI());
                                 }),
