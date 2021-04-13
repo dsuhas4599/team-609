@@ -53,11 +53,15 @@ class HomeUI extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.amber.shade700),
                                 child: Text('Game Mode'),
                                 onPressed: () async {
                                   Get.to(PlaylistUI());
                                 }),
                             ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.amber.shade700),
                                 child: Text('Dance Mode'),
                                 onPressed: () async {
                                   Get.to(PlaylistUI());
