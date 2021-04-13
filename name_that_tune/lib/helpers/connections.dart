@@ -11,6 +11,7 @@ CollectionReference game = FirebaseFirestore.instance.collection('game');
 CollectionReference rounds = FirebaseFirestore.instance.collection('rounds');
 CollectionReference scores = FirebaseFirestore.instance.collection('scores');
 CollectionReference images = FirebaseFirestore.instance.collection('images');
+CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 // Answer choices
 Future createAnswerChoices(String videoID) async {
@@ -189,7 +190,7 @@ Future getCustomGlobalPlaylists(String user) async {
             'songs': List<String>.from(doc['songs']),
             'image': doc['image']
           };
-          if(data['user'] == 'global' || data['user'] == user) {
+          if (data['user'] == 'global' || data['user'] == user) {
             customGlobalPlaylists.add(PlaylistModel.fromMap(data));
           }
         })
@@ -202,7 +203,20 @@ Future createEmptyPlaylist(String playlistName, String user) {
     'user': user,
     'songs': [],
     'name': playlistName,
-    'image': ''
+    'image':
+        'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274'
   };
   return playlists.add(data);
+}
+
+Future findPlayer(String uid) async {
+  await users.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          if (doc.id == uid) {
+            return doc['name'];
+          } else {
+            return 'global';
+          }
+        })
+      });
 }

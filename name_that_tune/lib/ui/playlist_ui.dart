@@ -76,12 +76,12 @@ Widget playlistWidget(String user) {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
                     allPlaylists.image,
-                    height: 100.0,
-                    width: 100.0,
+                    height: 50.0,
+                    width: 50.0,
                   ),
                 ),
                 title: Text(allPlaylists.name),
-                subtitle: Text('Public Playlist'),
+                subtitle: determineSubtitle(allPlaylists.user),
                 trailing: Icon(Icons.keyboard_arrow_right),
                 onTap: () async {
                   Get.to(SongUI(), arguments: allPlaylists.name);
@@ -100,32 +100,40 @@ Widget playlistWidget(String user) {
 // Add empty playlist dialog box
 TextEditingController _textFieldController = TextEditingController();
 Future<void> _displayTextInputDialog(BuildContext context, String user) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Name your playlist!'),
-          content: TextField(
-            controller: _textFieldController,
-            decoration: InputDecoration(hintText: "My playlist"),
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Name your playlist!'),
+        content: TextField(
+          controller: _textFieldController,
+          decoration: InputDecoration(hintText: "My playlist"),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('CANCEL'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('CANCEL'),
-              onPressed: () {
-                Navigator.pop(context);
-                print(user);
-              },
-            ),
-            TextButton(
-              child: Text('CREATE'),
-              onPressed: () {
-                createEmptyPlaylist(_textFieldController.text, user);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
+          TextButton(
+            child: Text('CREATE'),
+            onPressed: () {
+              createEmptyPlaylist(_textFieldController.text, user);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Widget determineSubtitle(String user) {
+  // var displayName =  findPlayer(user);
+  if (user == 'global') {
+    return Text('Public Playlist');
+  } else {
+    return Text('Custom Playlist');
   }
+}
