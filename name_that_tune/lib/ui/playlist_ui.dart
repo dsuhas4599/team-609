@@ -36,7 +36,7 @@ class PlaylistPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           tooltip: 'Navigation menu',
           onPressed: () async {
-            Get.to(HomeUI());
+            Get.back();
           },
         ),
         title: Text('Playlists'),
