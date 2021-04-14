@@ -11,6 +11,7 @@ CollectionReference game = FirebaseFirestore.instance.collection('game');
 CollectionReference rounds = FirebaseFirestore.instance.collection('rounds');
 CollectionReference scores = FirebaseFirestore.instance.collection('scores');
 CollectionReference images = FirebaseFirestore.instance.collection('images');
+CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 // Answer choices
 Future createAnswerChoices(String videoID) async {
@@ -176,4 +177,64 @@ Future<void> addScore(var game, var user, var date, var score) {
       .add({'game': game, 'user': user, 'date': date, 'score': score})
       .then((value) => print("score added"))
       .catchError((error) => print("failed to add score"));
+}
+
+// All functions that are related to custom playlists
+Future getCustomGlobalPlaylists(String user) async {
+  List<PlaylistModel> customGlobalPlaylists = [];
+  await playlists.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'user': doc['user'],
+            'name': doc['name'],
+            'songs': List<String>.from(doc['songs']),
+            'image': doc['image']
+          };
+          if (data['user'] == 'global' || data['user'] == user) {
+            customGlobalPlaylists.add(PlaylistModel.fromMap(data));
+          }
+        })
+      });
+  return customGlobalPlaylists;
+}
+
+Future createEmptyPlaylist(String playlistName, String user) {
+  var data = {
+    'user': user,
+    'songs': [],
+    'name': playlistName,
+    'image':
+        'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274'
+  };
+  return playlists.add(data);
+}
+
+Future findPlayer(String uid) async {
+  await users.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          if (doc.id == uid) {
+            return doc['name'];
+          } else {
+            return 'global';
+          }
+        })
+      });
+}
+
+Future getPlaylistSongs(List<String> playlistSongs) async {
+  List<SongModel> retrievedSongs = [];
+  await songs.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          if (playlistSongs.contains(doc.id)) {
+            var data = {
+              'artist': doc['artist'],
+              'date': doc['date'],
+              'name': doc['name'],
+              'videoID': doc['videoID']
+            };
+            retrievedSongs.add(SongModel.fromMap(data));
+          }
+        })
+      });
+  return retrievedSongs;
 }

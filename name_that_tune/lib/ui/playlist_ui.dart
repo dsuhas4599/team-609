@@ -4,8 +4,10 @@ import 'package:flutter_starter/controllers/controllers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
+import 'package:flutter_starter/ui/playlist_display_ui.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PlaylistUI extends StatelessWidget {
   static const String _title = 'Playlists';
@@ -22,7 +24,11 @@ class PlaylistUI extends StatelessWidget {
   }
 }
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class PlaylistPage extends StatelessWidget {
+  final String user = auth.currentUser.uid.toString();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,29 +37,33 @@ class PlaylistPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           tooltip: 'Navigation menu',
           onPressed: () async {
-            Get.to(HomeUI());
+            Get.back();
           },
         ),
         title: Text('Playlists'),
         actions: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.search),
-          //   tooltip: 'Search',
-          //   onPressed: null,
-          // ),
+          IconButton(
+            icon: Icon(Icons.add),
+            tooltip: 'Add Playlist',
+            onPressed: () {
+              _displayTextInputDialog(context, user);
+            },
+          ),
         ],
       ),
-      body: playlistWidget(),
+      body: playlistWidget(user),
     );
   }
 }
 
-Widget playlistWidget() {
+Widget playlistWidget(String user) {
   return FutureBuilder(
     builder: (context, projectSnap) {
       if (projectSnap.connectionState == ConnectionState.none &&
           projectSnap.hasData == null) {
         return Container();
+      } else if (projectSnap.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
       }
       return ListView.builder(
         itemCount: projectSnap.data.length,
@@ -67,15 +77,15 @@ Widget playlistWidget() {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
                     allPlaylists.image,
-                    height: 100.0,
-                    width: 100.0,
+                    height: 50.0,
+                    width: 50.0,
                   ),
                 ),
                 title: Text(allPlaylists.name),
-                subtitle: Text('Public Playlist'),
+                subtitle: determineSubtitle(allPlaylists.user),
                 trailing: Icon(Icons.keyboard_arrow_right),
                 onTap: () async {
-                  Get.to(SongUI(), arguments: allPlaylists.name);
+                  Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
                 },
               ),
               Divider(thickness: 1),
@@ -84,6 +94,47 @@ Widget playlistWidget() {
         },
       );
     },
-    future: getAllPlaylists(),
+    future: getCustomGlobalPlaylists(user),
   );
+}
+
+// Add empty playlist dialog box
+TextEditingController _textFieldController = TextEditingController();
+Future<void> _displayTextInputDialog(BuildContext context, String user) async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Name your playlist!'),
+        content: TextField(
+          controller: _textFieldController,
+          decoration: InputDecoration(hintText: "My playlist"),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('CANCEL'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          TextButton(
+            child: Text('CREATE'),
+            onPressed: () {
+              createEmptyPlaylist(_textFieldController.text, user);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Widget determineSubtitle(String user) {
+  // var displayName =  findPlayer(user);
+  if (user == 'global') {
+    return Text('Public Playlist');
+  } else {
+    return Text('Custom Playlist');
+  }
 }
