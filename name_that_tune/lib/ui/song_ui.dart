@@ -62,10 +62,10 @@ class _SongPageState extends State<SongUI> {
   }
 
   Future initializeAudio() async {
-    correctSound =
-        await correctPlayer.setAsset('476178__unadamlar__correct-choice.wav');
-    /* incorrectSound = await incorrectPlayer
-        .setAsset('181858__timgormly__training-program-incorrect1.aiff'); */
+    correctSound = await correctPlayer.setUrl(
+        'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/476178__unadamlar__correct-choice.wav?alt=media&token=5414fc7b-edc2-4edd-b282-fcea34188c8e');
+    incorrectSound = await incorrectPlayer.setUrl(
+        'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/331912__kevinvg207__wrong-buzzer.wav?alt=media&token=c12f90d2-0922-49d5-95cf-9fa012817d2d');
   }
 
   Future initializePlaylist() async {
@@ -331,8 +331,12 @@ class _SongPageState extends State<SongUI> {
                                         await correctPlayer.stop();
                                         progressRound();
                                       } else {
+                                        incorrectPlayer.play();
                                         buttonOne = ButtonStatus.incorrect;
                                         setState(() => buttonOneActive = false);
+                                        await Future.delayed(
+                                            Duration(seconds: 1));
+                                        await incorrectPlayer.stop();
                                       }
                                     }
                                   : () async {},
@@ -395,8 +399,12 @@ class _SongPageState extends State<SongUI> {
                                         await correctPlayer.stop();
                                         progressRound();
                                       } else {
+                                        incorrectPlayer.play();
                                         buttonTwo = ButtonStatus.incorrect;
                                         setState(() => buttonTwoActive = false);
+                                        await Future.delayed(
+                                            Duration(seconds: 1));
+                                        await incorrectPlayer.stop();
                                       }
                                     }
                                   : () async {},
@@ -463,9 +471,13 @@ class _SongPageState extends State<SongUI> {
                                         await correctPlayer.stop();
                                         progressRound();
                                       } else {
+                                        incorrectPlayer.play();
                                         buttonThree = ButtonStatus.incorrect;
                                         setState(
                                             () => buttonThreeActive = false);
+                                        await Future.delayed(
+                                            Duration(seconds: 1));
+                                        await incorrectPlayer.stop();
                                       }
                                     }
                                   : () async {},
@@ -528,9 +540,13 @@ class _SongPageState extends State<SongUI> {
                                         await correctPlayer.stop();
                                         progressRound();
                                       } else {
+                                        incorrectPlayer.play();
                                         buttonFour = ButtonStatus.incorrect;
                                         setState(
                                             () => buttonFourActive = false);
+                                        await Future.delayed(
+                                            Duration(seconds: 1));
+                                        await incorrectPlayer.stop();
                                       }
                                     }
                                   : () async {},
