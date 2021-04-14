@@ -26,7 +26,7 @@ class SignInUI extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                //crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -43,36 +43,40 @@ class SignInUI extends StatelessWidget {
                   ),
                   LogoGraphicHeader(),
                   SizedBox(height: 48.0),
-                  FormInputFieldWithIcon(
-                    controller: authController.emailController,
-                    iconPrefix: Icons.email,
-                    labelText: labels?.auth?.emailFormField,
-                    validator: Validator(labels).email,
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) => null,
-                    onSaved: (value) =>
-                        authController.emailController.text = value,
-                    onFieldSubmitted: (value) => {
-                      if (_formKey.currentState.validate())
-                        {authController.signInWithEmailAndPassword(context)}
-                    },
-                  ),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+                      child: FormInputFieldWithIcon(
+                        controller: authController.emailController,
+                        iconPrefix: Icons.email,
+                        labelText: labels?.auth?.emailFormField,
+                        validator: Validator(labels).email,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) => null,
+                        onSaved: (value) =>
+                            authController.emailController.text = value,
+                        onFieldSubmitted: (value) => {
+                          if (_formKey.currentState.validate())
+                            {authController.signInWithEmailAndPassword(context)}
+                        },
+                      )),
                   FormVerticalSpace(),
-                  FormInputFieldWithIcon(
-                    controller: authController.passwordController,
-                    iconPrefix: Icons.lock,
-                    labelText: labels?.auth?.passwordFormField,
-                    validator: Validator(labels).password,
-                    obscureText: true,
-                    onChanged: (value) => null,
-                    onSaved: (value) =>
-                        authController.passwordController.text = value,
-                    onFieldSubmitted: (value) => {
-                      if (_formKey.currentState.validate())
-                        {authController.signInWithEmailAndPassword(context)}
-                    },
-                    maxLines: 1,
-                  ),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(100, 0, 100, 0),
+                      child: FormInputFieldWithIcon(
+                        controller: authController.passwordController,
+                        iconPrefix: Icons.lock,
+                        labelText: labels?.auth?.passwordFormField,
+                        validator: Validator(labels).password,
+                        obscureText: true,
+                        onChanged: (value) => null,
+                        onSaved: (value) =>
+                            authController.passwordController.text = value,
+                        onFieldSubmitted: (value) => {
+                          if (_formKey.currentState.validate())
+                            {authController.signInWithEmailAndPassword(context)}
+                        },
+                        maxLines: 1,
+                      )),
                   FormVerticalSpace(),
                   PrimaryButton(
                       labelText: labels?.auth?.signInButton,
