@@ -220,3 +220,21 @@ Future findPlayer(String uid) async {
         })
       });
 }
+
+Future getPlaylistSongs(List<String> playlistSongs) async {
+  List<SongModel> retrievedSongs = [];
+  await songs.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          if (playlistSongs.contains(doc.id)) {
+            var data = {
+              'artist': doc['artist'],
+              'date': doc['date'],
+              'name': doc['name'],
+              'videoID': doc['videoID']
+            };
+            retrievedSongs.add(SongModel.fromMap(data));
+          }
+        })
+      });
+  return retrievedSongs;
+}
