@@ -48,7 +48,8 @@ class HomeUI extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        //Image.network('https://steamuserimages-a.akamaihd.net/ugc/844839873131070481/AB66503A189DA5B9547557C82E13CB5E6061EEC1/'),
+                        // Image.network(
+                        //     'https://steamuserimages-a.akamaihd.net/ugc/844839873131070481/AB66503A189DA5B9547557C82E13CB5E6061EEC1/'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
