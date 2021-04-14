@@ -153,6 +153,28 @@ Future yearToImages(int year) async {
   return imageLinks;
 }
 
+Future videoIDToImage(String id) async {
+  // given a song's video id, returns a list of images from the year of that song
+  var imageLinks = [];
+  String songYear = "";
+  await songs.where('videoID', isEqualTo: id).get().then((QuerySnapshot qs) {
+    qs.docs.forEach((song) {
+      songYear = song['date'];
+    });
+  });
+  await images
+      .where('year', isEqualTo: songYear)
+      .get()
+      .then((QuerySnapshot qs) {
+    qs.docs.forEach((doc) {
+      imageLinks.add(doc['links']);
+    });
+  });
+  List imagesList = imageLinks[0];
+  imagesList.shuffle();
+  return imagesList.first;
+}
+
 //Functions to write to firestore
 Future addGame(var rounds, var user) async {
   var valueid = "";

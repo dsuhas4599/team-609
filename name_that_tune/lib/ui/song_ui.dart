@@ -30,7 +30,7 @@ class _SongPageState extends State<SongUI> {
   var scores = [];
   PlaylistModel _playlist;
   Future<dynamic> _playlistFuture;
-  List<dynamic> _images;
+  dynamic _image;
   Future<dynamic> _imagesFuture;
   List<String> _answerChoices;
   Future<dynamic> _answersFuture;
@@ -71,6 +71,7 @@ class _SongPageState extends State<SongUI> {
   Future initializePlaylist() async {
     return await convertPlaylistToUsable(data).then((playlist) {
       _playlist = playlist;
+      _playlist.songs.shuffle();
       songs = _playlist.songs;
       _controller = YoutubePlayerController(
         initialVideoId: '',
@@ -92,11 +93,9 @@ class _SongPageState extends State<SongUI> {
     if (method == 'init') {
       dynamic pl = await initializePlaylist();
     }
-    // eventually use playlist and song to plug in the year
-    return yearToImages(1967).then((images) {
-      _images = images[0];
-      _images.shuffle();
-      return images;
+    return videoIDToImage(songs[round]).then((image) {
+      _image = image;
+      return image;
     }).onError((error, stackTrace) {
       print(error);
       return error;
@@ -254,7 +253,7 @@ class _SongPageState extends State<SongUI> {
                             ConnectionState.waiting) {
                           return CircularProgressIndicator();
                         } else if (snapshot.hasData) {
-                          return Image.network(_images[0]);
+                          return Image.network(_image);
                         } else {
                           return Container();
                         }
