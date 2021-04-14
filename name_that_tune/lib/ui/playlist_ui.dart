@@ -4,6 +4,7 @@ import 'package:flutter_starter/controllers/controllers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
+import 'package:flutter_starter/ui/playlist_display_ui.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -84,7 +85,7 @@ Widget playlistWidget(String user) {
                 subtitle: determineSubtitle(allPlaylists.user),
                 trailing: Icon(Icons.keyboard_arrow_right),
                 onTap: () async {
-                  Get.to(SongUI(), arguments: allPlaylists.name);
+                  Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
                 },
               ),
               Divider(thickness: 1),
