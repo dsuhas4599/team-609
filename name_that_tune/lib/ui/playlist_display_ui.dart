@@ -33,6 +33,9 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
               Get.back();
             },
           ),
+          actions: <Widget>[
+          determineCustomPlaylist(playlistData),
+        ],
         ),
         body: buildEverything(playlistData),
       ),
@@ -118,4 +121,20 @@ Widget playlistSongsWidget(var playlistData) {
     },
     future: getPlaylistSongs(playlistData.songs),
   );
+}
+
+Widget determineCustomPlaylist(var playlistInfo) {
+  // var displayName =  findPlayer(user);
+  if (playlistInfo.user != 'global') {
+    return 
+          IconButton(
+            icon: Icon(Icons.add),
+            tooltip: 'Add Playlist',
+            onPressed: () {
+              Get.to(SongDisplayUi(), arguments: playlistInfo);
+            },
+          );
+  } else {
+    return new Container();
+  }
 }

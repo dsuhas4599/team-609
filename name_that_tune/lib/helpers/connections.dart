@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_starter/models/models.dart';
+import 'package:flutter/material.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 CollectionReference playlists =
@@ -201,19 +202,37 @@ Future<void> addScore(var game, var user, var date, var score) {
       .catchError((error) => print("failed to add score"));
 }
 
+// Inherited model for playlist with IDs
+class PlaylistWithID extends PlaylistModel {
+  String id;
+
+  PlaylistWithID({user, name, songs, image, this.id}) : super(user: user, name: name, songs: songs, image: image);
+  // factory PlaylistWithID.fromJson(Map<String, dynamic> toJson() => {"user": user, "name": name, "songs": songs, "image": image};)
+  factory PlaylistWithID.fromMap(Map data) {
+    return PlaylistWithID(
+      user: data['user'] ?? '',
+      name: data['name'] ?? '',
+      songs: data['songs'] ?? '',
+      image: data['image'] ?? '',
+      id: data['id'] ?? '',
+    );
+  }
+}
+
 // All functions that are related to custom playlists
 Future getCustomGlobalPlaylists(String user) async {
-  List<PlaylistModel> customGlobalPlaylists = [];
+  List<PlaylistWithID> customGlobalPlaylists = [];
   await playlists.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
           var data = {
             'user': doc['user'],
             'name': doc['name'],
             'songs': List<String>.from(doc['songs']),
-            'image': doc['image']
+            'image': doc['image'],
+            'id': doc.id
           };
           if (data['user'] == 'global' || data['user'] == user) {
-            customGlobalPlaylists.add(PlaylistModel.fromMap(data));
+            customGlobalPlaylists.add(PlaylistWithID.fromMap(data));
           }
         })
       });
@@ -259,4 +278,34 @@ Future getPlaylistSongs(List<String> playlistSongs) async {
         })
       });
   return retrievedSongs;
+}
+
+Future addSongToCurrentPlaylist(String id, var songData, BuildContext context) async {
+  await playlists.doc(id).get().then((DocumentSnapshot documentSnapshot) {
+    if(documentSnapshot.data()['songs'].contains(songData.videoID)) {
+      _displayCreated(context);
+    } else {
+      playlists.doc(id).update({"songs": FieldValue.arrayUnion([songData.videoID])});
+    }
+  });
+}
+
+// Misc. Alert
+Future<void> _displayCreated(BuildContext context) async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('This song is already added to this playlist!'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OKAY'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

@@ -9,24 +9,25 @@ import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PlaylistUI extends StatelessWidget {
-  static const String _title = 'Playlists';
+class PlaylistUI extends StatefulWidget {
+  // static const String _title = 'Playlists';
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        body: PlaylistPage(),
-      ),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     title: _title,
+  //     home: Scaffold(
+  //       body: PlaylistPage(),
+  //     ),
+  //     debugShowCheckedModeBanner: false,
+  //   );
+  // }
+  _PlaylistPageState createState() => _PlaylistPageState();
 }
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
-class PlaylistPage extends StatelessWidget {
+class _PlaylistPageState extends State<PlaylistUI> {
   final String user = auth.currentUser.uid.toString();
 
   @override
@@ -68,7 +69,7 @@ Widget playlistWidget(String user) {
       return ListView.builder(
         itemCount: projectSnap.data.length,
         itemBuilder: (context, index) {
-          PlaylistModel allPlaylists = projectSnap.data[index];
+          PlaylistWithID allPlaylists = projectSnap.data[index];
           return Column(
             children: <Widget>[
               // Displays list of projects in a tile
