@@ -56,10 +56,11 @@ Widget buildEverything(var playlistData) {
 }
 
 Widget playGameButton(var playlistData) {
-  if (playlistData.songs.length == 0 || playlistData.songs.length < 5) {
+  if (playlistData.songs.length == 0 || playlistData.songs.length < 4) {
     return Column(
       children: <Widget>[
         Text('Add some more songs!'),
+        Text('You need at least 5 songs'),
         ElevatedButton(
           child: Text('Play Game'),
         )

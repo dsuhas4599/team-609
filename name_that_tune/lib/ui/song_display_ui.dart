@@ -130,6 +130,6 @@ Widget songDisplayWidget(BuildContext topContext, var playlistInfo) {
         },
       );
     },
-    future: getAllSongs(),
+    future: getSongsWithIDs(),
   );
 }

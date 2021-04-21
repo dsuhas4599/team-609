@@ -282,12 +282,48 @@ Future getPlaylistSongs(List<String> playlistSongs) async {
 
 Future addSongToCurrentPlaylist(String id, var songData, BuildContext context) async {
   await playlists.doc(id).get().then((DocumentSnapshot documentSnapshot) {
-    if(documentSnapshot.data()['songs'].contains(songData.videoID)) {
+    if(documentSnapshot.data()['songs'].contains(songData.id)) {
       _displayCreated(context);
     } else {
-      playlists.doc(id).update({"songs": FieldValue.arrayUnion([songData.videoID])});
+      playlists.doc(id).update({"songs": FieldValue.arrayUnion([songData.id])});
     }
   });
+}
+
+// Inherited model for songs with IDs
+class SongWithID extends SongModel {
+  String id;
+
+  SongWithID({artist, date, name, videoID, this.id}) : super(artist: artist, date: date, name: name, videoID: videoID);
+
+  factory SongWithID.fromMap(Map data) {
+    return SongWithID(
+      artist: data['artist'] ?? '',
+      date: data['date'] ?? '',
+      name: data['name'] ?? '',
+      videoID: data['videoID'] ?? '',
+      id: data['id'] ?? '',
+    );
+  }
+}
+
+// Song functions
+Future getSongsWithIDs() async {
+  // returns all songs in a list of song models including IDs for easier db manipulation
+  List<SongWithID> songObjects = [];
+  await songs.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'artist': doc['artist'],
+            'date': doc['date'],
+            'name': doc['name'],
+            'videoID': doc['videoID'],
+            'id': doc.id
+          };
+          songObjects.add(SongWithID.fromMap(data));
+        })
+      });
+  return songObjects;
 }
 
 // Misc. Alert
