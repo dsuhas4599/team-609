@@ -29,6 +29,13 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 
 class _PlaylistPageState extends State<PlaylistUI> {
   final String user = auth.currentUser.uid.toString();
+  var _allPlaylists;
+
+  @override
+  void initState() {
+    super.initState();
+    _allPlaylists = getCustomGlobalPlaylists(user);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,87 +62,98 @@ class _PlaylistPageState extends State<PlaylistUI> {
       body: playlistWidget(user),
     );
   }
-}
 
-Widget playlistWidget(String user) {
-  return FutureBuilder(
-    builder: (context, projectSnap) {
-      if (projectSnap.connectionState == ConnectionState.none &&
-          projectSnap.hasData == null) {
-        return Container();
-      } else if (projectSnap.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
-      }
-      return ListView.builder(
-        itemCount: projectSnap.data.length,
-        itemBuilder: (context, index) {
-          PlaylistWithID allPlaylists = projectSnap.data[index];
-          return Column(
-            children: <Widget>[
-              // Displays list of projects in a tile
-              ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    allPlaylists.image,
-                    height: 50.0,
-                    width: 50.0,
-                  ),
-                ),
-                title: Text(allPlaylists.name),
-                subtitle: determineSubtitle(allPlaylists.user),
-                trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () async {
-                  Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
-                },
-              ),
-              Divider(thickness: 1),
-            ],
+  Widget playlistWidget(String user) {
+    return FutureBuilder(
+      builder: (context, projectSnap) {
+        if (projectSnap.connectionState == ConnectionState.none &&
+            projectSnap.hasData == null) {
+          return Container();
+        } else if (projectSnap.connectionState == ConnectionState.waiting) {
+          return new Center(
+            child: new CircularProgressIndicator(),
           );
-        },
-      );
-    },
-    future: getCustomGlobalPlaylists(user),
-  );
-}
+        }
+        return ListView.builder(
+          itemCount: projectSnap.data.length,
+          itemBuilder: (context, index) {
+            PlaylistWithID allPlaylists = projectSnap.data[index];
+            return Column(
+              children: <Widget>[
+                // Displays list of projects in a tile
+                ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.network(
+                      allPlaylists.image,
+                      height: 50.0,
+                      width: 50.0,
+                    ),
+                  ),
+                  title: Text(allPlaylists.name),
+                  subtitle: determineSubtitle(allPlaylists.user),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () async {
+                    Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
+                  },
+                ),
+                Divider(thickness: 1),
+              ],
+            );
+          },
+        );
+      },
+      future: _allPlaylists,
+    );
+  }
 
 // Add empty playlist dialog box
-TextEditingController _textFieldController = TextEditingController();
-Future<void> _displayTextInputDialog(BuildContext context, String user) async {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text('Name your playlist!'),
-        content: TextField(
-          controller: _textFieldController,
-          decoration: InputDecoration(hintText: "My playlist"),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('CANCEL'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+  TextEditingController _textFieldController = TextEditingController();
+  Future<void> _displayTextInputDialog(
+      BuildContext context, String user) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Name your playlist!'),
+          content: TextField(
+            controller: _textFieldController,
+            decoration: InputDecoration(hintText: "My playlist"),
           ),
-          TextButton(
-            child: Text('CREATE'),
-            onPressed: () {
-              createEmptyPlaylist(_textFieldController.text, user);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: <Widget>[
+            TextButton(
+              child: Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text('CREATE'),
+              onPressed: () {
+                createEmptyPlaylist(_textFieldController.text, user);
+                refreshPlaylists();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-Widget determineSubtitle(String user) {
-  // var displayName =  findPlayer(user);
-  if (user == 'global') {
-    return Text('Public Playlist');
-  } else {
-    return Text('Custom Playlist');
+  Widget determineSubtitle(String user) {
+    // var displayName =  findPlayer(user);
+    if (user == 'global') {
+      return Text('Public Playlist');
+    } else {
+      return Text('Custom Playlist');
+    }
+  }
+
+  // misc functions
+  void refreshPlaylists() {
+    setState(() {
+      _allPlaylists = getCustomGlobalPlaylists(user);
+    });
   }
 }

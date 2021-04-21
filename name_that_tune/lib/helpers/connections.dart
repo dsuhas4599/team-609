@@ -345,3 +345,10 @@ Future<void> _displayCreated(BuildContext context) async {
     },
   );
 }
+
+Future<void> deleteCustomPlaylist(PlaylistWithID playlistData) async {
+  return playlists.doc(playlistData.id)
+  .delete()
+  .then((value) => print("Playlist deleted"))
+  .catchError((error) => print("Failed to delete playlist: $error"));
+}
