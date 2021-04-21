@@ -1,14 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:just_audio/just_audio.dart' as audio;
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
 
 enum ButtonStatus { correct, incorrect, nil }
+enum VideoStatus { playing, paused }
 
 class SongUI extends StatefulWidget {
   @override
@@ -29,18 +31,19 @@ class _SongPageState extends State<SongUI> {
   String correctAnswer = "";
   var scores = [];
   PlaylistModel _playlist;
-  Future<dynamic> _playlistFuture;
+  Future<PlaylistModel> _playlistFuture;
   dynamic _image;
-  Future<dynamic> _imagesFuture;
+  Future<String> _imagesFuture;
   List<String> _answerChoices;
-  Future<dynamic> _answersFuture;
+  Future<List<String>> _answersFuture;
   YoutubePlayerController _controller;
-  final correctPlayer = AudioPlayer();
-  final incorrectPlayer = AudioPlayer();
+  final correctPlayer = audio.AudioPlayer();
+  final incorrectPlayer = audio.AudioPlayer();
   var correctSound;
   var incorrectSound;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  VideoStatus ppButtonStatus = VideoStatus.playing;
   ButtonStatus buttonOne = ButtonStatus.nil;
   ButtonStatus buttonTwo = ButtonStatus.nil;
   ButtonStatus buttonThree = ButtonStatus.nil;
@@ -50,80 +53,71 @@ class _SongPageState extends State<SongUI> {
   bool buttonThreeActive = true;
   bool buttonFourActive = true;
 
+  StreamSubscription sub;
+
   @override
   void initState() {
     super.initState();
     _playlistFuture = initializePlaylist();
-    _imagesFuture = getImages('init');
-    _answersFuture = getAnswers('init');
     initializeAudio();
     final User u = auth.currentUser;
     user = u.email.toString();
   }
 
-  Future initializeAudio() async {
+  Future<void> initializeAudio() async {
     correctSound = await correctPlayer.setUrl(
         'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/476178__unadamlar__correct-choice.wav?alt=media&token=5414fc7b-edc2-4edd-b282-fcea34188c8e');
     incorrectSound = await incorrectPlayer.setUrl(
         'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/331912__kevinvg207__wrong-buzzer.wav?alt=media&token=c12f90d2-0922-49d5-95cf-9fa012817d2d');
+    return;
   }
 
-  Future initializePlaylist() async {
-    return await convertPlaylistToUsable(data).then((playlist) {
-      _playlist = playlist;
-      _playlist.songs.shuffle();
-      songs = _playlist.songs;
-      _controller = YoutubePlayerController(
-        initialVideoId: '',
-        params: YoutubePlayerParams(
-          playlist: _playlist.songs,
-          showControls: true,
-          showFullscreenButton: true,
-          autoPlay: true,
-        ),
-      );
-      return playlist;
-    }).onError((error, stackTrace) {
-      print(error);
-      return error;
+  Future<PlaylistModel> initializePlaylist() async {
+    _playlist = await convertPlaylistToUsable(data);
+    _playlist.songs.shuffle();
+    songs = _playlist.songs;
+    _controller = YoutubePlayerController(
+      initialVideoId: '',
+      params: YoutubePlayerParams(
+        playlist: _playlist.songs,
+        showControls: true,
+        showFullscreenButton: true,
+        autoPlay: true,
+      ),
+    );
+    sub = _controller.listen((event) {
+      print(event.playerState.toString());
+      if (event.playerState == PlayerState.ended) {
+        progressRound(false);
+      }
     });
-  }
-
-  Future getImages(String method) async {
-    if (method == 'init') {
-      dynamic pl = await initializePlaylist();
-    }
-    return videoIDToImage(songs[round]).then((image) {
-      _image = image;
-      return image;
-    }).onError((error, stackTrace) {
-      print(error);
-      return error;
+    setState(() {
+      _imagesFuture = getImages();
+      _answersFuture = getAnswers();
     });
+    return _playlist;
   }
 
-  Future getAnswers(String method) async {
-    if (method == 'init') {
-      dynamic pl = await initializePlaylist();
-    }
-    return createAnswerChoicesFromPlaylist(
-            _playlist.songs[round], _playlist.name)
-        .then((answers) {
-      _answerChoices = answers;
-      correctAnswer = _answerChoices[0];
-      _answerChoices.shuffle();
-      return answers;
-    }).onError((error, stackTrace) {
-      print(error);
-      return error;
-    });
+  Future<String> getImages() async {
+    _image = await videoIDToImage(songs[round]);
+    return _image;
   }
 
-  void progressRound() {
+  Future<List<String>> getAnswers() async {
+    _answerChoices =
+        await createAnswerChoicesFromPlaylist(songs[round], _playlist.name);
+    correctAnswer = _answerChoices[0];
+    _answerChoices.shuffle();
+    return _answerChoices;
+  }
+
+  void progressRound(bool skipVideo) {
     round++;
     // reset and update
     if (round <= 4) {
-      _controller.nextVideo();
+      if (skipVideo) {
+        _controller.nextVideo();
+      }
       s.reset();
       buttonOne = ButtonStatus.nil;
       buttonTwo = ButtonStatus.nil;
@@ -132,10 +126,11 @@ class _SongPageState extends State<SongUI> {
       setAllButtonActivity(true);
       s.start();
       setState(() {
-        _imagesFuture = getImages('update');
-        _answersFuture = getAnswers('update');
+        _imagesFuture = getImages();
+        _answersFuture = getAnswers();
       });
     } else {
+      sub.cancel();
       Get.to(GameRecapUI());
     }
   }
@@ -195,26 +190,25 @@ class _SongPageState extends State<SongUI> {
         body: Center(
             child: ListView(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            PrimaryButton(
-                labelText: "Play",
-                onPressed: () async {
-                  _controller.play();
-                }),
-            PrimaryButton(
-                labelText: "Pause",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ],
-        ),
+        PrimaryButton(
+            labelText: ppButtonStatus == VideoStatus.playing ? "Pause" : "Play",
+            onPressed: () async {
+              if (ppButtonStatus == VideoStatus.playing) {
+                _controller.pause();
+                setState(() {
+                  ppButtonStatus = VideoStatus.paused;
+                });
+              } else {
+                _controller.play();
+                setState(() {
+                  ppButtonStatus = VideoStatus.playing;
+                });
+              }
+            }),
         PrimaryButton(
             labelText: "Skip song",
             onPressed: () async {
-              // _controller.nextVideo();
-              progressRound();
+              progressRound(true);
             }),
         Align(
           alignment: Alignment.center,
@@ -329,7 +323,7 @@ class _SongPageState extends State<SongUI> {
                                           }
                                         });
                                         await correctPlayer.stop();
-                                        progressRound();
+                                        progressRound(true);
                                       } else {
                                         incorrectPlayer.play();
                                         buttonOne = ButtonStatus.incorrect;
@@ -397,7 +391,7 @@ class _SongPageState extends State<SongUI> {
                                           }
                                         });
                                         await correctPlayer.stop();
-                                        progressRound();
+                                        progressRound(true);
                                       } else {
                                         incorrectPlayer.play();
                                         buttonTwo = ButtonStatus.incorrect;
@@ -469,7 +463,7 @@ class _SongPageState extends State<SongUI> {
                                           }
                                         });
                                         await correctPlayer.stop();
-                                        progressRound();
+                                        progressRound(true);
                                       } else {
                                         incorrectPlayer.play();
                                         buttonThree = ButtonStatus.incorrect;
@@ -538,7 +532,7 @@ class _SongPageState extends State<SongUI> {
                                           }
                                         });
                                         await correctPlayer.stop();
-                                        progressRound();
+                                        progressRound(true);
                                       } else {
                                         incorrectPlayer.play();
                                         buttonFour = ButtonStatus.incorrect;
