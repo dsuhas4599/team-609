@@ -9,6 +9,7 @@ class HomeUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labels = AppLocalizations.of(context);
+    var mode;
 
     return GetBuilder<AuthController>(
       init: AuthController(),
@@ -58,14 +59,16 @@ class HomeUI extends StatelessWidget {
                                     primary: Colors.amber.shade700),
                                 child: Text('Game Mode'),
                                 onPressed: () async {
-                                  Get.to(PlaylistUI());
+                                  mode = "game";
+                                  Get.to(PlaylistUI(), arguments: mode);
                                 }),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.amber.shade700),
                                 child: Text('Dance Mode'),
                                 onPressed: () async {
-                                  Get.to(PlaylistUI());
+                                  mode = "dance";
+                                  Get.to(PlaylistUI(), arguments: mode);
                                 }),
                           ],
                         )

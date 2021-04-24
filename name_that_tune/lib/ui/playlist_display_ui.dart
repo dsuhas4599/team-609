@@ -25,7 +25,8 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
   }
 
   final String user = auth.currentUser.uid.toString();
-  var playlistData = Get.arguments;
+  var playlistData = Get.arguments[0];
+  var mode = Get.arguments[1];
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +128,12 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
       return ElevatedButton(
         child: Text('Play Game'),
         onPressed: () {
-          Get.to(SongUI(), arguments: playlistData.name);
+          if (mode == "game") {
+            Get.to(SongUI(), arguments: playlistData.name);
+          }
+          else if (mode == "dance") {
+            Get.to(DanceUI(), arguments: playlistData.name);
+          }
         },
       );
     }
