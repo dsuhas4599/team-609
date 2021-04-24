@@ -17,7 +17,8 @@ class PlaylistDisplayUI extends StatefulWidget {
 
 class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
   final String user = auth.currentUser.uid.toString();
-  var playlistData = Get.arguments;
+  var playlistData = Get.arguments[0];
+  var mode = Get.arguments[1];
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +35,17 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
             },
           ),
         ),
-        body: buildEverything(playlistData),
+        body: buildEverything(playlistData, mode),
       ),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-Widget buildEverything(var playlistData) {
+Widget buildEverything(var playlistData, var mode) {
   return Column(
     children: <Widget>[
-      playGameButton(playlistData),
+      playGameButton(playlistData, mode),
       Expanded(
         child: playlistSongsWidget(playlistData),
       )
@@ -52,7 +53,7 @@ Widget buildEverything(var playlistData) {
   );
 }
 
-Widget playGameButton(var playlistData) {
+Widget playGameButton(var playlistData, var mode) {
   if (playlistData.songs.length == 0 || playlistData.songs.length < 5) {
     return Column(
       children: <Widget>[
@@ -66,7 +67,12 @@ Widget playGameButton(var playlistData) {
     return ElevatedButton(
       child: Text('Play Game'),
       onPressed: () {
-        Get.to(SongUI(), arguments: playlistData.name);
+        if (mode == "dance") {
+          Get.to(DanceUI(), arguments: playlistData.name);
+        }
+        else if (mode == "game") {
+          Get.to(SongUI(), arguments: playlistData.name);
+        }
       },
     );
   }

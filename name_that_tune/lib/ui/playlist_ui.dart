@@ -29,6 +29,8 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 class PlaylistPage extends StatelessWidget {
   final String user = auth.currentUser.uid.toString();
 
+  var mode = Get.arguments;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,12 +53,12 @@ class PlaylistPage extends StatelessWidget {
           ),
         ],
       ),
-      body: playlistWidget(user),
+      body: playlistWidget(user, mode),
     );
   }
 }
 
-Widget playlistWidget(String user) {
+Widget playlistWidget(String user, String mode) {
   return FutureBuilder(
     builder: (context, projectSnap) {
       if (projectSnap.connectionState == ConnectionState.none &&
@@ -85,7 +87,8 @@ Widget playlistWidget(String user) {
                 subtitle: determineSubtitle(allPlaylists.user),
                 trailing: Icon(Icons.keyboard_arrow_right),
                 onTap: () async {
-                  Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
+                  var arg = [allPlaylists, mode];
+                  Get.to(PlaylistDisplayUI(), arguments: arg);
                 },
               ),
               Divider(thickness: 1),
