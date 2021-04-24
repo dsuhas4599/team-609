@@ -61,7 +61,7 @@ class _DancePageState extends State<DanceUI> {
   void progressRound(bool skipVideo) {
     round++;
     // reset and update
-    if (round <= 3) {
+    if (round <= 4) {
       if (skipVideo) {
         _controller.nextVideo();
       }
