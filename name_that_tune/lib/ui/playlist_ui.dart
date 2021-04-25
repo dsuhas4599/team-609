@@ -30,7 +30,6 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 class _PlaylistPageState extends State<PlaylistUI> {
   final String user = auth.currentUser.uid.toString();
   var _allPlaylists;
-  var mode = Get.arguments;
 
   @override
   void initState() {
@@ -95,8 +94,7 @@ class _PlaylistPageState extends State<PlaylistUI> {
                   subtitle: determineSubtitle(allPlaylists.user),
                   trailing: Icon(Icons.keyboard_arrow_right),
                   onTap: () async {
-                    var arg = [allPlaylists, mode];
-                    Get.to(PlaylistDisplayUI(), arguments: arg);
+                    Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
                   },
                 ),
                 Divider(thickness: 1),
