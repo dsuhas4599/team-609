@@ -206,7 +206,8 @@ Future<void> addScore(var game, var user, var date, var score) {
 class PlaylistWithID extends PlaylistModel {
   String id;
 
-  PlaylistWithID({user, name, songs, image, this.id}) : super(user: user, name: name, songs: songs, image: image);
+  PlaylistWithID({user, name, songs, image, this.id})
+      : super(user: user, name: name, songs: songs, image: image);
   // factory PlaylistWithID.fromJson(Map<String, dynamic> toJson() => {"user": user, "name": name, "songs": songs, "image": image};)
   factory PlaylistWithID.fromMap(Map data) {
     return PlaylistWithID(
@@ -280,12 +281,15 @@ Future getPlaylistSongs(List<String> playlistSongs) async {
   return retrievedSongs;
 }
 
-Future addSongToCurrentPlaylist(String id, var songData, BuildContext context) async {
+Future addSongToCurrentPlaylist(
+    String id, var songData, BuildContext context) async {
   await playlists.doc(id).get().then((DocumentSnapshot documentSnapshot) {
-    if(documentSnapshot.data()['songs'].contains(songData.id)) {
+    if (documentSnapshot.data()['songs'].contains(songData.id)) {
       _displayCreated(context);
     } else {
-      playlists.doc(id).update({"songs": FieldValue.arrayUnion([songData.id])});
+      playlists.doc(id).update({
+        "songs": FieldValue.arrayUnion([songData.id])
+      });
     }
   });
 }
@@ -294,7 +298,8 @@ Future addSongToCurrentPlaylist(String id, var songData, BuildContext context) a
 class SongWithID extends SongModel {
   String id;
 
-  SongWithID({artist, date, name, videoID, this.id}) : super(artist: artist, date: date, name: name, videoID: videoID);
+  SongWithID({artist, date, name, videoID, this.id})
+      : super(artist: artist, date: date, name: name, videoID: videoID);
 
   factory SongWithID.fromMap(Map data) {
     return SongWithID(
@@ -326,6 +331,26 @@ Future getSongsWithIDs() async {
   return songObjects;
 }
 
+Future getCustomSongsWithIDs(List<String> playlistSongs) async {
+  // returns list of songs of a custom playlist with all IDs
+  List<SongWithID> retrievedSongs = [];
+  await songs.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          if (playlistSongs.contains(doc.id)) {
+            var data = {
+              'artist': doc['artist'],
+              'date': doc['date'],
+              'name': doc['name'],
+              'videoID': doc['videoID'],
+              'id': doc.id
+            };
+            retrievedSongs.add(SongWithID.fromMap(data));
+          }
+        })
+      });
+  return retrievedSongs;
+}
+
 // Misc. Alert
 Future<void> _displayCreated(BuildContext context) async {
   return showDialog(
@@ -347,8 +372,19 @@ Future<void> _displayCreated(BuildContext context) async {
 }
 
 Future<void> deleteCustomPlaylist(PlaylistWithID playlistData) async {
-  return playlists.doc(playlistData.id)
-  .delete()
-  .then((value) => print("Playlist deleted"))
-  .catchError((error) => print("Failed to delete playlist: $error"));
+  return playlists
+      .doc(playlistData.id)
+      .delete()
+      .then((value) => print("Playlist deleted"))
+      .catchError((error) => print("Failed to delete playlist: $error"));
+}
+
+Future<void> deleteSongInCustomPlaylist(var playlistData, var allSongs) async {
+  return playlists
+      .doc(playlistData.id)
+      .update({
+        'songs': FieldValue.arrayRemove([allSongs.id])
+      })
+      .then((value) => print("Song deleted"))
+      .catchError((error) => print("Failed to delete song: $error"));
 }

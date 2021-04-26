@@ -85,7 +85,7 @@ class _PlaylistPageState extends State<PlaylistUI> {
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Image.network(
-                      allPlaylists.image,
+                      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274',
                       height: 50.0,
                       width: 50.0,
                     ),
