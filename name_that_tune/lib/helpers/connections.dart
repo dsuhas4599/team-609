@@ -388,3 +388,38 @@ Future<void> deleteSongInCustomPlaylist(var playlistData, var allSongs) async {
       .then((value) => print("Song deleted"))
       .catchError((error) => print("Failed to delete song: $error"));
 }
+
+Future getPlaylistFromID(String playlistID) async {
+  // given a playlist ID will return that playlist object
+  PlaylistWithID retrievedPlaylist;
+  await playlists.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'user': doc['user'],
+            'name': doc['name'],
+            'songs': List<String>.from(doc['songs']),
+            'image': doc['image'],
+            'id': doc.id
+          };
+          if (doc.id == playlistID) {
+            retrievedPlaylist = PlaylistWithID.fromMap(data);
+          }
+        })
+      });
+    return retrievedPlaylist;
+
+  // var playlistData;
+  // playlists.doc(playlistID).get().then((datasnapshot) {
+  //   if (datasnapshot.exists) {
+  //     var data = {
+  //           'user': datasnapshot['user'],
+  //           'name': datasnapshot['name'],
+  //           'songs': List<String>.from(datasnapshot['songs']),
+  //           'image': datasnapshot['image'],
+  //           'id': datasnapshot.id
+  //         };
+  //         playlistData = PlaylistWithID.fromMap(data);
+  //   }
+  // });
+  // return playlistData;
+}
