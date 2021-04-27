@@ -93,9 +93,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                                     GestureDetector(
                                       onTapDown: (TapDownDetails details) {
                                         _specificSongPopUp(
-                                            details.globalPosition,
-                                            playlistData,
-                                            allSongs);
+                                            details.globalPosition, playlistData, allSongs);
                                       },
                                       child: IconButton(
                                           icon: Icon(Icons.more_horiz)),
@@ -212,10 +210,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
       if (value != null) {
         if (value == 1) {
           await deleteSongInCustomPlaylist(playlistData, allSongs);
-          setState(() {
-            _allSongs = getCustomSongsWithIDs(playlistData.songs);
-            // playlistData = getPlaylistFromID(playlistData.id);
-          });
+          refreshSongList();
         }
       }
     });
