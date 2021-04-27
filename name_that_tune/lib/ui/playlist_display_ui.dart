@@ -43,7 +43,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
             child: new CircularProgressIndicator(),
           );
         }
-        
+
         return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Playlist Songs',
@@ -156,10 +156,12 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
   }
 
   // misc functions
-  void refreshSongList() {
+  void refreshSongList() async {
+    playlistData = await getPlaylistFromID(playlistData.id);
     setState(() {
-      newPlaylistData = getPlaylistFromID(playlistData.id); 
-      playlistData = newPlaylistData; // Not working - returns a Future<dynamic> butneeds to be a PlaylistWithIDs object for the next function to work
+      // newPlaylistData = await getPlaylistFromID(playlistData.id);
+      /* playlistData =
+          newPlaylistData; */ // Not working - returns a Future<dynamic> butneeds to be a PlaylistWithIDs object for the next function to work
       _allSongs = getCustomSongsWithIDs(playlistData.songs);
     });
   }
@@ -206,10 +208,10 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
         ),
       ],
       elevation: 8.0,
-    ).then((value) {
+    ).then((value) async {
       if (value != null) {
         if (value == 1) {
-          deleteSongInCustomPlaylist(playlistData, allSongs);
+          await deleteSongInCustomPlaylist(playlistData, allSongs);
           setState(() {
             _allSongs = getCustomSongsWithIDs(playlistData.songs);
             // playlistData = getPlaylistFromID(playlistData.id);

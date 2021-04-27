@@ -389,7 +389,7 @@ Future<void> deleteSongInCustomPlaylist(var playlistData, var allSongs) async {
       .catchError((error) => print("Failed to delete song: $error"));
 }
 
-Future getPlaylistFromID(String playlistID) async {
+Future<PlaylistWithID> getPlaylistFromID(String playlistID) async {
   // given a playlist ID will return that playlist object
   PlaylistWithID retrievedPlaylist;
   await playlists.get().then((QuerySnapshot querySnapshot) => {
@@ -406,7 +406,7 @@ Future getPlaylistFromID(String playlistID) async {
           }
         })
       });
-    return retrievedPlaylist;
+  return retrievedPlaylist;
 
   // var playlistData;
   // playlists.doc(playlistID).get().then((datasnapshot) {
