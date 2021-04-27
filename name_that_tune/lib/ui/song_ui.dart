@@ -184,6 +184,32 @@ class _SongPageState extends State<SongUI> {
     }
   }
 
+  void scoring(int g) {
+    switch (g) {
+      case 1:
+        {
+          scores.add(100);
+        }
+        break;
+      case 2:
+        {
+          scores.add(75);
+        }
+        break;
+      case 3:
+        {
+          scores.add(50);
+        }
+        break;
+      case 4:
+        {
+          scores.add(25);
+        }
+        break;
+    }
+    guesses = 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,15 +217,15 @@ class _SongPageState extends State<SongUI> {
         backgroundColor: Colors.black12, //Colors.amber.shade700,
         title: Text(_playlist.name),
         actions: <Widget>[
-        //   IconButton(
-        //       icon: Icon(Icons.skip_next_rounded),
-        //       iconSize: 40,
-        //       color: Colors.white,
-        //       // labelText: "Skip",
-        //       onPressed: () async {
-        //         progressRound(true);
-        //       }),
-        // ],
+          //   IconButton(
+          //       icon: Icon(Icons.skip_next_rounded),
+          //       iconSize: 40,
+          //       color: Colors.white,
+          //       // labelText: "Skip",
+          //       onPressed: () async {
+          //         progressRound(true);
+          //       }),
+        ],
       ),
       backgroundColor: Colors.black,
       body: Center(
@@ -286,29 +312,7 @@ class _SongPageState extends State<SongUI> {
                                                   songs[round])
                                               .then((value) {
                                             rounds.add(value);
-                                            switch (guesses) {
-                                              case 1:
-                                                {
-                                                  scores.add(100);
-                                                }
-                                                break;
-                                              case 2:
-                                                {
-                                                  scores.add(75);
-                                                }
-                                                break;
-                                              case 3:
-                                                {
-                                                  scores.add(50);
-                                                }
-                                                break;
-                                              case 4:
-                                                {
-                                                  scores.add(25);
-                                                }
-                                                break;
-                                            }
-                                            guesses = 0;
+                                            scoring(guesses);
                                             if (round > 4) {
                                               addGame(rounds, user)
                                                   .then((value) {
@@ -358,29 +362,7 @@ class _SongPageState extends State<SongUI> {
                                                 songs[round])
                                             .then((value) {
                                           rounds.add(value);
-                                          switch (guesses) {
-                                            case 1:
-                                              {
-                                                scores.add(100);
-                                              }
-                                              break;
-                                            case 2:
-                                              {
-                                                scores.add(75);
-                                              }
-                                              break;
-                                            case 3:
-                                              {
-                                                scores.add(50);
-                                              }
-                                              break;
-                                            case 4:
-                                              {
-                                                scores.add(25);
-                                              }
-                                              break;
-                                          }
-                                          guesses = 0;
+                                          scoring(guesses);
                                           if (round > 4) {
                                             addGame(rounds, user).then((value) {
                                               addScore(
@@ -430,29 +412,7 @@ class _SongPageState extends State<SongUI> {
                                                   songs[round])
                                               .then((value) {
                                             rounds.add(value);
-                                            switch (guesses) {
-                                              case 1:
-                                                {
-                                                  scores.add(100);
-                                                }
-                                                break;
-                                              case 2:
-                                                {
-                                                  scores.add(75);
-                                                }
-                                                break;
-                                              case 3:
-                                                {
-                                                  scores.add(50);
-                                                }
-                                                break;
-                                              case 4:
-                                                {
-                                                  scores.add(25);
-                                                }
-                                                break;
-                                            }
-                                            guesses = 0;
+                                            scoring(guesses);
                                             if (round > 4) {
                                               addGame(rounds, user)
                                                   .then((value) {
@@ -502,29 +462,7 @@ class _SongPageState extends State<SongUI> {
                                                 songs[round])
                                             .then((value) {
                                           rounds.add(value);
-                                          switch (guesses) {
-                                            case 1:
-                                              {
-                                                scores.add(100);
-                                              }
-                                              break;
-                                            case 2:
-                                              {
-                                                scores.add(75);
-                                              }
-                                              break;
-                                            case 3:
-                                              {
-                                                scores.add(50);
-                                              }
-                                              break;
-                                            case 4:
-                                              {
-                                                scores.add(25);
-                                              }
-                                              break;
-                                          }
-                                          guesses = 0;
+                                          scoring(guesses);
                                           if (round > 4) {
                                             addGame(rounds, user).then((value) {
                                               addScore(
