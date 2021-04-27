@@ -49,7 +49,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
             title: 'Playlist Songs',
             home: Scaffold(
                 appBar: AppBar(
-                  title: Text(projectSnap.data[1].name),
+                  title: Text(playlistData.name),
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back),
                     tooltip: 'Navigation menu',
@@ -64,7 +64,6 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                 body: Column(
                   children: <Widget>[
                     playGameButton(projectSnap.data[1]),
-                    Text('Current song ID: ' + projectSnap.data[1].songs[0]),
                     ElevatedButton(
                       child: Text('Refresh'),
                       onPressed: () async {
