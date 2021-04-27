@@ -93,7 +93,9 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                                     GestureDetector(
                                       onTapDown: (TapDownDetails details) {
                                         _specificSongPopUp(
-                                            details.globalPosition, playlistData, allSongs);
+                                            details.globalPosition,
+                                            playlistData,
+                                            allSongs);
                                       },
                                       child: IconButton(
                                           icon: Icon(Icons.more_horiz)),
