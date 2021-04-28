@@ -272,54 +272,54 @@ class _SongPageState extends State<SongUI> {
                 child: Stack(
                   children: [
                     Center(
+                      child: FutureBuilder(
+                        future: _playlistFuture,
+                        builder:
+                        (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasData) {
+                            return Container(
+                              height: 1 /* change back to 0 */,
+                              width: 1 /* change back to 0 */,
+                              child: YoutubePlayerIFrame(
+                              controller: _controller,
+                              aspectRatio: 16 / 9,
+                              ));
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                    ),
+                    Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
                             child: FutureBuilder(
-                              future: _playlistFuture,
-                              builder:
+                            future: _imagesFuture,
+                            builder:
                                 (BuildContext context, AsyncSnapshot snapshot) {
                                   if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
-                                } else if (snapshot.hasData) {
-                                  return Container(
-                                    height: 1 /* change back to 0 */,
-                                    width: 1 /* change back to 0 */,
-                                    child: YoutubePlayerIFrame(
-                                      controller: _controller,
-                                      aspectRatio: 16 / 9,
-                                    ));
-                                } else {
-                                    return Container();
-                                  }
+                                    ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasData) {
+                                    return Image.network(_image);
+                                  } else {
+                                      return Container();
+                                  }   
                                 },
                             ),
                           ),
                           Expanded(
                             child: Container(
-                              padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                              padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
                               child: Image.network(feedbacklink, key: ValueKey(feedbacklink)),
                             ),
-                          )
+                          ),
                         ],
-                      ),
-                    ),
-                    Center(
-                      child: FutureBuilder(
-                        future: _imagesFuture,
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasData) {
-                            return Image.network(_image);
-                          } else {
-                            return Container();
-                          }
-                        },
                       ),
                     ),
                   ],
