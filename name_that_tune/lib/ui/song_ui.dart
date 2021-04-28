@@ -18,7 +18,7 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
-  String feedbacklink = "https://media3.giphy.com/media/cKJ57vl30ZTmsuPjts/giphy.gif?cid=ecf05e47g17upfbh3nve2nin3bpxh4z6nneb3viy311s9jro&rid=giphy.gif&ct=g";
+  String feedbacklink = "";
   var rounds = [];
   String user = "";
   int guesses = 0;
@@ -119,7 +119,7 @@ class _SongPageState extends State<SongUI> {
       setState(() {
         _imagesFuture = getImages();
         _answersFuture = getAnswers();
-        feedbacklink = "https://media3.giphy.com/media/cKJ57vl30ZTmsuPjts/giphy.gif?cid=ecf05e47g17upfbh3nve2nin3bpxh4z6nneb3viy311s9jro&rid=giphy.gif&ct=g";
+        feedbacklink = "";
       });
       if (skipVideo) {
         _controller.nextVideo();
@@ -272,25 +272,38 @@ class _SongPageState extends State<SongUI> {
                 child: Stack(
                   children: [
                     Center(
-                      child: FutureBuilder(
-                        future: _playlistFuture,
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasData) {
-                            return Container(
-                                height: 1 /* change back to 0 */,
-                                width: 1 /* change back to 0 */,
-                                child: YoutubePlayerIFrame(
-                                  controller: _controller,
-                                  aspectRatio: 16 / 9,
-                                ));
-                          } else {
-                            return Container();
-                          }
-                        },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: FutureBuilder(
+                              future: _playlistFuture,
+                              builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                                  if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasData) {
+                                  return Container(
+                                    height: 1 /* change back to 0 */,
+                                    width: 1 /* change back to 0 */,
+                                    child: YoutubePlayerIFrame(
+                                      controller: _controller,
+                                      aspectRatio: 16 / 9,
+                                    ));
+                                } else {
+                                    return Container();
+                                  }
+                                },
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                              child: Image.network(feedbacklink, key: ValueKey(feedbacklink)),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                     Center(
@@ -596,16 +609,6 @@ class _SongPageState extends State<SongUI> {
                   }
                 }),
           ),
-        Center(
-          child: Container(
-          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-          //child: Text(feedbacklink,
-            //textAlign: TextAlign.center,
-            //style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50)
-           // ),
-          child: Image.network(feedbacklink, key: ValueKey(feedbacklink)),
-          ),
-        ),
         ],
       )),
       bottomNavigationBar: BottomAppBar(
