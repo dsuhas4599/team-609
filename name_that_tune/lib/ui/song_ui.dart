@@ -18,6 +18,7 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
+  String message = "";
   var rounds = [];
   String user = "";
   int guesses = 0;
@@ -128,9 +129,13 @@ class _SongPageState extends State<SongUI> {
       setState(() {
         _imagesFuture = getImages();
         _answersFuture = getAnswers();
+        message = "";
       });
     } else {
       sub.cancel();
+      setState(() {
+        message = "";
+      });
       Get.to(GameRecapUI());
     }
   }
@@ -212,6 +217,38 @@ class _SongPageState extends State<SongUI> {
         break;
     }
     guesses = 0;
+  }
+  void feedback(int g) {
+    switch (g) {
+      case 1:
+        {
+          setState(() {
+            message = "Perfect!";
+          });
+        }
+        break;
+      case 2:
+        {
+          setState(() {
+            message = "Excellent!";
+          });
+        }
+        break;
+      case 3:
+        {
+          setState(() {
+            message = "Good Job!";
+          });
+        }
+        break;
+      case 4:
+        {
+          setState(() {
+            message = "You got it!";
+          });
+        }
+        break;
+    }
   }
 
   @override
@@ -302,6 +339,7 @@ class _SongPageState extends State<SongUI> {
                                             if (_answerChoices[0] ==
                                                 correctAnswer) {
                                               s.stop();
+                                              feedback(guesses);
                                               correctPlayer.play();
                                               var time = s.elapsedMilliseconds;
                                               buttonOne = ButtonStatus.correct;
@@ -361,6 +399,7 @@ class _SongPageState extends State<SongUI> {
                                           if (_answerChoices[1] ==
                                               correctAnswer) {
                                             s.stop();
+                                            feedback(guesses);
                                             correctPlayer.play();
                                             var time = s.elapsedMilliseconds;
                                             buttonTwo = ButtonStatus.correct;
@@ -428,6 +467,7 @@ class _SongPageState extends State<SongUI> {
                                               if (_answerChoices[2] ==
                                                   correctAnswer) {
                                                 s.stop();
+                                                feedback(guesses);
                                                 correctPlayer.play();
                                                 var time =
                                                     s.elapsedMilliseconds;
@@ -493,6 +533,7 @@ class _SongPageState extends State<SongUI> {
                                               if (_answerChoices[3] ==
                                                   correctAnswer) {
                                                 s.stop();
+                                                feedback(guesses);
                                                 correctPlayer.play();
                                                 var time =
                                                     s.elapsedMilliseconds;
@@ -554,6 +595,15 @@ class _SongPageState extends State<SongUI> {
                     return Container();
                   }
                 }),
+          ),
+          Center(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0, 50, 0, 50),
+              child: Text(message,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50)
+              ),
+            ),
           ),
         ],
       )),
