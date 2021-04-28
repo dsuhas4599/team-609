@@ -136,7 +136,8 @@ class _SongPageState extends State<SongUI> {
       setState(() {
         feedbacklink = "";
       });
-      Get.to(GameRecapUI());
+      int finalScore = scores.reduce((a, b) => a + b);
+      Get.to(GameRecapUI(), arguments: [data, finalScore]);
     }
   }
 
@@ -218,33 +219,38 @@ class _SongPageState extends State<SongUI> {
     }
     guesses = 0;
   }
+
   void feedback(int g) {
     switch (g) {
       case 1:
         {
           setState(() {
-            feedbacklink = "https://media2.giphy.com/media/l3vRcttCynxJoxIrK/giphy.gif?cid=ecf05e47gdw3l5wic62gsdcvxv0ft94npf1lq0u0yf0jks8g&rid=giphy.gif&ct=g";
+            feedbacklink =
+                "https://media2.giphy.com/media/l3vRcttCynxJoxIrK/giphy.gif?cid=ecf05e47gdw3l5wic62gsdcvxv0ft94npf1lq0u0yf0jks8g&rid=giphy.gif&ct=g";
           });
         }
         break;
       case 2:
         {
           setState(() {
-            feedbacklink = "https://media3.giphy.com/media/V72fyK86e9NQLOgtZi/giphy.gif?cid=ecf05e473mqydbqrztk2m45odvgyw03ld0ua24b9fwp52xay&rid=giphy.gif&ct=g";
+            feedbacklink =
+                "https://media3.giphy.com/media/V72fyK86e9NQLOgtZi/giphy.gif?cid=ecf05e473mqydbqrztk2m45odvgyw03ld0ua24b9fwp52xay&rid=giphy.gif&ct=g";
           });
         }
         break;
       case 3:
         {
           setState(() {
-            feedbacklink = "https://media1.giphy.com/media/lMBcCPM0VYfhh2zCAy/giphy.gif";
+            feedbacklink =
+                "https://media1.giphy.com/media/lMBcCPM0VYfhh2zCAy/giphy.gif";
           });
         }
         break;
       case 4:
         {
           setState(() {
-            feedbacklink = "https://media4.giphy.com/media/cOQSc9wAHifk1LlQBM/giphy.gif";
+            feedbacklink =
+                "https://media4.giphy.com/media/cOQSc9wAHifk1LlQBM/giphy.gif";
           });
         }
         break;
@@ -256,7 +262,22 @@ class _SongPageState extends State<SongUI> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black12, //Colors.amber.shade700,
-        title: Text(_playlist.name),
+        title: FutureBuilder(
+          future: _playlistFuture,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return Center(
+                  child: Text(_playlist.name,
+                      textScaleFactor: 4,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )));
+            } else {
+              return Container();
+            }
+          },
+        ),
         actions: <Widget>[],
       ),
       backgroundColor: Colors.black,
@@ -275,18 +296,18 @@ class _SongPageState extends State<SongUI> {
                       child: FutureBuilder(
                         future: _playlistFuture,
                         builder:
-                        (BuildContext context, AsyncSnapshot snapshot) {
+                            (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
+                              ConnectionState.waiting) {
                             return CircularProgressIndicator();
                           } else if (snapshot.hasData) {
                             return Container(
-                              height: 1 /* change back to 0 */,
-                              width: 1 /* change back to 0 */,
-                              child: YoutubePlayerIFrame(
-                              controller: _controller,
-                              aspectRatio: 16 / 9,
-                              ));
+                                height: 1 /* change back to 0 */,
+                                width: 1 /* change back to 0 */,
+                                child: YoutubePlayerIFrame(
+                                  controller: _controller,
+                                  aspectRatio: 16 / 9,
+                                ));
                           } else {
                             return Container();
                           }
@@ -299,24 +320,22 @@ class _SongPageState extends State<SongUI> {
                         children: [
                           Expanded(
                             child: FutureBuilder(
-                            future: _imagesFuture,
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                                  if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
-                                  } else if (snapshot.hasData) {
-                                    return Image.network(_image);
-                                  } else {
-                                      return Container();
-                                  }   
-                                },
+                              future: _imagesFuture,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return Image.network(_image);
+                                } else {
+                                  return Container();
+                                }
+                              },
                             ),
                           ),
                           Expanded(
                             child: Container(
                               padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
-                              child: Image.network(feedbacklink, key: ValueKey(feedbacklink)),
+                              child: Image.network(feedbacklink,
+                                  key: ValueKey(feedbacklink)),
                             ),
                           ),
                         ],
