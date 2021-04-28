@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/localizations.dart';
 import 'package:flutter_starter/controllers/controllers.dart';
@@ -34,7 +35,8 @@ class _PlaylistPageState extends State<PlaylistUI> {
   @override
   void initState() {
     super.initState();
-    _allPlaylists = getCustomGlobalPlaylists(user);
+    // _allPlaylists = streamCustomPlaylists(user);
+    // _allPlaylists = FirebaseFirestore.instance.collection('playlist').snapshots();
   }
 
   @override
@@ -64,7 +66,9 @@ class _PlaylistPageState extends State<PlaylistUI> {
   }
 
   Widget playlistWidget(String user) {
-    return FutureBuilder(
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('playlists').snapshots(),
+      initialData: [],
       builder: (context, projectSnap) {
         if (projectSnap.connectionState == ConnectionState.none &&
             projectSnap.hasData == null) {
@@ -75,12 +79,12 @@ class _PlaylistPageState extends State<PlaylistUI> {
           );
         }
         return ListView.builder(
-          itemCount: projectSnap.data.length,
+          itemCount: projectSnap.data.docs.length,
           itemBuilder: (context, index) {
-            PlaylistWithID allPlaylists = projectSnap.data[index];
+            PlaylistWithID currentPlaylist = projectSnap.data.docs[index];
             return Column(
               children: <Widget>[
-                // Displays list of projects in a tile
+                // Displays list of playlists in a tile
                 ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
@@ -90,11 +94,11 @@ class _PlaylistPageState extends State<PlaylistUI> {
                       width: 50.0,
                     ),
                   ),
-                  title: Text(allPlaylists.name),
-                  subtitle: determineSubtitle(allPlaylists.user),
+                  title: Text(currentPlaylist.name),
+                  subtitle: determineSubtitle(currentPlaylist.user),
                   trailing: Icon(Icons.keyboard_arrow_right),
                   onTap: () async {
-                    Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
+                    Get.to(PlaylistDisplayUI(), arguments: currentPlaylist);
                   },
                 ),
                 Divider(thickness: 1),
@@ -103,7 +107,6 @@ class _PlaylistPageState extends State<PlaylistUI> {
           },
         );
       },
-      future: _allPlaylists,
     );
   }
 

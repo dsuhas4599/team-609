@@ -240,6 +240,25 @@ Future getCustomGlobalPlaylists(String user) async {
   return customGlobalPlaylists;
 }
 
+Stream streamCustomPlaylists(String user) async* {
+  List<PlaylistWithID> customGlobalPlaylists = [];
+  playlists.snapshots().listen((QuerySnapshot querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      var data = {
+        'user': doc['user'],
+        'name': doc['name'],
+        'songs': List<String>.from(doc['songs']),
+        'image': doc['image'],
+        'id': doc.id
+      };
+      if (data['user'] == 'global' || data['user'] == user) {
+        customGlobalPlaylists.add(PlaylistWithID.fromMap(data));
+      }
+    });
+    return (customGlobalPlaylists);
+  });
+}
+
 Future createEmptyPlaylist(String playlistName, String user) {
   var data = {
     'user': user,
@@ -407,19 +426,4 @@ Future<PlaylistWithID> getPlaylistFromID(String playlistID) async {
         })
       });
   return retrievedPlaylist;
-
-  // var playlistData;
-  // playlists.doc(playlistID).get().then((datasnapshot) {
-  //   if (datasnapshot.exists) {
-  //     var data = {
-  //           'user': datasnapshot['user'],
-  //           'name': datasnapshot['name'],
-  //           'songs': List<String>.from(datasnapshot['songs']),
-  //           'image': datasnapshot['image'],
-  //           'id': datasnapshot.id
-  //         };
-  //         playlistData = PlaylistWithID.fromMap(data);
-  //   }
-  // });
-  // return playlistData;
 }
