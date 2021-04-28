@@ -18,6 +18,7 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
+  String feedbacklink = "";
   var rounds = [];
   String user = "";
   int guesses = 0;
@@ -115,6 +116,11 @@ class _SongPageState extends State<SongUI> {
     round++;
     // reset and update
     if (round <= 4) {
+      setState(() {
+        _imagesFuture = getImages();
+        _answersFuture = getAnswers();
+        feedbacklink = "";
+      });
       if (skipVideo) {
         _controller.nextVideo();
       }
@@ -125,12 +131,11 @@ class _SongPageState extends State<SongUI> {
       buttonFour = ButtonStatus.nil;
       setAllButtonActivity(true);
       s.start();
-      setState(() {
-        _imagesFuture = getImages();
-        _answersFuture = getAnswers();
-      });
     } else {
       sub.cancel();
+      setState(() {
+        feedbacklink = "";
+      });
       Get.to(GameRecapUI());
     }
   }
@@ -213,6 +218,38 @@ class _SongPageState extends State<SongUI> {
     }
     guesses = 0;
   }
+  void feedback(int g) {
+    switch (g) {
+      case 1:
+        {
+          setState(() {
+            feedbacklink = "https://media2.giphy.com/media/l3vRcttCynxJoxIrK/giphy.gif?cid=ecf05e47gdw3l5wic62gsdcvxv0ft94npf1lq0u0yf0jks8g&rid=giphy.gif&ct=g";
+          });
+        }
+        break;
+      case 2:
+        {
+          setState(() {
+            feedbacklink = "https://media3.giphy.com/media/V72fyK86e9NQLOgtZi/giphy.gif?cid=ecf05e473mqydbqrztk2m45odvgyw03ld0ua24b9fwp52xay&rid=giphy.gif&ct=g";
+          });
+        }
+        break;
+      case 3:
+        {
+          setState(() {
+            feedbacklink = "https://media1.giphy.com/media/lMBcCPM0VYfhh2zCAy/giphy.gif";
+          });
+        }
+        break;
+      case 4:
+        {
+          setState(() {
+            feedbacklink = "https://media4.giphy.com/media/cOQSc9wAHifk1LlQBM/giphy.gif";
+          });
+        }
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -238,18 +275,18 @@ class _SongPageState extends State<SongUI> {
                       child: FutureBuilder(
                         future: _playlistFuture,
                         builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
+                        (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                            ConnectionState.waiting) {
                             return CircularProgressIndicator();
                           } else if (snapshot.hasData) {
                             return Container(
-                                height: 1 /* change back to 0 */,
-                                width: 1 /* change back to 0 */,
-                                child: YoutubePlayerIFrame(
-                                  controller: _controller,
-                                  aspectRatio: 16 / 9,
-                                ));
+                              height: 1 /* change back to 0 */,
+                              width: 1 /* change back to 0 */,
+                              child: YoutubePlayerIFrame(
+                              controller: _controller,
+                              aspectRatio: 16 / 9,
+                              ));
                           } else {
                             return Container();
                           }
@@ -257,19 +294,32 @@ class _SongPageState extends State<SongUI> {
                       ),
                     ),
                     Center(
-                      child: FutureBuilder(
-                        future: _imagesFuture,
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasData) {
-                            return Image.network(_image);
-                          } else {
-                            return Container();
-                          }
-                        },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: FutureBuilder(
+                            future: _imagesFuture,
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                                  if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasData) {
+                                    return Image.network(_image);
+                                  } else {
+                                      return Container();
+                                  }   
+                                },
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
+                              child: Image.network(feedbacklink, key: ValueKey(feedbacklink)),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -302,6 +352,7 @@ class _SongPageState extends State<SongUI> {
                                             if (_answerChoices[0] ==
                                                 correctAnswer) {
                                               s.stop();
+                                              feedback(guesses);
                                               correctPlayer.play();
                                               var time = s.elapsedMilliseconds;
                                               buttonOne = ButtonStatus.correct;
@@ -361,6 +412,7 @@ class _SongPageState extends State<SongUI> {
                                           if (_answerChoices[1] ==
                                               correctAnswer) {
                                             s.stop();
+                                            feedback(guesses);
                                             correctPlayer.play();
                                             var time = s.elapsedMilliseconds;
                                             buttonTwo = ButtonStatus.correct;
@@ -428,6 +480,7 @@ class _SongPageState extends State<SongUI> {
                                               if (_answerChoices[2] ==
                                                   correctAnswer) {
                                                 s.stop();
+                                                feedback(guesses);
                                                 correctPlayer.play();
                                                 var time =
                                                     s.elapsedMilliseconds;
@@ -493,6 +546,7 @@ class _SongPageState extends State<SongUI> {
                                               if (_answerChoices[3] ==
                                                   correctAnswer) {
                                                 s.stop();
+                                                feedback(guesses);
                                                 correctPlayer.play();
                                                 var time =
                                                     s.elapsedMilliseconds;
