@@ -18,7 +18,7 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
-  String message = "";
+  String feedbacklink = "https://media3.giphy.com/media/cKJ57vl30ZTmsuPjts/giphy.gif?cid=ecf05e47g17upfbh3nve2nin3bpxh4z6nneb3viy311s9jro&rid=giphy.gif&ct=g";
   var rounds = [];
   String user = "";
   int guesses = 0;
@@ -116,6 +116,11 @@ class _SongPageState extends State<SongUI> {
     round++;
     // reset and update
     if (round <= 4) {
+      setState(() {
+        _imagesFuture = getImages();
+        _answersFuture = getAnswers();
+        feedbacklink = "https://media3.giphy.com/media/cKJ57vl30ZTmsuPjts/giphy.gif?cid=ecf05e47g17upfbh3nve2nin3bpxh4z6nneb3viy311s9jro&rid=giphy.gif&ct=g";
+      });
       if (skipVideo) {
         _controller.nextVideo();
       }
@@ -126,15 +131,10 @@ class _SongPageState extends State<SongUI> {
       buttonFour = ButtonStatus.nil;
       setAllButtonActivity(true);
       s.start();
-      setState(() {
-        _imagesFuture = getImages();
-        _answersFuture = getAnswers();
-        message = "";
-      });
     } else {
       sub.cancel();
       setState(() {
-        message = "";
+        feedbacklink = "";
       });
       Get.to(GameRecapUI());
     }
@@ -223,28 +223,28 @@ class _SongPageState extends State<SongUI> {
       case 1:
         {
           setState(() {
-            message = "Perfect!";
+            feedbacklink = "https://media2.giphy.com/media/l3vRcttCynxJoxIrK/giphy.gif?cid=ecf05e47gdw3l5wic62gsdcvxv0ft94npf1lq0u0yf0jks8g&rid=giphy.gif&ct=g";
           });
         }
         break;
       case 2:
         {
           setState(() {
-            message = "Excellent!";
+            feedbacklink = "https://media3.giphy.com/media/V72fyK86e9NQLOgtZi/giphy.gif?cid=ecf05e473mqydbqrztk2m45odvgyw03ld0ua24b9fwp52xay&rid=giphy.gif&ct=g";
           });
         }
         break;
       case 3:
         {
           setState(() {
-            message = "Good Job!";
+            feedbacklink = "https://media1.giphy.com/media/lMBcCPM0VYfhh2zCAy/giphy.gif";
           });
         }
         break;
       case 4:
         {
           setState(() {
-            message = "You got it!";
+            feedbacklink = "https://media4.giphy.com/media/cOQSc9wAHifk1LlQBM/giphy.gif";
           });
         }
         break;
@@ -596,15 +596,16 @@ class _SongPageState extends State<SongUI> {
                   }
                 }),
           ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.fromLTRB(0, 50, 0, 50),
-              child: Text(message,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50)
-              ),
-            ),
+        Center(
+          child: Container(
+          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+          //child: Text(feedbacklink,
+            //textAlign: TextAlign.center,
+            //style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50)
+           // ),
+          child: Image.network(feedbacklink, key: ValueKey(feedbacklink)),
           ),
+        ),
         ],
       )),
       bottomNavigationBar: BottomAppBar(
