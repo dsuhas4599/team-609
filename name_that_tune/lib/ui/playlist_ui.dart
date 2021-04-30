@@ -36,7 +36,7 @@ class _PlaylistPageState extends State<PlaylistUI> {
   void initState() {
     super.initState();
     // _allPlaylists = streamCustomPlaylists(user);
-    // _allPlaylists = FirebaseFirestore.instance.collection('playlist').snapshots();
+    _allPlaylists = FirebaseFirestore.instance.collection('playlists').snapshots();
   }
 
   @override
@@ -67,7 +67,7 @@ class _PlaylistPageState extends State<PlaylistUI> {
 
   Widget playlistWidget(String user) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('playlists').snapshots(),
+      stream: FirebaseFirestore.instance.collection('playlists').where('user', whereIn: [user, 'global']).snapshots(),
       initialData: [],
       builder: (context, projectSnap) {
         if (projectSnap.connectionState == ConnectionState.none &&
@@ -81,7 +81,15 @@ class _PlaylistPageState extends State<PlaylistUI> {
         return ListView.builder(
           itemCount: projectSnap.data.docs.length,
           itemBuilder: (context, index) {
-            PlaylistWithID currentPlaylist = projectSnap.data.docs[index];
+            var currentDoc = projectSnap.data.docs[index];
+            var data = {
+              'user': currentDoc['user'],
+              'name': currentDoc['name'],
+              'songs': List<String>.from(currentDoc['songs']),
+              'image': currentDoc['image'],
+              'id': currentDoc.id
+            };
+            PlaylistWithID currentPlaylist = PlaylistWithID.fromMap(data);
             return Column(
               children: <Widget>[
                 // Displays list of playlists in a tile
