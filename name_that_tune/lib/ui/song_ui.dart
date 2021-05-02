@@ -225,7 +225,7 @@ class _SongPageState extends State<SongUI> {
       case 1:
         {
           setState(() {
-            feedbacklink =
+            _image =
                 "https://media2.giphy.com/media/l3vRcttCynxJoxIrK/giphy.gif?cid=ecf05e47gdw3l5wic62gsdcvxv0ft94npf1lq0u0yf0jks8g&rid=giphy.gif&ct=g";
           });
         }
@@ -233,7 +233,7 @@ class _SongPageState extends State<SongUI> {
       case 2:
         {
           setState(() {
-            feedbacklink =
+            _image =
                 "https://media3.giphy.com/media/V72fyK86e9NQLOgtZi/giphy.gif?cid=ecf05e473mqydbqrztk2m45odvgyw03ld0ua24b9fwp52xay&rid=giphy.gif&ct=g";
           });
         }
@@ -241,7 +241,7 @@ class _SongPageState extends State<SongUI> {
       case 3:
         {
           setState(() {
-            feedbacklink =
+            _image =
                 "https://media1.giphy.com/media/lMBcCPM0VYfhh2zCAy/giphy.gif";
           });
         }
@@ -249,7 +249,7 @@ class _SongPageState extends State<SongUI> {
       case 4:
         {
           setState(() {
-            feedbacklink =
+            _image =
                 "https://media4.giphy.com/media/cOQSc9wAHifk1LlQBM/giphy.gif";
           });
         }
@@ -329,13 +329,6 @@ class _SongPageState extends State<SongUI> {
                                   return Container();
                                 }
                               },
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
-                              child: Image.network(feedbacklink,
-                                  key: ValueKey(feedbacklink)),
                             ),
                           ),
                         ],
