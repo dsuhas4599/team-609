@@ -154,9 +154,9 @@ class _SongPageState extends State<SongUI> {
     if (buttonOne == ButtonStatus.correct) {
       return Colors.green;
     } else if (buttonOne == ButtonStatus.incorrect) {
-      return Colors.red;
+      return Colors.grey.shade600;
     } else {
-      return Colors.amber.shade700;
+      return Colors.red;
     }
   }
 
@@ -164,9 +164,9 @@ class _SongPageState extends State<SongUI> {
     if (buttonTwo == ButtonStatus.correct) {
       return Colors.green;
     } else if (buttonTwo == ButtonStatus.incorrect) {
-      return Colors.red;
+      return Colors.grey.shade600;
     } else {
-      return Colors.amber.shade700;
+      return Colors.amber.shade800;
     }
   }
 
@@ -174,9 +174,9 @@ class _SongPageState extends State<SongUI> {
     if (buttonThree == ButtonStatus.correct) {
       return Colors.green;
     } else if (buttonThree == ButtonStatus.incorrect) {
-      return Colors.red;
+      return Colors.grey.shade600;
     } else {
-      return Colors.amber.shade700;
+      return Colors.yellow.shade700;
     }
   }
 
@@ -184,14 +184,14 @@ class _SongPageState extends State<SongUI> {
     if (buttonFour == ButtonStatus.correct) {
       return Colors.green;
     } else if (buttonFour == ButtonStatus.incorrect) {
-      return Colors.red;
+      return Colors.grey.shade600;
     } else {
-      return Colors.amber.shade700;
+      return Colors.lightBlue.shade600;
     }
   }
 
   Size buttonSizing(Set<MaterialState> states) {
-    return Size(200, 70);
+    return Size(200, 100);
   }
 
   void scoring(int g) {
@@ -268,7 +268,7 @@ class _SongPageState extends State<SongUI> {
             if (snapshot.hasData) {
               return Center(
                   child: Text(_playlist.name,
-                      textScaleFactor: 4,
+                      textScaleFactor: 2,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -349,15 +349,18 @@ class _SongPageState extends State<SongUI> {
                     return Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(24.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                                   child: ElevatedButton(
-                                    child: Text(_answerChoices[0]),
+                                    child: Text(
+                                      _answerChoices[0],
+                                      style: TextStyle(fontSize: 20),
+                                    ),
                                     onPressed: buttonOneActive
                                         ? () async {
                                             guesses++;
@@ -415,9 +418,12 @@ class _SongPageState extends State<SongUI> {
                               ),
                               Expanded(
                                   child: Padding(
-                                padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                                 child: ElevatedButton(
-                                  child: Text(_answerChoices[1]),
+                                  child: Text(
+                                    _answerChoices[1],
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                                   onPressed: buttonTwoActive
                                       ? () async {
                                           guesses++;
@@ -476,16 +482,19 @@ class _SongPageState extends State<SongUI> {
                         ),
                         Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 24.0),
+                                const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                    padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                                     // child:
                                     child: ElevatedButton(
-                                      child: Text(_answerChoices[2]),
+                                      child: Text(
+                                        _answerChoices[2],
+                                        style: TextStyle(fontSize: 20),
+                                      ),
                                       onPressed: buttonThreeActive
                                           ? () async {
                                               guesses++;
@@ -549,9 +558,12 @@ class _SongPageState extends State<SongUI> {
                                 // Spacer(),
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                                    padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                                     child: ElevatedButton(
-                                      child: Text(_answerChoices[3]),
+                                      child: Text(
+                                        _answerChoices[3],
+                                        style: TextStyle(fontSize: 20),
+                                      ),
                                       onPressed: buttonFourActive
                                           ? () async {
                                               guesses++;
