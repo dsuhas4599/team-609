@@ -1,6 +1,5 @@
 // Functions for getting data from firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,7 @@ CollectionReference images = FirebaseFirestore.instance.collection('images');
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 // Answer choices
-Future createAnswerChoices(String videoID) async {
+Future<List<String>> createAnswerChoices(String videoID) async {
   // returns 4 answer choices with the first one being the answer
   List<SongModel> allSongs = await getAllSongs();
   List<String> answerChoices = [];
@@ -31,7 +30,8 @@ Future createAnswerChoices(String videoID) async {
   return answerChoices;
 }
 
-Future createAnswerChoicesFromPlaylist(String videoID, String playlist) async {
+Future<List<String>> createAnswerChoicesFromPlaylist(
+    String videoID, String playlist) async {
   // returns 4 answer choices from a given playlist
   List<SongModel> playlistSongs = await playlistToSongs(playlist);
   List<String> answerChoices = [];
@@ -48,7 +48,7 @@ Future createAnswerChoicesFromPlaylist(String videoID, String playlist) async {
 }
 
 // Song functions
-Future getAllSongs() async {
+Future<List<SongModel>> getAllSongs() async {
   // returns all songs in a list of song models
   List<SongModel> songObjects = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
@@ -65,7 +65,7 @@ Future getAllSongs() async {
   return songObjects;
 }
 
-Future getAllSongNames() async {
+Future<List<String>> getAllSongNames() async {
   // returns a list of all song names
   List<String> songNames = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
@@ -77,7 +77,7 @@ Future getAllSongNames() async {
 }
 
 // Playlist functions
-Future getAllPlaylists() async {
+Future<List<PlaylistModel>> getAllPlaylists() async {
   // returns a list of all playlists in firestore
   List<PlaylistModel> playlistObjects = [];
   await playlists.get().then((QuerySnapshot querySnapshot) => {
@@ -94,7 +94,7 @@ Future getAllPlaylists() async {
   return playlistObjects;
 }
 
-Future getSpecificPlaylist(String playlistName) async {
+Future<PlaylistModel> getSpecificPlaylist(String playlistName) async {
   // given a playlist name will return that playlist object
   List<PlaylistModel> allPlaylists = await getAllPlaylists();
   PlaylistModel currentPlaylist =
@@ -102,7 +102,7 @@ Future getSpecificPlaylist(String playlistName) async {
   return currentPlaylist;
 }
 
-Future playlistToSongs(String playlist) async {
+Future<List<SongModel>> playlistToSongs(String playlist) async {
   // given a playlist object, will retrieve the list of songs from document ID
   PlaylistModel currentPlaylist = await getSpecificPlaylist(playlist);
   List<SongModel> playlistSongs = [];
@@ -121,7 +121,7 @@ Future playlistToSongs(String playlist) async {
   return playlistSongs;
 }
 
-Future convertPlaylistToUsable(String playlist) async {
+Future<PlaylistModel> convertPlaylistToUsable(String playlist) async {
   // given a playlist of songs doc references will return the same thing except with songs as videoIDs
   PlaylistModel currentPlaylist = await getSpecificPlaylist(playlist);
   PlaylistModel convertedPlaylist = currentPlaylist;
@@ -141,7 +141,7 @@ Future convertPlaylistToUsable(String playlist) async {
   return convertedPlaylist;
 }
 
-Future yearToImages(int year) async {
+Future<List<dynamic>> yearToImages(int year) async {
   // given a year, returns a list of image links
   var imageLinks = [];
   await images
@@ -155,7 +155,7 @@ Future yearToImages(int year) async {
   return imageLinks;
 }
 
-Future videoIDToImage(String id) async {
+Future<String> videoIDToImage(String id) async {
   // given a song's video id, returns a list of images from the year of that song
   var imageLinks = [];
   String songYear = "";
@@ -172,20 +172,20 @@ Future videoIDToImage(String id) async {
       imageLinks.add(doc['links']);
     });
   });
-  List imagesList = imageLinks[0];
+  List<dynamic> imagesList = imageLinks[0];
   imagesList.shuffle();
   return imagesList.first;
 }
 
 //Functions to write to firestore
-Future addGame(var rounds, var user) async {
+Future<String> addGame(var rounds, var user) async {
   var valueid = "";
   await game.add({'rounds': rounds, 'user': user}).then(
       (value) => valueid = value.id);
   return valueid;
 }
 
-Future addRound(int guesses, var user, var time, var song) async {
+Future<String> addRound(int guesses, var user, var time, var song) async {
   var valueid = "";
   await rounds
       .add({'user': user, 'guesses': guesses, 'song': song, 'time': time}).then(
@@ -221,8 +221,8 @@ class PlaylistWithID extends PlaylistModel {
 }
 
 // All functions that are related to custom playlists
-Future getCustomGlobalPlaylists(String user) async {
-  List<PlaylistWithID> customGlobalPlaylists = [];
+Future<List<PlaylistModel>> getCustomGlobalPlaylists(String user) async {
+  List<PlaylistModel> customGlobalPlaylists = [];
   await playlists.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
           var data = {
@@ -240,26 +240,7 @@ Future getCustomGlobalPlaylists(String user) async {
   return customGlobalPlaylists;
 }
 
-Stream streamCustomPlaylists(String user) async* {
-  List<PlaylistWithID> customGlobalPlaylists = [];
-  playlists.snapshots().listen((QuerySnapshot querySnapshot) {
-    querySnapshot.docs.forEach((doc) {
-      var data = {
-        'user': doc['user'],
-        'name': doc['name'],
-        'songs': List<String>.from(doc['songs']),
-        'image': doc['image'],
-        'id': doc.id
-      };
-      if (data['user'] == 'global' || data['user'] == user) {
-        customGlobalPlaylists.add(PlaylistWithID.fromMap(data));
-      }
-    });
-    return (customGlobalPlaylists);
-  });
-}
-
-Future createEmptyPlaylist(String playlistName, String user) {
+Future<void> createEmptyPlaylist(String playlistName, String user) {
   var data = {
     'user': user,
     'songs': [],
@@ -282,7 +263,7 @@ Future findPlayer(String uid) async {
       });
 }
 
-Future getPlaylistSongs(List<String> playlistSongs) async {
+Future<List<SongModel>> getPlaylistSongs(List<String> playlistSongs) async {
   List<SongModel> retrievedSongs = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {

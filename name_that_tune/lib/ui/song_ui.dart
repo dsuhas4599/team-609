@@ -1,14 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:just_audio/just_audio.dart' as audio;
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
 
 enum ButtonStatus { correct, incorrect, nil }
+enum VideoStatus { playing, paused }
 
 class SongUI extends StatefulWidget {
   @override
@@ -16,6 +18,7 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
+  String feedbacklink = "";
   var rounds = [];
   String user = "";
   int guesses = 0;
@@ -29,18 +32,19 @@ class _SongPageState extends State<SongUI> {
   String correctAnswer = "";
   var scores = [];
   PlaylistModel _playlist;
-  Future<dynamic> _playlistFuture;
+  Future<PlaylistModel> _playlistFuture;
   dynamic _image;
-  Future<dynamic> _imagesFuture;
+  Future<String> _imagesFuture;
   List<String> _answerChoices;
-  Future<dynamic> _answersFuture;
+  Future<List<String>> _answersFuture;
   YoutubePlayerController _controller;
-  final correctPlayer = AudioPlayer();
-  final incorrectPlayer = AudioPlayer();
+  final correctPlayer = audio.AudioPlayer();
+  final incorrectPlayer = audio.AudioPlayer();
   var correctSound;
   var incorrectSound;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  VideoStatus ppButtonStatus = VideoStatus.playing;
   ButtonStatus buttonOne = ButtonStatus.nil;
   ButtonStatus buttonTwo = ButtonStatus.nil;
   ButtonStatus buttonThree = ButtonStatus.nil;
@@ -50,80 +54,76 @@ class _SongPageState extends State<SongUI> {
   bool buttonThreeActive = true;
   bool buttonFourActive = true;
 
+  StreamSubscription sub;
+
   @override
   void initState() {
     super.initState();
     _playlistFuture = initializePlaylist();
-    _imagesFuture = getImages('init');
-    _answersFuture = getAnswers('init');
     initializeAudio();
     final User u = auth.currentUser;
     user = u.email.toString();
   }
 
-  Future initializeAudio() async {
+  Future<void> initializeAudio() async {
     correctSound = await correctPlayer.setUrl(
         'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/476178__unadamlar__correct-choice.wav?alt=media&token=5414fc7b-edc2-4edd-b282-fcea34188c8e');
     incorrectSound = await incorrectPlayer.setUrl(
         'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/331912__kevinvg207__wrong-buzzer.wav?alt=media&token=c12f90d2-0922-49d5-95cf-9fa012817d2d');
+    return;
   }
 
-  Future initializePlaylist() async {
-    return await convertPlaylistToUsable(data).then((playlist) {
-      _playlist = playlist;
-      _playlist.songs.shuffle();
-      songs = _playlist.songs;
-      _controller = YoutubePlayerController(
-        initialVideoId: '',
-        params: YoutubePlayerParams(
-          playlist: _playlist.songs,
-          showControls: true,
-          showFullscreenButton: true,
-          autoPlay: true,
-        ),
-      );
-      return playlist;
-    }).onError((error, stackTrace) {
-      print(error);
-      return error;
+  Future<PlaylistModel> initializePlaylist() async {
+    _playlist = await convertPlaylistToUsable(data);
+    _playlist.songs.shuffle();
+    songs = _playlist.songs;
+    _controller = YoutubePlayerController(
+      initialVideoId: '',
+      params: YoutubePlayerParams(
+        playlist: _playlist.songs,
+        showControls: true,
+        showFullscreenButton: true,
+        autoPlay: true,
+      ),
+    );
+    sub = _controller.listen((event) {
+      print(event.playerState.toString());
+      if (event.playerState == PlayerState.ended) {
+        progressRound(false);
+      }
     });
-  }
-
-  Future getImages(String method) async {
-    if (method == 'init') {
-      dynamic pl = await initializePlaylist();
-    }
-    return videoIDToImage(songs[round]).then((image) {
-      _image = image;
-      return image;
-    }).onError((error, stackTrace) {
-      print(error);
-      return error;
+    setState(() {
+      _imagesFuture = getImages();
+      _answersFuture = getAnswers();
     });
+    return _playlist;
   }
 
-  Future getAnswers(String method) async {
-    if (method == 'init') {
-      dynamic pl = await initializePlaylist();
-    }
-    return createAnswerChoicesFromPlaylist(
-            _playlist.songs[round], _playlist.name)
-        .then((answers) {
-      _answerChoices = answers;
-      correctAnswer = _answerChoices[0];
-      _answerChoices.shuffle();
-      return answers;
-    }).onError((error, stackTrace) {
-      print(error);
-      return error;
-    });
+  Future<String> getImages() async {
+    _image = await videoIDToImage(songs[round]);
+    return _image;
   }
 
-  void progressRound() {
+  Future<List<String>> getAnswers() async {
+    _answerChoices =
+        await createAnswerChoicesFromPlaylist(songs[round], _playlist.name);
+    correctAnswer = _answerChoices[0];
+    _answerChoices.shuffle();
+    return _answerChoices;
+  }
+
+  void progressRound(bool skipVideo) {
     round++;
     // reset and update
     if (round <= 4) {
-      _controller.nextVideo();
+      setState(() {
+        _imagesFuture = getImages();
+        _answersFuture = getAnswers();
+        feedbacklink = "";
+      });
+      if (skipVideo) {
+        _controller.nextVideo();
+      }
       s.reset();
       buttonOne = ButtonStatus.nil;
       buttonTwo = ButtonStatus.nil;
@@ -131,12 +131,13 @@ class _SongPageState extends State<SongUI> {
       buttonFour = ButtonStatus.nil;
       setAllButtonActivity(true);
       s.start();
-      setState(() {
-        _imagesFuture = getImages('update');
-        _answersFuture = getAnswers('update');
-      });
     } else {
-      Get.to(GameRecapUI());
+      sub.cancel();
+      setState(() {
+        feedbacklink = "";
+      });
+      int finalScore = scores.reduce((a, b) => a + b);
+      Get.to(GameRecapUI(), arguments: [data, finalScore]);
     }
   }
 
@@ -155,7 +156,7 @@ class _SongPageState extends State<SongUI> {
     } else if (buttonOne == ButtonStatus.incorrect) {
       return Colors.red;
     } else {
-      return Colors.blue;
+      return Colors.amber.shade700;
     }
   }
 
@@ -165,7 +166,7 @@ class _SongPageState extends State<SongUI> {
     } else if (buttonTwo == ButtonStatus.incorrect) {
       return Colors.red;
     } else {
-      return Colors.blue;
+      return Colors.amber.shade700;
     }
   }
 
@@ -175,7 +176,7 @@ class _SongPageState extends State<SongUI> {
     } else if (buttonThree == ButtonStatus.incorrect) {
       return Colors.red;
     } else {
-      return Colors.blue;
+      return Colors.amber.shade700;
     }
   }
 
@@ -185,385 +186,475 @@ class _SongPageState extends State<SongUI> {
     } else if (buttonFour == ButtonStatus.incorrect) {
       return Colors.red;
     } else {
-      return Colors.blue;
+      return Colors.amber.shade700;
+    }
+  }
+
+  Size buttonSizing(Set<MaterialState> states) {
+    return Size(200, 70);
+  }
+
+  void scoring(int g) {
+    switch (g) {
+      case 1:
+        {
+          scores.add(100);
+        }
+        break;
+      case 2:
+        {
+          scores.add(75);
+        }
+        break;
+      case 3:
+        {
+          scores.add(50);
+        }
+        break;
+      case 4:
+        {
+          scores.add(25);
+        }
+        break;
+    }
+    guesses = 0;
+  }
+
+  void feedback(int g) {
+    switch (g) {
+      case 1:
+        {
+          setState(() {
+            _image =
+                "https://media2.giphy.com/media/l3vRcttCynxJoxIrK/giphy.gif?cid=ecf05e47gdw3l5wic62gsdcvxv0ft94npf1lq0u0yf0jks8g&rid=giphy.gif&ct=g";
+          });
+        }
+        break;
+      case 2:
+        {
+          setState(() {
+            _image =
+                "https://media3.giphy.com/media/V72fyK86e9NQLOgtZi/giphy.gif?cid=ecf05e473mqydbqrztk2m45odvgyw03ld0ua24b9fwp52xay&rid=giphy.gif&ct=g";
+          });
+        }
+        break;
+      case 3:
+        {
+          setState(() {
+            _image =
+                "https://media1.giphy.com/media/lMBcCPM0VYfhh2zCAy/giphy.gif";
+          });
+        }
+        break;
+      case 4:
+        {
+          setState(() {
+            _image =
+                "https://media4.giphy.com/media/cOQSc9wAHifk1LlQBM/giphy.gif";
+          });
+        }
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-            child: ListView(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            PrimaryButton(
-                labelText: "Play",
-                onPressed: () async {
-                  _controller.play();
-                }),
-            PrimaryButton(
-                labelText: "Pause",
-                onPressed: () async {
-                  _controller.pause();
-                }),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.black12, //Colors.amber.shade700,
+        title: FutureBuilder(
+          future: _playlistFuture,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return Center(
+                  child: Text(_playlist.name,
+                      textScaleFactor: 4,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )));
+            } else {
+              return Container();
+            }
+          },
         ),
-        PrimaryButton(
-            labelText: "Skip song",
-            onPressed: () async {
-              // _controller.nextVideo();
-              progressRound();
-            }),
-        Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 300,
-              child: Stack(
-                children: [
-                  Center(
-                    child: FutureBuilder(
-                      future: _playlistFuture,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasData) {
-                          return Container(
-                              height: 1 /* change back to 0 */,
-                              width: 1 /* change back to 0 */,
-                              child: YoutubePlayerIFrame(
-                                controller: _controller,
-                                aspectRatio: 16 / 9,
-                              ));
-                        } else {
-                          return Container();
-                        }
-                      },
+        actions: <Widget>[],
+      ),
+      backgroundColor: Colors.black,
+      body: Center(
+          child: ListView(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.all(50.0),
+              child: Container(
+                height: 300,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: FutureBuilder(
+                        future: _playlistFuture,
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasData) {
+                            return Container(
+                                height: 1 /* change back to 0 */,
+                                width: 1 /* change back to 0 */,
+                                child: YoutubePlayerIFrame(
+                                  controller: _controller,
+                                  aspectRatio: 16 / 9,
+                                ));
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: FutureBuilder(
-                      future: _imagesFuture,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasData) {
-                          return Image.network(_image);
-                        } else {
-                          return Container();
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Center(
-          child: FutureBuilder(
-              future: _answersFuture,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container();
-                } else if (snapshot.hasData) {
-                  return Column(
-                    children: [
-                      Row(
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
-                            child: PrimaryButton(
-                              labelText: _answerChoices[0],
-                              onPressed: buttonOneActive
-                                  ? () async {
-                                      guesses++;
-                                      if (_answerChoices[0] == correctAnswer) {
-                                        s.stop();
-                                        correctPlayer.play();
-                                        var time = s.elapsedMilliseconds;
-                                        buttonOne = ButtonStatus.correct;
-                                        setAllButtonActivity(false);
-                                        await Future.delayed(
-                                            Duration(seconds: 3));
-                                        addRound(guesses, user, time / 1000,
-                                                songs[round])
-                                            .then((value) {
-                                          rounds.add(value);
-                                          switch (guesses) {
-                                            case 1:
-                                              {
-                                                scores.add(100);
-                                              }
-                                              break;
-                                            case 2:
-                                              {
-                                                scores.add(75);
-                                              }
-                                              break;
-                                            case 3:
-                                              {
-                                                scores.add(50);
-                                              }
-                                              break;
-                                            case 4:
-                                              {
-                                                scores.add(25);
-                                              }
-                                              break;
-                                          }
-                                          guesses = 0;
-                                          if (round > 4) {
-                                            addGame(rounds, user).then((value) {
-                                              addScore(
-                                                  value,
-                                                  user,
-                                                  date,
-                                                  scores
-                                                      .reduce((a, b) => a + b));
-                                            });
-                                          }
-                                        });
-                                        await correctPlayer.stop();
-                                        progressRound();
-                                      } else {
-                                        incorrectPlayer.play();
-                                        buttonOne = ButtonStatus.incorrect;
-                                        setState(() => buttonOneActive = false);
-                                        await Future.delayed(
-                                            Duration(seconds: 1));
-                                        await incorrectPlayer.stop();
-                                      }
-                                    }
-                                  : () async {},
-                              color: MaterialStateProperty.resolveWith(
-                                  getColorOne),
-                            ),
-                          ),
-                          Expanded(
-                            child: PrimaryButton(
-                              labelText: _answerChoices[1],
-                              onPressed: buttonTwoActive
-                                  ? () async {
-                                      guesses++;
-                                      if (_answerChoices[1] == correctAnswer) {
-                                        s.stop();
-                                        correctPlayer.play();
-                                        var time = s.elapsedMilliseconds;
-                                        buttonTwo = ButtonStatus.correct;
-                                        setAllButtonActivity(false);
-                                        await Future.delayed(
-                                            Duration(seconds: 3));
-                                        addRound(guesses, user, time / 1000,
-                                                songs[round])
-                                            .then((value) {
-                                          rounds.add(value);
-                                          switch (guesses) {
-                                            case 1:
-                                              {
-                                                scores.add(100);
-                                              }
-                                              break;
-                                            case 2:
-                                              {
-                                                scores.add(75);
-                                              }
-                                              break;
-                                            case 3:
-                                              {
-                                                scores.add(50);
-                                              }
-                                              break;
-                                            case 4:
-                                              {
-                                                scores.add(25);
-                                              }
-                                              break;
-                                          }
-                                          guesses = 0;
-                                          if (round > 4) {
-                                            addGame(rounds, user).then((value) {
-                                              addScore(
-                                                  value,
-                                                  user,
-                                                  date,
-                                                  scores
-                                                      .reduce((a, b) => a + b));
-                                            });
-                                          }
-                                        });
-                                        await correctPlayer.stop();
-                                        progressRound();
-                                      } else {
-                                        incorrectPlayer.play();
-                                        buttonTwo = ButtonStatus.incorrect;
-                                        setState(() => buttonTwoActive = false);
-                                        await Future.delayed(
-                                            Duration(seconds: 1));
-                                        await incorrectPlayer.stop();
-                                      }
-                                    }
-                                  : () async {},
-                              color: MaterialStateProperty.resolveWith(
-                                  getColorTwo),
+                            child: FutureBuilder(
+                              future: _imagesFuture,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return Image.network(_image);
+                                } else {
+                                  return Container();
+                                }
+                              },
                             ),
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: PrimaryButton(
-                              labelText: _answerChoices[2],
-                              onPressed: buttonThreeActive
-                                  ? () async {
-                                      guesses++;
-                                      if (_answerChoices[2] == correctAnswer) {
-                                        s.stop();
-                                        correctPlayer.play();
-                                        var time = s.elapsedMilliseconds;
-                                        buttonThree = ButtonStatus.correct;
-                                        setAllButtonActivity(false);
-                                        await Future.delayed(
-                                            Duration(seconds: 3));
-                                        addRound(guesses, user, time / 1000,
-                                                songs[round])
-                                            .then((value) {
-                                          rounds.add(value);
-                                          switch (guesses) {
-                                            case 1:
-                                              {
-                                                scores.add(100);
-                                              }
-                                              break;
-                                            case 2:
-                                              {
-                                                scores.add(75);
-                                              }
-                                              break;
-                                            case 3:
-                                              {
-                                                scores.add(50);
-                                              }
-                                              break;
-                                            case 4:
-                                              {
-                                                scores.add(25);
-                                              }
-                                              break;
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: FutureBuilder(
+                future: _answersFuture,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container();
+                  } else if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                  child: ElevatedButton(
+                                    child: Text(_answerChoices[0]),
+                                    onPressed: buttonOneActive
+                                        ? () async {
+                                            guesses++;
+                                            if (_answerChoices[0] ==
+                                                correctAnswer) {
+                                              s.stop();
+                                              feedback(guesses);
+                                              correctPlayer.play();
+                                              var time = s.elapsedMilliseconds;
+                                              buttonOne = ButtonStatus.correct;
+                                              setAllButtonActivity(false);
+                                              await Future.delayed(
+                                                  Duration(seconds: 3));
+                                              addRound(guesses, user,
+                                                      time / 1000, songs[round])
+                                                  .then((value) {
+                                                rounds.add(value);
+                                                scoring(guesses);
+                                                if (round > 4) {
+                                                  addGame(rounds, user)
+                                                      .then((value) {
+                                                    addScore(
+                                                        value,
+                                                        user,
+                                                        date,
+                                                        scores.reduce(
+                                                            (a, b) => a + b));
+                                                  });
+                                                }
+                                              });
+                                              await correctPlayer.stop();
+                                              progressRound(true);
+                                            } else {
+                                              incorrectPlayer.play();
+                                              buttonOne =
+                                                  ButtonStatus.incorrect;
+                                              setState(() =>
+                                                  buttonOneActive = false);
+                                              await Future.delayed(
+                                                  Duration(seconds: 1));
+                                              await incorrectPlayer.stop();
+                                            }
                                           }
-                                          guesses = 0;
-                                          if (round > 4) {
-                                            addGame(rounds, user).then((value) {
-                                              addScore(
-                                                  value,
-                                                  user,
-                                                  date,
-                                                  scores
-                                                      .reduce((a, b) => a + b));
+                                        : () async {},
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              getColorOne),
+                                      minimumSize:
+                                          MaterialStateProperty.resolveWith(
+                                              buttonSizing),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                  child: Padding(
+                                padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                                child: ElevatedButton(
+                                  child: Text(_answerChoices[1]),
+                                  onPressed: buttonTwoActive
+                                      ? () async {
+                                          guesses++;
+                                          if (_answerChoices[1] ==
+                                              correctAnswer) {
+                                            s.stop();
+                                            feedback(guesses);
+                                            correctPlayer.play();
+                                            var time = s.elapsedMilliseconds;
+                                            buttonTwo = ButtonStatus.correct;
+                                            setAllButtonActivity(false);
+                                            await Future.delayed(
+                                                Duration(seconds: 3));
+                                            addRound(guesses, user, time / 1000,
+                                                    songs[round])
+                                                .then((value) {
+                                              rounds.add(value);
+                                              scoring(guesses);
+                                              if (round > 4) {
+                                                addGame(rounds, user)
+                                                    .then((value) {
+                                                  addScore(
+                                                      value,
+                                                      user,
+                                                      date,
+                                                      scores.reduce(
+                                                          (a, b) => a + b));
+                                                });
+                                              }
                                             });
+                                            await correctPlayer.stop();
+                                            progressRound(true);
+                                          } else {
+                                            incorrectPlayer.play();
+                                            buttonTwo = ButtonStatus.incorrect;
+                                            setState(
+                                                () => buttonTwoActive = false);
+                                            await Future.delayed(
+                                                Duration(seconds: 1));
+                                            await incorrectPlayer.stop();
                                           }
-                                        });
-                                        await correctPlayer.stop();
-                                        progressRound();
-                                      } else {
-                                        incorrectPlayer.play();
-                                        buttonThree = ButtonStatus.incorrect;
-                                        setState(
-                                            () => buttonThreeActive = false);
-                                        await Future.delayed(
-                                            Duration(seconds: 1));
-                                        await incorrectPlayer.stop();
-                                      }
-                                    }
-                                  : () async {},
-                              color: MaterialStateProperty.resolveWith(
-                                  getColorThree),
-                            ),
+                                        }
+                                      : () async {},
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            getColorTwo),
+                                    minimumSize:
+                                        MaterialStateProperty.resolveWith(
+                                            buttonSizing),
+                                  ),
+                                ),
+                              ))
+                            ],
                           ),
-                          Expanded(
-                            child: PrimaryButton(
-                              labelText: _answerChoices[3],
-                              onPressed: buttonFourActive
-                                  ? () async {
-                                      guesses++;
-                                      if (_answerChoices[3] == correctAnswer) {
-                                        s.stop();
-                                        correctPlayer.play();
-                                        var time = s.elapsedMilliseconds;
-                                        buttonFour = ButtonStatus.correct;
-                                        setAllButtonActivity(false);
-                                        await Future.delayed(
-                                            Duration(seconds: 3));
-                                        addRound(guesses, user, time / 1000,
-                                                songs[round])
-                                            .then((value) {
-                                          rounds.add(value);
-                                          switch (guesses) {
-                                            case 1:
-                                              {
-                                                scores.add(100);
+                        ),
+                        Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 24.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                    // child:
+                                    child: ElevatedButton(
+                                      child: Text(_answerChoices[2]),
+                                      onPressed: buttonThreeActive
+                                          ? () async {
+                                              guesses++;
+                                              if (_answerChoices[2] ==
+                                                  correctAnswer) {
+                                                s.stop();
+                                                feedback(guesses);
+                                                correctPlayer.play();
+                                                var time =
+                                                    s.elapsedMilliseconds;
+                                                buttonThree =
+                                                    ButtonStatus.correct;
+                                                setAllButtonActivity(false);
+                                                await Future.delayed(
+                                                    Duration(seconds: 3));
+                                                addRound(
+                                                        guesses,
+                                                        user,
+                                                        time / 1000,
+                                                        songs[round])
+                                                    .then((value) {
+                                                  rounds.add(value);
+                                                  scoring(guesses);
+                                                  if (round > 4) {
+                                                    addGame(rounds, user)
+                                                        .then((value) {
+                                                      addScore(
+                                                          value,
+                                                          user,
+                                                          date,
+                                                          scores.reduce(
+                                                              (a, b) => a + b));
+                                                    });
+                                                  }
+                                                });
+                                                await correctPlayer.stop();
+                                                progressRound(true);
+                                              } else {
+                                                incorrectPlayer.play();
+                                                buttonThree =
+                                                    ButtonStatus.incorrect;
+                                                setState(() =>
+                                                    buttonThreeActive = false);
+                                                await Future.delayed(
+                                                    Duration(seconds: 1));
+                                                await incorrectPlayer.stop();
                                               }
-                                              break;
-                                            case 2:
-                                              {
-                                                scores.add(75);
+                                            }
+                                          : () async {},
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.resolveWith(
+                                                getColorThree),
+                                        minimumSize:
+                                            MaterialStateProperty.resolveWith(
+                                                buttonSizing),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Spacer(),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                                    child: ElevatedButton(
+                                      child: Text(_answerChoices[3]),
+                                      onPressed: buttonFourActive
+                                          ? () async {
+                                              guesses++;
+                                              if (_answerChoices[3] ==
+                                                  correctAnswer) {
+                                                s.stop();
+                                                feedback(guesses);
+                                                correctPlayer.play();
+                                                var time =
+                                                    s.elapsedMilliseconds;
+                                                buttonFour =
+                                                    ButtonStatus.correct;
+                                                setAllButtonActivity(false);
+                                                await Future.delayed(
+                                                    Duration(seconds: 3));
+                                                addRound(
+                                                        guesses,
+                                                        user,
+                                                        time / 1000,
+                                                        songs[round])
+                                                    .then((value) {
+                                                  rounds.add(value);
+                                                  scoring(guesses);
+                                                  if (round > 4) {
+                                                    addGame(rounds, user)
+                                                        .then((value) {
+                                                      addScore(
+                                                          value,
+                                                          user,
+                                                          date,
+                                                          scores.reduce(
+                                                              (a, b) => a + b));
+                                                    });
+                                                  }
+                                                });
+                                                await correctPlayer.stop();
+                                                progressRound(true);
+                                              } else {
+                                                incorrectPlayer.play();
+                                                buttonFour =
+                                                    ButtonStatus.incorrect;
+                                                setState(() =>
+                                                    buttonFourActive = false);
+                                                await Future.delayed(
+                                                    Duration(seconds: 1));
+                                                await incorrectPlayer.stop();
                                               }
-                                              break;
-                                            case 3:
-                                              {
-                                                scores.add(50);
-                                              }
-                                              break;
-                                            case 4:
-                                              {
-                                                scores.add(25);
-                                              }
-                                              break;
-                                          }
-                                          guesses = 0;
-                                          if (round > 4) {
-                                            addGame(rounds, user).then((value) {
-                                              addScore(
-                                                  value,
-                                                  user,
-                                                  date,
-                                                  scores
-                                                      .reduce((a, b) => a + b));
-                                            });
-                                          }
-                                        });
-                                        await correctPlayer.stop();
-                                        progressRound();
-                                      } else {
-                                        incorrectPlayer.play();
-                                        buttonFour = ButtonStatus.incorrect;
-                                        setState(
-                                            () => buttonFourActive = false);
-                                        await Future.delayed(
-                                            Duration(seconds: 1));
-                                        await incorrectPlayer.stop();
-                                      }
-                                    }
-                                  : () async {},
-                              color: MaterialStateProperty.resolveWith(
-                                  getColorFour),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              }),
-        )
-      ],
-    )));
+                                            }
+                                          : () async {},
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.resolveWith(
+                                                getColorFour),
+                                        minimumSize:
+                                            MaterialStateProperty.resolveWith(
+                                                buttonSizing),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+          ),
+        ],
+      )),
+      bottomNavigationBar: BottomAppBar(
+          color: Colors.black12,
+          child: Row(children: [
+            Spacer(),
+            IconButton(
+                icon: Icon(Icons.skip_next_rounded),
+                iconSize: 40,
+                color: Colors.white,
+                // labelText: "Skip",
+                onPressed: () async {
+                  progressRound(true);
+                }),
+          ])),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.deepPurple,
+          child: Icon(ppButtonStatus == VideoStatus.playing
+              ? Icons.pause
+              : Icons.play_arrow),
+          onPressed: () async {
+            if (ppButtonStatus == VideoStatus.playing) {
+              _controller.pause();
+              setState(() {
+                ppButtonStatus = VideoStatus.paused;
+              });
+            } else {
+              _controller.play();
+              setState(() {
+                ppButtonStatus = VideoStatus.playing;
+              });
+            }
+          }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
   }
 }
