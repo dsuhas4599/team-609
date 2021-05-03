@@ -35,6 +35,17 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
           .doc(playlistData.id)
           .snapshots(),
       builder: (context, snapshot1) {
+
+        // Convert to real time playlist data
+        var streamData = {
+          'image': snapshot1.data['image'],
+          'name': snapshot1.data['name'],
+          'songs': List<String>.from(snapshot1.data['songs']),
+          'user': snapshot1.data['user'],
+          'id': snapshot1.data.id
+        };
+        PlaylistWithID currentPlaylist = PlaylistWithID.fromMap(streamData);
+
         return StreamBuilder(
             stream: FirebaseFirestore.instance.collection('songs').snapshots(),
             builder: (context, snapshot2) {
@@ -109,7 +120,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                                                 (TapDownDetails details) {
                                               _specificSongPopUp(
                                                   details.globalPosition,
-                                                  playlistData,
+                                                  currentPlaylist,
                                                   currentSong);
                                             },
                                             child: IconButton(
@@ -192,25 +203,51 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
     });
   }
 
-  _specificSongPopUp(Offset offset, var playlistData, var allSongs) async {
+  _specificSongPopUp(Offset offset, PlaylistWithID playlistData, var songToSend) async {
     double left = offset.dx;
     double top = offset.dy;
-    await showMenu(
+    if (playlistData.user == 'global') {
+      await showMenu(
       context: context,
       position: RelativeRect.fromLTRB(left, top, 0, 0),
       items: [
         PopupMenuItem(
           value: 1,
-          child: Text("Delete Song"),
+          child: Text("Add to Playlist"),
         ),
       ],
       elevation: 8.0,
     ).then((value) async {
       if (value != null) {
         if (value == 1) {
-          await deleteSongInCustomPlaylist(playlistData, allSongs);
+          Get.to(UserPlaylistUI(), arguments: songToSend);
         }
       }
     });
+    } else {
+      await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, 0, 0),
+      items: [
+        PopupMenuItem(
+          value: 1,
+          child: Text("Add to Playlist")
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Text("Delete Song"),
+        )
+      ],
+      elevation: 8.0,
+    ).then((value) async {
+      if (value != null) {
+        if (value == 1) {
+          Get.to(UserPlaylistUI(), arguments: songToSend);
+        } else if (value == 2) {
+          await deleteSongInCustomPlaylist(playlistData, songToSend);
+        }
+      }
+    });
+    }
   }
 }
