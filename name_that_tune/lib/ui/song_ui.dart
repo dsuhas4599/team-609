@@ -18,7 +18,6 @@ class SongUI extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongUI> {
-  String feedbacklink = "";
   var rounds = [];
   String user = "";
   int guesses = 0;
@@ -119,7 +118,6 @@ class _SongPageState extends State<SongUI> {
       setState(() {
         _imagesFuture = getImages();
         _answersFuture = getAnswers();
-        feedbacklink = "";
       });
       if (skipVideo) {
         _controller.nextVideo();
@@ -133,9 +131,6 @@ class _SongPageState extends State<SongUI> {
       s.start();
     } else {
       sub.cancel();
-      setState(() {
-        feedbacklink = "";
-      });
       int finalScore = scores.reduce((a, b) => a + b);
       Get.to(GameRecapUI(), arguments: [data, finalScore]);
     }
