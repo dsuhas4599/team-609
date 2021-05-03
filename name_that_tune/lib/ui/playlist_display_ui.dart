@@ -7,6 +7,7 @@ import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -16,105 +17,119 @@ class PlaylistDisplayUI extends StatefulWidget {
 }
 
 class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
-  Future _allSongs;
-  Future newPlaylistData;
   var playlistData;
 
   @override
   void initState() {
     super.initState();
     playlistData = Get.arguments;
-    _allSongs = getPlaylistSongs(playlistData.songs);
-    newPlaylistData = getPlaylistFromID(playlistData.id);
   }
 
   final String user = auth.currentUser.uid.toString();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.wait([_allSongs, newPlaylistData]),
-      builder: (context, projectSnap) {
-        if (projectSnap.connectionState == ConnectionState.none &&
-            projectSnap.hasData == null) {
-          return Container();
-        } else if (projectSnap.connectionState == ConnectionState.waiting) {
-          return new Center(
-            child: new CircularProgressIndicator(),
-          );
-        }
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('playlists')
+          .doc(playlistData.id)
+          .snapshots(),
+      builder: (context, snapshot1) {
+        return StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('songs').snapshots(),
+            builder: (context, snapshot2) {
+              if (snapshot1.connectionState == ConnectionState.none &&
+                  snapshot1.hasData == null) {
+                return Container();
+              } else if (snapshot1.connectionState == ConnectionState.waiting) {
+                return new Center(
+                  child: new CircularProgressIndicator(),
+                );
+              }
 
-        return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Playlist Songs',
-            home: Scaffold(
-                appBar: AppBar(
-                  title: Text(playlistData.name),
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    tooltip: 'Navigation menu',
-                    onPressed: () async {
-                      Get.back();
-                    },
-                  ),
-                  actions: <Widget>[
-                    determineCustomPlaylist(projectSnap.data[1]),
-                  ],
-                ),
-                body: Column(
-                  children: <Widget>[
-                    playGameButton(projectSnap.data[1]),
-                    ElevatedButton(
-                      child: Text('Refresh'),
-                      onPressed: () async {
-                        refreshSongList();
-                      },
-                    ),
-                    Expanded(
-                        child: ListView.builder(
-                      itemCount: projectSnap.data[0].length,
-                      itemBuilder: (context, index) {
-                        SongModel allSongs = projectSnap.data[0][index];
-                        return Column(
-                          children: <Widget>[
-                            // Displays list of songs in a tile
-                            ListTile(
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.network(
-                                    'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274',
-                                  ),
-                                ),
-                                title: Text(allSongs.name),
-                                subtitle: Text(allSongs.artist),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTapDown: (TapDownDetails details) {
-                                        _specificSongPopUp(
-                                            details.globalPosition,
-                                            playlistData,
-                                            allSongs);
-                                      },
-                                      child: IconButton(
-                                          icon: Icon(Icons.more_horiz)),
-                                    )
-                                  ],
-                                )),
-                            Divider(thickness: 1),
-                          ],
-                        );
-                      },
-                    ))
-                  ],
-                )));
+              // Set song data to be displayed
+              List<SongWithID> customPlaylistSongs = [];
+              for (var songData in snapshot2.data.docs) {
+                var data = {
+                  'artist': songData['artist'],
+                  'date': songData['date'],
+                  'name': songData['name'],
+                  'videoID': songData['videoID'],
+                  'id': songData.id
+                };
+
+                if (snapshot1.data['songs'].contains(songData.id)) {
+                  customPlaylistSongs.add(SongWithID.fromMap(data));
+                }
+              }
+
+              return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Playlist Songs',
+                  home: Scaffold(
+                      appBar: AppBar(
+                        title: Text(playlistData.name),
+                        leading: IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          tooltip: 'Navigation menu',
+                          onPressed: () async {
+                            Get.back();
+                          },
+                        ),
+                        actions: <Widget>[
+                          determineCustomPlaylist(playlistData),
+                        ],
+                      ),
+                      body: Column(
+                        children: <Widget>[
+                          playGameButton(customPlaylistSongs),
+                          Expanded(
+                              child: ListView.builder(
+                            itemCount: customPlaylistSongs.length,
+                            itemBuilder: (context, index) {
+                              SongModel currentSong =
+                                  customPlaylistSongs[index];
+                              return Column(
+                                children: <Widget>[
+                                  ListTile(
+                                      leading: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Image.network(
+                                          'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274',
+                                        ),
+                                      ),
+                                      title: Text(currentSong.name),
+                                      subtitle: Text(currentSong.artist),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            onTapDown:
+                                                (TapDownDetails details) {
+                                              _specificSongPopUp(
+                                                  details.globalPosition,
+                                                  playlistData,
+                                                  currentSong);
+                                            },
+                                            child: IconButton(
+                                                icon: Icon(Icons.more_horiz)),
+                                          )
+                                        ],
+                                      )),
+                                ],
+                              );
+                            },
+                          ))
+                        ],
+                      )));
+            });
       },
     );
   }
 
-  Widget playGameButton(var playlistData) {
-    if (playlistData.songs.length == 0 || playlistData.songs.length < 4) {
+  Widget playGameButton(var listOfSongs) {
+    if (listOfSongs.length == 0 || listOfSongs.length < 5) {
       return Column(
         children: <Widget>[
           Text('Add some more songs!'),
@@ -143,27 +158,9 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
         },
         child: IconButton(icon: Icon(Icons.more_horiz)),
       );
-      // IconButton(
-      //   icon: Icon(Icons.add),
-      //   tooltip: 'Add Playlist',
-      //   onPressed: () {
-      //     Get.to(SongDisplayUi(), arguments: playlistInfo);
-      //   },
-      // );
     } else {
       return new Container();
     }
-  }
-
-  // misc functions
-  void refreshSongList() async {
-    playlistData = await getPlaylistFromID(playlistData.id);
-    setState(() {
-      // newPlaylistData = await getPlaylistFromID(playlistData.id);
-      /* playlistData =
-          newPlaylistData; */ // Not working - returns a Future<dynamic> butneeds to be a PlaylistWithIDs object for the next function to work
-      _allSongs = getCustomSongsWithIDs(playlistData.songs);
-    });
   }
 
   _showPopupMenu(Offset offset, var playlistData) async {
@@ -212,7 +209,6 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
       if (value != null) {
         if (value == 1) {
           await deleteSongInCustomPlaylist(playlistData, allSongs);
-          refreshSongList();
         }
       }
     });
