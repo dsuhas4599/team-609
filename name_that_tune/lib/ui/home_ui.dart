@@ -23,11 +23,12 @@ class HomeUI extends StatelessWidget {
                 backgroundColor: Colors.black12, //Colors.amber.shade700,
                 // title: // Text("Welcome, " + controller.firestoreUser.value.name.split(' ')[0]),
                 actions: [
-                  // IconButton(
-                  //     icon: Icon(Icons.settings),
-                  //     onPressed: () {
-                  //       Get.to(SettingsUI());
-                  //     }),
+                  IconButton(
+                      icon: Icon(Icons.settings),
+                      color: Colors.amber.shade700,
+                      onPressed: () {
+                        Get.to(SettingsUI());
+                      }),
                 ],
               ),
               body: Center(

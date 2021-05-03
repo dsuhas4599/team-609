@@ -94,6 +94,25 @@ Future<List<PlaylistModel>> getAllPlaylists() async {
   return playlistObjects;
 }
 
+Future<List<PlaylistModel>> getGlobalPlaylists() async {
+  // returns a list of all global playlists in firestore
+  List<PlaylistModel> playlistObjects = [];
+  await playlists.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'user': doc['user'],
+            'name': doc['name'],
+            'songs': List<String>.from(doc['songs']),
+            'image': doc['image']
+          };
+          if (PlaylistModel.fromMap(data).user == "global") {
+            playlistObjects.add(PlaylistModel.fromMap(data));
+          }
+        })
+      });
+  return playlistObjects;
+}
+
 Future<PlaylistModel> getSpecificPlaylist(String playlistName) async {
   // given a playlist name will return that playlist object
   List<PlaylistModel> allPlaylists = await getAllPlaylists();
@@ -159,6 +178,7 @@ Future<String> videoIDToImage(String id) async {
   // given a song's video id, returns a list of images from the year of that song
   var imageLinks = [];
   String songYear = "";
+  bool displayTemp = false;
   await songs.where('videoID', isEqualTo: id).get().then((QuerySnapshot qs) {
     qs.docs.forEach((song) {
       songYear = song['date'];
@@ -168,13 +188,22 @@ Future<String> videoIDToImage(String id) async {
       .where('year', isEqualTo: songYear)
       .get()
       .then((QuerySnapshot qs) {
-    qs.docs.forEach((doc) {
-      imageLinks.add(doc['links']);
-    });
+    if (qs.docs.isEmpty) {
+      displayTemp = true;
+    } else {
+      qs.docs.forEach((doc) {
+        imageLinks.add(doc['links']);
+      });
+    }
   });
-  List<dynamic> imagesList = imageLinks[0];
-  imagesList.shuffle();
-  return imagesList.first;
+  if (displayTemp) {
+    return "https://combo.staticflickr.com/ap/build/images/refencing-announcement/bird2.jpg";
+    //return "https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274";
+  } else {
+    List<dynamic> imagesList = imageLinks[0];
+    imagesList.shuffle();
+    return imagesList.first;
+  }
 }
 
 //Functions to write to firestore
@@ -200,6 +229,17 @@ Future<void> addScore(var game, var user, var date, var score) {
       .add({'game': game, 'user': user, 'date': date, 'score': score})
       .then((value) => print("score added"))
       .catchError((error) => print("failed to add score"));
+}
+
+Future<DocumentReference> addSong(
+    String artist, String date, String name, String videoID) async {
+  DocumentReference docRef = await songs.add({
+    'artist': artist,
+    'date': date,
+    'name': name,
+    'videoID': videoID,
+  });
+  return docRef;
 }
 
 // Inherited model for playlist with IDs
@@ -251,7 +291,7 @@ Future<void> createEmptyPlaylist(String playlistName, String user) {
   return playlists.add(data);
 }
 
-Future findPlayer(String uid) async {
+Future<void> findPlayer(String uid) async {
   await users.get().then((QuerySnapshot querySnapshot) => {
         querySnapshot.docs.forEach((doc) {
           if (doc.id == uid) {
@@ -281,7 +321,7 @@ Future<List<SongModel>> getPlaylistSongs(List<String> playlistSongs) async {
   return retrievedSongs;
 }
 
-Future addSongToCurrentPlaylist(
+Future<void> addSongToCurrentPlaylist(
     String id, var songData, BuildContext context) async {
   await playlists.doc(id).get().then((DocumentSnapshot documentSnapshot) {
     if (documentSnapshot.data()['songs'].contains(songData.id)) {
@@ -289,6 +329,19 @@ Future addSongToCurrentPlaylist(
     } else {
       playlists.doc(id).update({
         "songs": FieldValue.arrayUnion([songData.id])
+      });
+    }
+  });
+}
+
+Future<void> addSongToGlobalPlaylist(String songID, String playlistName) async {
+  await playlists
+      .where("name", isEqualTo: playlistName)
+      .get()
+      .then((QuerySnapshot snap) {
+    if (snap.docs.length == 1) {
+      playlists.doc(snap.docs.first.id).update({
+        "songs": FieldValue.arrayUnion([songID])
       });
     }
   });
@@ -313,7 +366,7 @@ class SongWithID extends SongModel {
 }
 
 // Song functions
-Future getSongsWithIDs() async {
+Future<List<SongWithID>> getSongsWithIDs() async {
   // returns all songs in a list of song models including IDs for easier db manipulation
   List<SongWithID> songObjects = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
@@ -331,7 +384,8 @@ Future getSongsWithIDs() async {
   return songObjects;
 }
 
-Future getCustomSongsWithIDs(List<String> playlistSongs) async {
+Future<List<SongWithID>> getCustomSongsWithIDs(
+    List<String> playlistSongs) async {
   // returns list of songs of a custom playlist with all IDs
   List<SongWithID> retrievedSongs = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {

@@ -75,6 +75,7 @@ class _SongPageState extends State<SongUI> {
   Future<PlaylistModel> initializePlaylist() async {
     _playlist = await convertPlaylistToUsable(data);
     _playlist.songs.shuffle();
+    _playlist.songs = _playlist.songs.sublist(0, 5);
     songs = _playlist.songs;
     _controller = YoutubePlayerController(
       initialVideoId: '',
@@ -630,27 +631,29 @@ class _SongPageState extends State<SongUI> {
           ])),
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepPurple,
-          child: Stack(children: [
-            FutureBuilder(
-              future: _playlistFuture,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Container(
-                      height: 1,
-                      width: 1,
-                      child: YoutubePlayerIFrame(
-                        controller: _controller,
-                        aspectRatio: 16 / 9,
-                      ));
-                } else {
-                  return Container();
-                }
-              },
-            ),
-            Icon(ppButtonStatus == VideoStatus.playing
-                ? Icons.pause
-                : Icons.play_arrow),
-          ]),
+          child: FutureBuilder(
+            future: _playlistFuture,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return Stack(
+                  children: [
+                    Container(
+                        height: 1,
+                        width: 1,
+                        child: YoutubePlayerIFrame(
+                          controller: _controller,
+                          aspectRatio: 16 / 9,
+                        )),
+                    Icon(ppButtonStatus == VideoStatus.playing
+                        ? Icons.pause
+                        : Icons.play_arrow),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
           onPressed: () async {
             if (ppButtonStatus == VideoStatus.playing) {
               _controller.pause();
