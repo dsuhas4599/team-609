@@ -19,10 +19,12 @@ class _DancePageState extends State<DanceUI> {
   int round = 0;
   var songs = [];
   var data = Get.arguments;
+  String correctAnswer = "";
   PlaylistModel _playlist;
   Future<PlaylistModel> _playlistFuture;
   dynamic _image;
   Future<String> _imagesFuture;
+  List<SongModel> _songNames;
   YoutubePlayerController _controller;
 
   Status ppButtonStatus = Status.playing;
@@ -36,8 +38,9 @@ class _DancePageState extends State<DanceUI> {
 
   Future<PlaylistModel> initializePlaylist() async {
     _playlist = await convertPlaylistToUsable(data);
-    _playlist.songs.shuffle();
+    _playlist.songs;
     songs = _playlist.songs;
+    _songNames = await playlistToSongs(data);
     _controller = YoutubePlayerController(
       initialVideoId: '',
       params: YoutubePlayerParams(
@@ -59,6 +62,7 @@ class _DancePageState extends State<DanceUI> {
   }
 
   void progressRound(bool skipVideo) {
+    print(_playlist.songs);
     round++;
     // reset and update
     if (round <= 4) {
@@ -83,7 +87,7 @@ class _DancePageState extends State<DanceUI> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return Center(
-                  child: Text(_playlist.name,
+                  child: Text(_songNames[round].name,
                       textScaleFactor: 4,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
