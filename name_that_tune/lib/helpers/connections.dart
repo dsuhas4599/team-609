@@ -1,6 +1,7 @@
 // Functions for getting data from firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_starter/models/models.dart';
+import 'package:flutter/material.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 CollectionReference playlists =
@@ -201,6 +202,24 @@ Future<void> addScore(var game, var user, var date, var score) {
       .catchError((error) => print("failed to add score"));
 }
 
+// Inherited model for playlist with IDs
+class PlaylistWithID extends PlaylistModel {
+  String id;
+
+  PlaylistWithID({user, name, songs, image, this.id})
+      : super(user: user, name: name, songs: songs, image: image);
+  // factory PlaylistWithID.fromJson(Map<String, dynamic> toJson() => {"user": user, "name": name, "songs": songs, "image": image};)
+  factory PlaylistWithID.fromMap(Map data) {
+    return PlaylistWithID(
+      user: data['user'] ?? '',
+      name: data['name'] ?? '',
+      songs: data['songs'] ?? '',
+      image: data['image'] ?? '',
+      id: data['id'] ?? '',
+    );
+  }
+}
+
 // All functions that are related to custom playlists
 Future<List<PlaylistModel>> getCustomGlobalPlaylists(String user) async {
   List<PlaylistModel> customGlobalPlaylists = [];
@@ -210,10 +229,11 @@ Future<List<PlaylistModel>> getCustomGlobalPlaylists(String user) async {
             'user': doc['user'],
             'name': doc['name'],
             'songs': List<String>.from(doc['songs']),
-            'image': doc['image']
+            'image': doc['image'],
+            'id': doc.id
           };
           if (data['user'] == 'global' || data['user'] == user) {
-            customGlobalPlaylists.add(PlaylistModel.fromMap(data));
+            customGlobalPlaylists.add(PlaylistWithID.fromMap(data));
           }
         })
       });
@@ -259,4 +279,132 @@ Future<List<SongModel>> getPlaylistSongs(List<String> playlistSongs) async {
         })
       });
   return retrievedSongs;
+}
+
+Future addSongToCurrentPlaylist(
+    String id, var songData, BuildContext context) async {
+  await playlists.doc(id).get().then((DocumentSnapshot documentSnapshot) {
+    if (documentSnapshot.data()['songs'].contains(songData.id)) {
+      _displayCreated(context);
+    } else {
+      playlists.doc(id).update({
+        "songs": FieldValue.arrayUnion([songData.id])
+      });
+    }
+  });
+}
+
+// Inherited model for songs with IDs
+class SongWithID extends SongModel {
+  String id;
+
+  SongWithID({artist, date, name, videoID, this.id})
+      : super(artist: artist, date: date, name: name, videoID: videoID);
+
+  factory SongWithID.fromMap(Map data) {
+    return SongWithID(
+      artist: data['artist'] ?? '',
+      date: data['date'] ?? '',
+      name: data['name'] ?? '',
+      videoID: data['videoID'] ?? '',
+      id: data['id'] ?? '',
+    );
+  }
+}
+
+// Song functions
+Future getSongsWithIDs() async {
+  // returns all songs in a list of song models including IDs for easier db manipulation
+  List<SongWithID> songObjects = [];
+  await songs.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'artist': doc['artist'],
+            'date': doc['date'],
+            'name': doc['name'],
+            'videoID': doc['videoID'],
+            'id': doc.id
+          };
+          songObjects.add(SongWithID.fromMap(data));
+        })
+      });
+  return songObjects;
+}
+
+Future getCustomSongsWithIDs(List<String> playlistSongs) async {
+  // returns list of songs of a custom playlist with all IDs
+  List<SongWithID> retrievedSongs = [];
+  await songs.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          if (playlistSongs.contains(doc.id)) {
+            var data = {
+              'artist': doc['artist'],
+              'date': doc['date'],
+              'name': doc['name'],
+              'videoID': doc['videoID'],
+              'id': doc.id
+            };
+            retrievedSongs.add(SongWithID.fromMap(data));
+          }
+        })
+      });
+  return retrievedSongs;
+}
+
+// Misc. Alert
+Future<void> _displayCreated(BuildContext context) async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('This song is already added to this playlist!'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OKAY'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<void> deleteCustomPlaylist(PlaylistWithID playlistData) async {
+  return playlists
+      .doc(playlistData.id)
+      .delete()
+      .then((value) => print("Playlist deleted"))
+      .catchError((error) => print("Failed to delete playlist: $error"));
+}
+
+Future<void> deleteSongInCustomPlaylist(var playlistData, var allSongs) async {
+  return playlists
+      .doc(playlistData.id)
+      .update({
+        'songs': FieldValue.arrayRemove([allSongs.id])
+      })
+      .then((value) => print("Song deleted"))
+      .catchError((error) => print("Failed to delete song: $error"));
+}
+
+Future<PlaylistWithID> getPlaylistFromID(String playlistID) async {
+  // given a playlist ID will return that playlist object
+  PlaylistWithID retrievedPlaylist;
+  await playlists.get().then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) {
+          var data = {
+            'user': doc['user'],
+            'name': doc['name'],
+            'songs': List<String>.from(doc['songs']),
+            'image': doc['image'],
+            'id': doc.id
+          };
+          if (doc.id == playlistID) {
+            retrievedPlaylist = PlaylistWithID.fromMap(data);
+          }
+        })
+      });
+  return retrievedPlaylist;
 }

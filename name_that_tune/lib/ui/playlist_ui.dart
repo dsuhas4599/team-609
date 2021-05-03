@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/localizations.dart';
 import 'package:flutter_starter/controllers/controllers.dart';
@@ -9,25 +10,34 @@ import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PlaylistUI extends StatelessWidget {
-  static const String _title = 'Playlists';
+class PlaylistUI extends StatefulWidget {
+  // static const String _title = 'Playlists';
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        body: PlaylistPage(),
-      ),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     title: _title,
+  //     home: Scaffold(
+  //       body: PlaylistPage(),
+  //     ),
+  //     debugShowCheckedModeBanner: false,
+  //   );
+  // }
+  _PlaylistPageState createState() => _PlaylistPageState();
 }
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
-class PlaylistPage extends StatelessWidget {
+class _PlaylistPageState extends State<PlaylistUI> {
   final String user = auth.currentUser.uid.toString();
+  var _allPlaylists;
+
+  @override
+  void initState() {
+    super.initState();
+    // _allPlaylists = streamCustomPlaylists(user);
+    _allPlaylists = FirebaseFirestore.instance.collection('playlists').snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,87 +64,107 @@ class PlaylistPage extends StatelessWidget {
       body: playlistWidget(user),
     );
   }
-}
 
-Widget playlistWidget(String user) {
-  return FutureBuilder(
-    builder: (context, projectSnap) {
-      if (projectSnap.connectionState == ConnectionState.none &&
-          projectSnap.hasData == null) {
-        return Container();
-      } else if (projectSnap.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
-      }
-      return ListView.builder(
-        itemCount: projectSnap.data.length,
-        itemBuilder: (context, index) {
-          PlaylistModel allPlaylists = projectSnap.data[index];
-          return Column(
-            children: <Widget>[
-              // Displays list of projects in a tile
-              ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    allPlaylists.image,
-                    height: 50.0,
-                    width: 50.0,
-                  ),
-                ),
-                title: Text(allPlaylists.name),
-                subtitle: determineSubtitle(allPlaylists.user),
-                trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () async {
-                  Get.to(PlaylistDisplayUI(), arguments: allPlaylists);
-                },
-              ),
-              Divider(thickness: 1),
-            ],
+  Widget playlistWidget(String user) {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('playlists').where('user', whereIn: [user, 'global']).snapshots(),
+      initialData: [],
+      builder: (context, projectSnap) {
+        if (projectSnap.connectionState == ConnectionState.none &&
+            projectSnap.hasData == null) {
+          return Container();
+        } else if (projectSnap.connectionState == ConnectionState.waiting) {
+          return new Center(
+            child: new CircularProgressIndicator(),
           );
-        },
-      );
-    },
-    future: getCustomGlobalPlaylists(user),
-  );
-}
+        }
+        return ListView.builder(
+          itemCount: projectSnap.data.docs.length,
+          itemBuilder: (context, index) {
+            var currentDoc = projectSnap.data.docs[index];
+            var data = {
+              'user': currentDoc['user'],
+              'name': currentDoc['name'],
+              'songs': List<String>.from(currentDoc['songs']),
+              'image': currentDoc['image'],
+              'id': currentDoc.id
+            };
+            PlaylistWithID currentPlaylist = PlaylistWithID.fromMap(data);
+            return Column(
+              children: <Widget>[
+                // Displays list of playlists in a tile
+                ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.network(
+                      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274',
+                      height: 50.0,
+                      width: 50.0,
+                    ),
+                  ),
+                  title: Text(currentPlaylist.name),
+                  subtitle: determineSubtitle(currentPlaylist.user),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () async {
+                    Get.to(PlaylistDisplayUI(), arguments: currentPlaylist);
+                  },
+                ),
+                Divider(thickness: 1),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
 // Add empty playlist dialog box
-TextEditingController _textFieldController = TextEditingController();
-Future<void> _displayTextInputDialog(BuildContext context, String user) async {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text('Name your playlist!'),
-        content: TextField(
-          controller: _textFieldController,
-          decoration: InputDecoration(hintText: "My playlist"),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('CANCEL'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+  TextEditingController _textFieldController = TextEditingController();
+  Future<void> _displayTextInputDialog(
+      BuildContext context, String user) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Name your playlist!'),
+          content: TextField(
+            controller: _textFieldController,
+            decoration: InputDecoration(hintText: "My playlist"),
           ),
-          TextButton(
-            child: Text('CREATE'),
-            onPressed: () {
-              createEmptyPlaylist(_textFieldController.text, user);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: <Widget>[
+            TextButton(
+              child: Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text('CREATE'),
+              onPressed: () {
+                createEmptyPlaylist(_textFieldController.text, user);
+                refreshPlaylists();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-Widget determineSubtitle(String user) {
-  // var displayName =  findPlayer(user);
-  if (user == 'global') {
-    return Text('Public Playlist');
-  } else {
-    return Text('Custom Playlist');
+  Widget determineSubtitle(String user) {
+    // var displayName =  findPlayer(user);
+    if (user == 'global') {
+      return Text('Public Playlist');
+    } else {
+      return Text('Custom Playlist');
+    }
+  }
+
+  // misc functions
+  void refreshPlaylists() {
+    setState(() {
+      _allPlaylists = getCustomGlobalPlaylists(user);
+    });
   }
 }
