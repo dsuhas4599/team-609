@@ -88,7 +88,7 @@ class _DancePageState extends State<DanceUI> {
             if (snapshot.hasData) {
               return Center(
                   child: Text(_songNames[round].name,
-                      textScaleFactor: 4,
+                      textScaleFactor: 3,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -100,29 +100,10 @@ class _DancePageState extends State<DanceUI> {
         ),
         actions: <Widget>[],
       ),
+      backgroundColor: Colors.black,
       body: Center(
         child: ListView(
         children: <Widget>[
-          PrimaryButton(
-            labelText: ppButtonStatus == Status.playing ? "Pause" : "Play",
-            onPressed: () async {
-              if (ppButtonStatus == Status.playing) {
-                _controller.pause();
-                setState(() {
-                  ppButtonStatus = Status.paused;
-                });
-              } else {
-                _controller.play();
-                setState(() {
-                  ppButtonStatus = Status.playing;
-                });
-              }
-            }),
-          PrimaryButton(
-            labelText: "Skip song",
-            onPressed: () async {
-              progressRound(true);
-            }),
         Align(
           alignment: Alignment.center,
           child: Padding(
@@ -173,6 +154,39 @@ class _DancePageState extends State<DanceUI> {
           ),
         ),
       ],
-    )));
+    )),
+    bottomNavigationBar: BottomAppBar(
+      color: Colors.black12,
+      child: Row(children: [
+        Spacer(),
+        IconButton(
+          icon: Icon(Icons.skip_next_rounded),
+          iconSize: 40,
+          color: Colors.white,
+          // labelText: "Skip",
+          onPressed: () async {
+            progressRound(true);
+          }),
+      ])),
+    floatingActionButton: FloatingActionButton(
+      backgroundColor: Colors.deepPurple,
+      child: Icon(ppButtonStatus == Status.playing
+        ? Icons.pause
+        : Icons.play_arrow),
+      onPressed: () async {
+        if (ppButtonStatus == Status.playing) {
+          _controller.pause();
+          setState(() {
+            ppButtonStatus = Status.paused;
+          });
+        } else {
+            _controller.play();
+            setState(() {
+              ppButtonStatus = Status.playing;
+            });
+        }
+      }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
   }
 }
