@@ -118,6 +118,7 @@ class _SongPageState extends State<SongUI> {
       setState(() {
         _imagesFuture = getImages();
         _answersFuture = getAnswers();
+        ppButtonStatus = VideoStatus.playing;
       });
       if (skipVideo) {
         _controller.nextVideo();
@@ -285,51 +286,35 @@ class _SongPageState extends State<SongUI> {
               padding: const EdgeInsets.all(50.0),
               child: Container(
                 height: 300,
-                child: Stack(
-                  children: [
-                    Center(
-                      child: FutureBuilder(
-                        future: _playlistFuture,
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasData) {
-                            return Container(
-                                height: 1 /* change back to 0 */,
-                                width: 1 /* change back to 0 */,
-                                child: YoutubePlayerIFrame(
-                                  controller: _controller,
-                                  aspectRatio: 16 / 9,
-                                ));
-                          } else {
-                            return Container();
-                          }
-                        },
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: FutureBuilder(
+                          future: _imagesFuture,
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return SizedBox(
+                                width: 60.0,
+                                height: 60.0,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            } else if (snapshot.hasData) {
+                              return Image.network(_image);
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: FutureBuilder(
-                              future: _imagesFuture,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Image.network(_image);
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -645,9 +630,27 @@ class _SongPageState extends State<SongUI> {
           ])),
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepPurple,
-          child: Icon(ppButtonStatus == VideoStatus.playing
-              ? Icons.pause
-              : Icons.play_arrow),
+          child: Stack(children: [
+            FutureBuilder(
+              future: _playlistFuture,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                      height: 1,
+                      width: 1,
+                      child: YoutubePlayerIFrame(
+                        controller: _controller,
+                        aspectRatio: 16 / 9,
+                      ));
+                } else {
+                  return Container();
+                }
+              },
+            ),
+            Icon(ppButtonStatus == VideoStatus.playing
+                ? Icons.pause
+                : Icons.play_arrow),
+          ]),
           onPressed: () async {
             if (ppButtonStatus == VideoStatus.playing) {
               _controller.pause();
