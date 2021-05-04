@@ -57,56 +57,62 @@ class _GameRecapState extends State<GameRecapUI> {
                 ),
                 backgroundColor: Colors.black,
                 body: Center(
-                  child: Column(children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 60),
-                      child: Text(
-                          responses.first +
-                              ", " +
-                              controller.firestoreUser.value.name
-                                  .split(' ')[0] +
-                              "!!!",
-                          textScaleFactor: 4,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                    ),
-                    Flex(
-                      direction: Axis.horizontal,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.fromLTRB(48, 0, 48, 0),
-                          child: ElevatedButton(
-                              child: Text("Play Again"),
-                              onPressed: () async {
-                                Get.to(SongUI(), arguments: playlistName);
-                              },
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.resolveWith(getColor),
-                                minimumSize: MaterialStateProperty.resolveWith(
-                                    getButtonSize),
-                              )),
-                        )),
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.fromLTRB(48, 0, 48, 0),
-                          child: ElevatedButton(
-                              child: Text("Home"),
-                              onPressed: () async {
-                                Get.offAll(HomeUI());
-                              },
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.resolveWith(getColor),
-                                minimumSize: MaterialStateProperty.resolveWith(
-                                    getButtonSize),
-                              )),
-                        )),
-                      ],
-                    )
-                  ]),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 20, 0, 60),
+                          child: Text(
+                              responses.first +
+                                  ", " +
+                                  controller.firestoreUser.value.name
+                                      .split(' ')[0] +
+                                  "!",
+                              textScaleFactor: 4,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        ),
+                        Flex(
+                          direction: Axis.horizontal,
+                          children: [
+                            Expanded(
+                                child: Padding(
+                              padding: EdgeInsets.fromLTRB(48, 0, 48, 0),
+                              child: ElevatedButton(
+                                  child: Text("Play Again"),
+                                  onPressed: () async {
+                                    Get.to(SongUI(), arguments: playlistName);
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            getColor),
+                                    minimumSize:
+                                        MaterialStateProperty.resolveWith(
+                                            getButtonSize),
+                                  )),
+                            )),
+                            Expanded(
+                                child: Padding(
+                              padding: EdgeInsets.fromLTRB(48, 0, 48, 0),
+                              child: ElevatedButton(
+                                  child: Text("Home"),
+                                  onPressed: () async {
+                                    Get.offAll(HomeUI());
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            getColor),
+                                    minimumSize:
+                                        MaterialStateProperty.resolveWith(
+                                            getButtonSize),
+                                  )),
+                            )),
+                          ],
+                        )
+                      ]),
                 )));
   }
 }
