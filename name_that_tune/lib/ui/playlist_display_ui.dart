@@ -18,11 +18,11 @@ class PlaylistDisplayUI extends StatefulWidget {
 
 class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
   var playlistData;
-
+  var mode = Get.arguments[1];
   @override
   void initState() {
     super.initState();
-    playlistData = Get.arguments;
+    playlistData = Get.arguments[0];
   }
 
   final String user = auth.currentUser.uid.toString();
@@ -154,7 +154,12 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
       return ElevatedButton(
         child: Text('Play Game'),
         onPressed: () {
-          Get.to(SongUI(), arguments: playlistData.name);
+          if (mode == "game") {
+            Get.to(SongUI(), arguments: playlistData.name);
+          }
+          else if (mode == "dance") {
+            Get.to(DanceUI(), arguments: playlistData.name);
+          }
         },
       );
     }
