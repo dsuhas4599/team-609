@@ -23,11 +23,11 @@ class HomeUI extends StatelessWidget {
                 backgroundColor: Colors.black12, //Colors.amber.shade700,
                 // title: // Text("Welcome, " + controller.firestoreUser.value.name.split(' ')[0]),
                 actions: [
-                  IconButton(
-                      icon: Icon(Icons.settings),
-                      onPressed: () {
-                        Get.to(SettingsUI());
-                      }),
+                  // IconButton(
+                  //     icon: Icon(Icons.settings),
+                  //     onPressed: () {
+                  //       Get.to(SettingsUI());
+                  //     }),
                 ],
               ),
               body: Center(
@@ -41,7 +41,7 @@ class HomeUI extends StatelessWidget {
                               controller.firestoreUser.value.name
                                   .split(' ')[0] +
                               '!',
-                          textScaleFactor: 4,
+                          textScaleFactor: 5,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white)),
@@ -56,16 +56,24 @@ class HomeUI extends StatelessWidget {
                           children: [
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(100, 50),
                                     primary: Colors.amber.shade700),
-                                child: Text('Game Mode'),
+                                child: Text(
+                                  'Game Mode',
+                                  style: TextStyle(fontSize: 17),
+                                ),
                                 onPressed: () async {
                                   mode = "game";
                                   Get.to(PlaylistUI(), arguments: mode);
                                 }),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(100, 50),
                                     primary: Colors.amber.shade700),
-                                child: Text('Dance Mode'),
+                                child: Text(
+                                  'Dance Mode',
+                                  style: TextStyle(fontSize: 17),
+                                ),
                                 onPressed: () async {
                                   mode = "dance";
                                   Get.to(PlaylistUI(), arguments: mode);
