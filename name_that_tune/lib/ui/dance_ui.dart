@@ -29,7 +29,6 @@ class _DancePageState extends State<DanceUI> {
 
   Status ppButtonStatus = Status.playing;
 
-
   @override
   void initState() {
     super.initState();
@@ -38,7 +37,6 @@ class _DancePageState extends State<DanceUI> {
 
   Future<PlaylistModel> initializePlaylist() async {
     _playlist = await convertPlaylistToUsable(data);
-    _playlist.songs;
     songs = _playlist.songs;
     _songNames = await playlistToSongs(data);
     _controller = YoutubePlayerController(
@@ -71,6 +69,7 @@ class _DancePageState extends State<DanceUI> {
       }
       setState(() {
         _imagesFuture = getImages();
+        ppButtonStatus = Status.playing;
       });
     } else {
       Get.to(HomeUI());
@@ -102,90 +101,89 @@ class _DancePageState extends State<DanceUI> {
       ),
       backgroundColor: Colors.black,
       body: Center(
-        child: ListView(
+          child: ListView(
         children: <Widget>[
-        Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 300,
-              child: Stack(
-                children: [
-                  Center(
-                    child: FutureBuilder(
-                      future: _playlistFuture,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasData) {
-                          return Container(
-                              height: 1 /* change back to 0 */,
-                              width: 1 /* change back to 0 */,
-                              child: YoutubePlayerIFrame(
-                                controller: _controller,
-                                aspectRatio: 16 / 9,
-                              ));
-                        } else {
-                          return Container();
-                        }
-                      },
-                    ),
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                height: 300,
+                child: Center(
+                  child: FutureBuilder(
+                    future: _imagesFuture,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                          width: 60.0,
+                          height: 60.0,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else if (snapshot.hasData) {
+                        return Image.network(_image);
+                      } else {
+                        return Container();
+                      }
+                    },
                   ),
-                  Center(
-                    child: FutureBuilder(
-                      future: _imagesFuture,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasData) {
-                          return Image.network(_image);
-                        } else {
-                          return Container();
-                        }
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    )),
-    bottomNavigationBar: BottomAppBar(
-      color: Colors.black12,
-      child: Row(children: [
-        Spacer(),
-        IconButton(
-          icon: Icon(Icons.skip_next_rounded),
-          iconSize: 40,
-          color: Colors.white,
-          // labelText: "Skip",
+        ],
+      )),
+      bottomNavigationBar: BottomAppBar(
+          color: Colors.black12,
+          child: Row(children: [
+            Spacer(),
+            IconButton(
+                icon: Icon(Icons.skip_next_rounded),
+                iconSize: 40,
+                color: Colors.white,
+                // labelText: "Skip",
+                onPressed: () async {
+                  progressRound(true);
+                }),
+          ])),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.deepPurple,
+          child: Stack(children: [
+            FutureBuilder(
+              future: _playlistFuture,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                      height: 1,
+                      width: 1,
+                      child: YoutubePlayerIFrame(
+                        controller: _controller,
+                        aspectRatio: 16 / 9,
+                      ));
+                } else {
+                  return Container();
+                }
+              },
+            ),
+            Icon(ppButtonStatus == Status.playing
+                ? Icons.pause
+                : Icons.play_arrow),
+          ]),
           onPressed: () async {
-            progressRound(true);
+            if (ppButtonStatus == Status.playing) {
+              _controller.pause();
+              setState(() {
+                ppButtonStatus = Status.paused;
+              });
+            } else {
+              _controller.play();
+              setState(() {
+                ppButtonStatus = Status.playing;
+              });
+            }
           }),
-      ])),
-    floatingActionButton: FloatingActionButton(
-      backgroundColor: Colors.deepPurple,
-      child: Icon(ppButtonStatus == Status.playing
-        ? Icons.pause
-        : Icons.play_arrow),
-      onPressed: () async {
-        if (ppButtonStatus == Status.playing) {
-          _controller.pause();
-          setState(() {
-            ppButtonStatus = Status.paused;
-          });
-        } else {
-            _controller.play();
-            setState(() {
-              ppButtonStatus = Status.playing;
-            });
-        }
-      }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
