@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_starter/ui/add_song_ui.dart';
 import 'package:flutter_starter/ui/auth/auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter_starter/ui/components/segmented_selector.dart';
@@ -31,6 +32,14 @@ class SettingsUI extends StatelessWidget {
       children: <Widget>[
         languageListTile(context),
         themeListTile(context),
+        ListTile(
+            title: Text("Create New Song in Database"),
+            trailing: ElevatedButton(
+              onPressed: () async {
+                Get.to(AddSongUI());
+              },
+              child: Text("Add"),
+            )),
         ListTile(
             title: Text(labels.settings.updateProfile),
             trailing: ElevatedButton(

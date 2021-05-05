@@ -15,6 +15,7 @@ class AppRoutes {
     GetPage(name: '/play-a-song', page: () => SongUI()),
     GetPage(name: '/choose-a-playlist', page: () => PlaylistUI()),
     GetPage(name: '/game-recap', page: () => GameRecapUI()),
+    GetPage(name: '/add-song', page: () => AddSongUI()),
     GetPage(name: '/dance-mode', page: () => DanceUI()),
   ];
 }
