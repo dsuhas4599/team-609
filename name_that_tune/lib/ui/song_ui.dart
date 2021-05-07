@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:just_audio/just_audio.dart' as audio;
 import 'package:flutter_starter/helpers/helpers.dart';
@@ -52,6 +51,7 @@ class _SongPageState extends State<SongUI> {
   bool buttonTwoActive = true;
   bool buttonThreeActive = true;
   bool buttonFourActive = true;
+  bool skipActive = true;
 
   StreamSubscription sub;
 
@@ -144,6 +144,7 @@ class _SongPageState extends State<SongUI> {
       buttonTwoActive = active;
       buttonThreeActive = active;
       buttonFourActive = active;
+      skipActive = active;
     });
   }
 
@@ -625,9 +626,12 @@ class _SongPageState extends State<SongUI> {
                 iconSize: 40,
                 color: Colors.white,
                 // labelText: "Skip",
-                onPressed: () async {
-                  progressRound(true);
-                }),
+                onPressed: skipActive
+                    ? () async {
+                        setAllButtonActivity(true);
+                        progressRound(true);
+                      }
+                    : () async {}),
           ])),
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepPurple,

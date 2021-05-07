@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quiver/iterables.dart';
 import 'package:get/get.dart';
 
 enum Status { playing, paused }
@@ -28,6 +28,7 @@ class _DancePageState extends State<DanceUI> {
   YoutubePlayerController _controller;
 
   Status ppButtonStatus = Status.playing;
+  bool skipActive = true;
 
   @override
   void initState() {
@@ -37,10 +38,20 @@ class _DancePageState extends State<DanceUI> {
 
   Future<PlaylistModel> initializePlaylist() async {
     _playlist = await convertPlaylistToUsable(data);
-    _playlist.songs.shuffle();
-    _playlist.songs = _playlist.songs.sublist(0, 5);
+    //_playlist.songs.shuffle();
+    //_playlist.songs = _playlist.songs.sublist(0, 5);
     songs = _playlist.songs;
     _songNames = await playlistToSongs(data);
+    /* var zipped = zip([_playlist.songs, _songNames]).toList();
+    zipped.shuffle();
+    zipped = zipped.sublist(0, 5);
+    _playlist.songs = [];
+    _songNames = [];
+    for (var i = 0; i <= zipped.length; i++) {
+      _playlist.songs.add(zipped[i].first);
+      _songNames.add(zipped[i].last);
+    }
+    songs = _playlist.songs; */
     _controller = YoutubePlayerController(
       initialVideoId: '',
       params: YoutubePlayerParams(
@@ -62,7 +73,7 @@ class _DancePageState extends State<DanceUI> {
   }
 
   void progressRound(bool skipVideo) {
-    print(_playlist.songs);
+    // print(_playlist.songs);
     round++;
     // reset and update
     if (round <= 4) {
@@ -72,6 +83,7 @@ class _DancePageState extends State<DanceUI> {
       setState(() {
         _imagesFuture = getImages();
         ppButtonStatus = Status.playing;
+        skipActive = true;
       });
     } else {
       Get.to(HomeUI());
@@ -146,9 +158,14 @@ class _DancePageState extends State<DanceUI> {
                 iconSize: 40,
                 color: Colors.white,
                 // labelText: "Skip",
-                onPressed: () async {
-                  progressRound(true);
-                }),
+                onPressed: skipActive
+                    ? () async {
+                        setState(() {
+                          skipActive = false;
+                        });
+                        progressRound(true);
+                      }
+                    : () async {}),
           ])),
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepPurple,
