@@ -303,6 +303,20 @@ Future<void> findPlayer(String uid) async {
       });
 }
 
+Future<List<String>> getSongNames(List<String> songIDs) async {
+  List<String> songNames = [];
+  for (var i = 0; i < 5; i ++) {
+    await songs.get().then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) { 
+        if (songIDs[i] == doc['videoID']) {
+          songNames.add(doc['name']);
+        }
+      })
+    });
+  }
+  return songNames;
+}
+
 Future<List<SongModel>> getPlaylistSongs(List<String> playlistSongs) async {
   List<SongModel> retrievedSongs = [];
   await songs.get().then((QuerySnapshot querySnapshot) => {
