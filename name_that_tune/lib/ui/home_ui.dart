@@ -3,6 +3,7 @@ import 'package:flutter_starter/localizations.dart';
 import 'package:flutter_starter/controllers/controllers.dart';
 import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
+import 'package:bordered_text/bordered_text.dart';
 
 class HomeUI extends StatelessWidget {
   @override
