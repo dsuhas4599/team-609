@@ -35,7 +35,6 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
           .doc(playlistData.id)
           .snapshots(),
       builder: (context, snapshot1) {
-
         // Convert to real time playlist data
         var streamData = {
           'image': snapshot1.data['image'],
@@ -156,8 +155,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
         onPressed: () {
           if (mode == "game") {
             Get.to(SongUI(), arguments: playlistData.name);
-          }
-          else if (mode == "dance") {
+          } else if (mode == "dance") {
             Get.to(DanceUI(), arguments: playlistData.name);
           }
         },
@@ -208,51 +206,49 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
     });
   }
 
-  _specificSongPopUp(Offset offset, PlaylistWithID playlistData, var songToSend) async {
+  _specificSongPopUp(
+      Offset offset, PlaylistWithID playlistData, var songToSend) async {
     double left = offset.dx;
     double top = offset.dy;
     if (playlistData.user == 'global') {
       await showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(left, top, 0, 0),
-      items: [
-        PopupMenuItem(
-          value: 1,
-          child: Text("Add to Playlist"),
-        ),
-      ],
-      elevation: 8.0,
-    ).then((value) async {
-      if (value != null) {
-        if (value == 1) {
-          Get.to(UserPlaylistUI(), arguments: songToSend);
+        context: context,
+        position: RelativeRect.fromLTRB(left, top, 0, 0),
+        items: [
+          PopupMenuItem(
+            value: 1,
+            child: Text("Add to Playlist"),
+          ),
+        ],
+        elevation: 8.0,
+      ).then((value) async {
+        if (value != null) {
+          if (value == 1) {
+            Get.to(UserPlaylistUI(), arguments: songToSend);
+          }
         }
-      }
-    });
+      });
     } else {
       await showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(left, top, 0, 0),
-      items: [
-        PopupMenuItem(
-          value: 1,
-          child: Text("Add to Playlist")
-        ),
-        PopupMenuItem(
-          value: 2,
-          child: Text("Delete Song"),
-        )
-      ],
-      elevation: 8.0,
-    ).then((value) async {
-      if (value != null) {
-        if (value == 1) {
-          Get.to(UserPlaylistUI(), arguments: songToSend);
-        } else if (value == 2) {
-          await deleteSongInCustomPlaylist(playlistData, songToSend);
+        context: context,
+        position: RelativeRect.fromLTRB(left, top, 0, 0),
+        items: [
+          PopupMenuItem(value: 1, child: Text("Add to Playlist")),
+          PopupMenuItem(
+            value: 2,
+            child: Text("Delete Song"),
+          )
+        ],
+        elevation: 8.0,
+      ).then((value) async {
+        if (value != null) {
+          if (value == 1) {
+            Get.to(UserPlaylistUI(), arguments: songToSend);
+          } else if (value == 2) {
+            await deleteSongInCustomPlaylist(playlistData, songToSend);
+          }
         }
-      }
-    });
+      });
     }
   }
 }

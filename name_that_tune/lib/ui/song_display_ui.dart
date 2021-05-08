@@ -83,7 +83,8 @@ Widget songDisplayWidget(BuildContext topContext, var playlistInfo) {
           ],
           elevation: 8.0,
         ).then((value) {
-          if (value != null) addSongToCurrentPlaylist(playlistInfo.id, songData, topContext);
+          if (value != null)
+            addSongToCurrentPlaylist(playlistInfo.id, songData, topContext);
         });
       }
 
@@ -114,7 +115,8 @@ Widget songDisplayWidget(BuildContext topContext, var playlistInfo) {
                       // ),
                       GestureDetector(
                         onTapDown: (TapDownDetails details) {
-                          _showPopupMenu(details.globalPosition, allSongs, playlistInfo);
+                          _showPopupMenu(
+                              details.globalPosition, allSongs, playlistInfo);
                         },
                         child: IconButton(icon: Icon(Icons.more_horiz)),
                       ),
