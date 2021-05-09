@@ -19,16 +19,27 @@ class HomeUI extends StatelessWidget {
             )
           : Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                    Colors.pink,
-                    Colors.cyan,
-                    Colors.lime,
-                    Colors.amber,
-                    Colors.red
-                  ])),
+                  // gradient: LinearGradient(
+                  //     begin: Alignment.topRight,
+                  //     end: Alignment.bottomLeft,
+                  //     colors: [
+                  //   Colors.pink,
+                  //   Colors.cyan,
+                  //   Colors.lime,
+                  //   Colors.amber,
+                  //   Colors.red
+                  // ])),
+                  gradient: RadialGradient(radius: 1, stops: [
+                //0.1,
+                0.4,
+                0.6,
+                1.0
+              ], colors: [
+                //Colors.cyan.shade50,
+                Colors.cyan.shade100,
+                Colors.cyan.shade200,
+                Colors.lightBlue
+              ])),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
                 appBar: AppBar(
@@ -36,7 +47,7 @@ class HomeUI extends StatelessWidget {
                   actions: [
                     IconButton(
                         icon: Icon(Icons.settings),
-                        color: Colors.amber.shade700,
+                        color: Colors.pink.shade300,
                         onPressed: () {
                           Get.to(SettingsUI());
                         }),
@@ -56,7 +67,7 @@ class HomeUI extends StatelessWidget {
                             textScaleFactor: 5,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white)),
+                                color: Colors.black)),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +80,7 @@ class HomeUI extends StatelessWidget {
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       minimumSize: Size(100, 50),
-                                      primary: Colors.amber.shade700),
+                                      primary: Colors.pink.shade300),
                                   child: Text(
                                     'Game Mode',
                                     style: TextStyle(fontSize: 17),
@@ -81,7 +92,7 @@ class HomeUI extends StatelessWidget {
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       minimumSize: Size(100, 50),
-                                      primary: Colors.amber.shade700),
+                                      primary: Colors.pink.shade300),
                                   child: Text(
                                     'Dance Mode',
                                     style: TextStyle(fontSize: 17),
