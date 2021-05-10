@@ -66,7 +66,7 @@ class _UserPlaylistUIState extends State<UserPlaylistUI> {
                                 leading: ClipRRect(
                                   borderRadius: BorderRadius.circular(8.0),
                                   child: Image.network(
-                                    'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274',
+                                    'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlist.png?alt=media&token=d4e48dc0-fa3e-4245-8549-770d3e1726c2',
                                   ),
                                 ),
                                 title: Text(currentPlaylist['name']),

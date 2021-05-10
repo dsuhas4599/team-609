@@ -99,14 +99,13 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                             itemBuilder: (context, index) {
                               SongModel currentSong =
                                   customPlaylistSongs[index];
+                              var imagelink = determineImage(currentSong.name);
                               return Column(
                                 children: <Widget>[
                                   ListTile(
                                       leading: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
                                         child: Image.network(
-                                          'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlisticon.png?alt=media&token=774e6502-93e7-4de3-ada2-f3d676d70274',
+                                          imagelink,
                                         ),
                                       ),
                                       title: Text(currentSong.name),
@@ -250,5 +249,30 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
         }
       });
     }
+  }
+
+  determineImage(String playlistName) {
+    var numberToCheck = playlistName.length * 9973;
+    var numberToReturn = numberToCheck.toString()[1];
+    var mappedNumbers = {
+      '0': 0,
+      '1': 1,
+      '2': 2,
+      '3': 3,
+      '4': 4,
+      '5': 0,
+      '6': 1,
+      '7': 2,
+      '8': 3,
+      '9': 4
+    };
+    List<String> songImages = [
+      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/music(2).png?alt=media&token=bcfb50b3-bec0-4e82-a81b-9b33ff73ed1b',
+      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/music-note.png?alt=media&token=5861afc6-58c3-403b-99de-08d98a61eb77',
+      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/music(1).png?alt=media&token=cd275be6-5da0-4b78-ae31-12c3c09d5142',
+      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/music.png?alt=media&token=de62b676-1449-40cd-a5fb-a81b0a5eb6f7',
+      'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/song.png?alt=media&token=9da7674b-3569-472c-b20a-36a339f77cee'
+    ];
+    return songImages[mappedNumbers[numberToReturn]];
   }
 }

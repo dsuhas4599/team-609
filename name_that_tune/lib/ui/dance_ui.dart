@@ -24,7 +24,7 @@ class _DancePageState extends State<DanceUI> {
   Future<PlaylistModel> _playlistFuture;
   dynamic _image;
   Future<String> _imagesFuture;
-  List<SongModel> _songNames;
+  List<String> _songNames;
   YoutubePlayerController _controller;
 
   Status ppButtonStatus = Status.playing;
@@ -38,20 +38,10 @@ class _DancePageState extends State<DanceUI> {
 
   Future<PlaylistModel> initializePlaylist() async {
     _playlist = await convertPlaylistToUsable(data);
-    //_playlist.songs.shuffle();
-    //_playlist.songs = _playlist.songs.sublist(0, 5);
+    _playlist.songs.shuffle();
+    _playlist.songs = _playlist.songs.sublist(0, 5);
     songs = _playlist.songs;
-    _songNames = await playlistToSongs(data);
-    /* var zipped = zip([_playlist.songs, _songNames]).toList();
-    zipped.shuffle();
-    zipped = zipped.sublist(0, 5);
-    _playlist.songs = [];
-    _songNames = [];
-    for (var i = 0; i <= zipped.length; i++) {
-      _playlist.songs.add(zipped[i].first);
-      _songNames.add(zipped[i].last);
-    }
-    songs = _playlist.songs; */
+    _songNames = await getSongNames(_playlist.songs);
     _controller = YoutubePlayerController(
       initialVideoId: '',
       params: YoutubePlayerParams(
@@ -100,7 +90,7 @@ class _DancePageState extends State<DanceUI> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return Center(
-                  child: Text(_songNames[round].name,
+                  child: Text(_songNames[round],
                       textScaleFactor: 2,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
