@@ -36,27 +36,29 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
           .snapshots(),
       builder: (context, snapshot1) {
         // Convert to real time playlist data
-        var streamData = {
-          'image': snapshot1.data['image'],
-          'name': snapshot1.data['name'],
-          'songs': List<String>.from(snapshot1.data['songs']),
-          'user': snapshot1.data['user'],
-          'id': snapshot1.data.id
-        };
-        PlaylistWithID currentPlaylist = PlaylistWithID.fromMap(streamData);
-
         return StreamBuilder(
             stream: FirebaseFirestore.instance.collection('songs').snapshots(),
             builder: (context, snapshot2) {
-              if (snapshot1.connectionState == ConnectionState.none &&
-                  snapshot1.hasData == null) {
+              if ((snapshot1.connectionState == ConnectionState.none &&
+                      snapshot1.hasData == null) ||
+                  (snapshot2.connectionState == ConnectionState.none &&
+                      snapshot2.hasData == null)) {
                 return Container();
-              } else if (snapshot1.connectionState == ConnectionState.waiting) {
+              } else if (snapshot1.connectionState == ConnectionState.waiting ||
+                  snapshot2.connectionState == ConnectionState.waiting) {
                 return new Center(
                   child: new CircularProgressIndicator(),
                 );
               }
-
+              var streamData = {
+                'image': snapshot1.data['image'],
+                'name': snapshot1.data['name'],
+                'songs': List<String>.from(snapshot1.data['songs']),
+                'user': snapshot1.data['user'],
+                'id': snapshot1.data.id
+              };
+              PlaylistWithID currentPlaylist =
+                  PlaylistWithID.fromMap(streamData);
               // Set song data to be displayed
               List<SongWithID> customPlaylistSongs = [];
               for (var songData in snapshot2.data.docs) {
@@ -73,65 +75,62 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                 }
               }
 
-              return MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  title: 'Playlist Songs',
-                  home: Scaffold(
-                      appBar: AppBar(
-                        title: Text(playlistData.name),
-                        leading: IconButton(
-                          icon: Icon(Icons.arrow_back),
-                          tooltip: 'Navigation menu',
-                          onPressed: () async {
-                            Get.back();
-                          },
-                        ),
-                        actions: <Widget>[
-                          determineCustomPlaylist(playlistData),
-                        ],
-                      ),
-                      body: Column(
-                        children: <Widget>[
-                          playGameButton(customPlaylistSongs),
-                          Expanded(
-                              child: ListView.builder(
-                            itemCount: customPlaylistSongs.length,
-                            itemBuilder: (context, index) {
-                              SongModel currentSong =
-                                  customPlaylistSongs[index];
-                              var imagelink = determineImage(currentSong.name);
-                              return Column(
-                                children: <Widget>[
-                                  ListTile(
-                                      leading: ClipRRect(
-                                        child: Image.network(
-                                          imagelink,
-                                        ),
-                                      ),
-                                      title: Text(currentSong.name),
-                                      subtitle: Text(currentSong.artist),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          GestureDetector(
-                                            onTapDown:
-                                                (TapDownDetails details) {
-                                              _specificSongPopUp(
-                                                  details.globalPosition,
-                                                  currentPlaylist,
-                                                  currentSong);
-                                            },
-                                            child: IconButton(
-                                                icon: Icon(Icons.more_horiz)),
-                                          )
-                                        ],
-                                      )),
-                                ],
-                              );
-                            },
-                          ))
-                        ],
-                      )));
+              return Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    tooltip: 'Back',
+                    onPressed: () async {
+                      Get.back();
+                    },
+                  ),
+                  title: Text(playlistData.name),
+                  backgroundColor: Colors.lightBlue,
+                  actions: <Widget>[
+                    determineCustomPlaylist(playlistData),
+                  ],
+                ),
+                body: Column(
+                  children: <Widget>[
+                    playGameButton(customPlaylistSongs),
+                    Expanded(
+                        child: ListView.builder(
+                      itemCount: customPlaylistSongs.length,
+                      itemBuilder: (context, index) {
+                        SongModel currentSong = customPlaylistSongs[index];
+                        var imagelink = determineImage(currentSong.name);
+                        return Column(
+                          children: <Widget>[
+                            ListTile(
+                                leading: ClipRRect(
+                                  child: Image.network(
+                                    imagelink,
+                                  ),
+                                ),
+                                title: Text(currentSong.name),
+                                subtitle: Text(currentSong.artist),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTapDown: (TapDownDetails details) {
+                                        _specificSongPopUp(
+                                            details.globalPosition,
+                                            currentPlaylist,
+                                            currentSong);
+                                      },
+                                      child: IconButton(
+                                          icon: Icon(Icons.more_horiz)),
+                                    )
+                                  ],
+                                )),
+                          ],
+                        );
+                      },
+                    ))
+                  ],
+                ),
+              );
             });
       },
     );
@@ -144,13 +143,15 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
           Text('Add some more songs!'),
           Text('You need at least 5 songs'),
           ElevatedButton(
-            child: Text('Play Game'),
+            child: Text('Start'),
           )
         ],
       );
     } else {
       return ElevatedButton(
-        child: Text('Play Game'),
+        child: Text('Start'),
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size(100, 50), primary: Colors.pink.shade300),
         onPressed: () {
           if (mode == "game") {
             Get.to(SongUI(), arguments: playlistData.name);

@@ -28,7 +28,10 @@ class _UserPlaylistUIState extends State<UserPlaylistUI> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('playlists').where('user', isEqualTo: user).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('playlists')
+            .where('user', isEqualTo: user)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.none &&
               snapshot.hasData == null) {
@@ -39,61 +42,61 @@ class _UserPlaylistUIState extends State<UserPlaylistUI> {
             );
           }
 
-          return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Playlist Songs',
-              home: Scaffold(
-                  appBar: AppBar(
-                    title: Text('My Playlists'),
-                    leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      tooltip: 'Navigation menu',
-                      onPressed: () async {
-                        Get.back();
-                      },
-                    ),
+          return Scaffold(
+              appBar: AppBar(
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    tooltip: 'Back',
+                    onPressed: () async {
+                      Get.back();
+                    },
                   ),
-                  body: Column(
-                    children: <Widget>[
-                      Expanded(
-                          child: ListView.builder(
-                        itemCount: snapshot.data.docs.length,
-                        itemBuilder: (context, index) {
-                          var currentPlaylist = snapshot.data.docs[index];
-                          return Column(
-                            children: <Widget>[
-                              ListTile(
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.network(
-                                    'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlist.png?alt=media&token=d4e48dc0-fa3e-4245-8549-770d3e1726c2',
-                                  ),
-                                ),
-                                title: Text(currentPlaylist['name']),
-                                subtitle: Text(
-                                    (currentPlaylist['songs'].length).toString() +
-                                        ' Songs'),
-                                onTap: () {
-                                  _displayAddToPlaylist(context, songToAdd, currentPlaylist);
-                                },
+                  title: Text('My Playlists'),
+                  backgroundColor: Colors.lightBlue),
+              body: Column(
+                children: <Widget>[
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: snapshot.data.docs.length,
+                    itemBuilder: (context, index) {
+                      var currentPlaylist = snapshot.data.docs[index];
+                      return Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(
+                                'https://firebasestorage.googleapis.com/v0/b/careyaya-name-that-tune.appspot.com/o/playlist.png?alt=media&token=d4e48dc0-fa3e-4245-8549-770d3e1726c2',
                               ),
-                              Divider(thickness: 1),
-                            ],
-                          );
-                        },
-                      ))
-                    ],
-                  )));
+                            ),
+                            title: Text(currentPlaylist['name']),
+                            subtitle: Text(
+                                (currentPlaylist['songs'].length).toString() +
+                                    ' Songs'),
+                            onTap: () {
+                              _displayAddToPlaylist(
+                                  context, songToAdd, currentPlaylist);
+                            },
+                          ),
+                          Divider(thickness: 1),
+                        ],
+                      );
+                    },
+                  ))
+                ],
+              ));
         });
   }
 
-  Future<void> _displayAddToPlaylist(BuildContext context, var songToAdd, var currentPlaylist) async {
+  Future<void> _displayAddToPlaylist(
+      BuildContext context, var songToAdd, var currentPlaylist) async {
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Add to this playlist?'),
-          content: Text('Add ' + songToAdd.name + ' to ' + currentPlaylist['name'] + '?'),
+          content: Text(
+              'Add ' + songToAdd.name + ' to ' + currentPlaylist['name'] + '?'),
           actions: <Widget>[
             TextButton(
               child: Text('CANCEL'),
@@ -104,7 +107,8 @@ class _UserPlaylistUIState extends State<UserPlaylistUI> {
             TextButton(
               child: Text('ADD'),
               onPressed: () async {
-                addSongToCurrentPlaylist(currentPlaylist.id, songToAdd, context);
+                addSongToCurrentPlaylist(
+                    currentPlaylist.id, songToAdd, context);
                 Navigator.pop(context);
               },
             ),

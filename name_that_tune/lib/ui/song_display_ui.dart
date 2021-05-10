@@ -8,18 +8,6 @@ import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 
 class SongDisplayUi extends StatefulWidget {
-  // static const String _title = 'Songs';
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     title: _title,
-  //     home: Scaffold(
-  //       body: SongDisplayPage(),
-  //     ),
-  //     debugShowCheckedModeBanner: false,
-  //   );
-  // }
   @override
   _SongDisplayPageState createState() => _SongDisplayPageState();
 }
@@ -33,12 +21,13 @@ class _SongDisplayPageState extends State<SongDisplayUi> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: 'Navigation menu',
+          tooltip: 'Back',
           onPressed: () async {
             Get.back();
           },
         ),
         title: Text('Songs'),
+        backgroundColor: Colors.lightBlue,
         actions: <Widget>[
           // IconButton(
           //   icon: Icon(Icons.add),
