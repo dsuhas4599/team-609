@@ -87,7 +87,6 @@ class _SongPageState extends State<SongUI> {
       ),
     );
     sub = _controller.listen((event) {
-      print(event.playerState.toString());
       if (event.playerState == PlayerState.ended) {
         progressRound(false);
       }
@@ -112,7 +111,7 @@ class _SongPageState extends State<SongUI> {
     return _answerChoices;
   }
 
-  void progressRound(bool skipVideo) {
+  void progressRound(bool skipVideo) async {
     round++;
     // reset and update
     if (round <= 4) {
@@ -132,6 +131,8 @@ class _SongPageState extends State<SongUI> {
       setAllButtonActivity(true);
       s.start();
     } else {
+      await correctPlayer.dispose();
+      await incorrectPlayer.dispose();
       sub.cancel();
       int finalScore = scores.reduce((a, b) => a + b);
       Get.to(GameRecapUI(), arguments: [data, finalScore]);
@@ -258,22 +259,9 @@ class _SongPageState extends State<SongUI> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        // decoration: BoxDecoration(
-        //     gradient: RadialGradient(
-        //   radius: 1,
-        //   stops: [0.2, 0.5], //[0.1, 0.4, 0.6, 1.0],
-        //   colors: [
-        //     //Colors.white,
-        //     // Colors.cyan.shade100,
-        //     // Colors.cyan.shade200,
-        //     // Colors.lightBlue
-        //     Color(0xffe9dfd4)
-        //   ],
-        // )),
         child: Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(
-            0xffe9dfd4), // 0xffe9dfd4 Colors.transparent, //Colors.amber.shade700,
+        backgroundColor: Color(0xffe9dfd4),
         title: FutureBuilder(
           future: _playlistFuture,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -379,12 +367,13 @@ class _SongPageState extends State<SongUI> {
                                                 correctAnswer) {
                                               s.stop();
                                               feedback(guesses);
-                                              correctPlayer.play();
                                               var time = s.elapsedMilliseconds;
                                               buttonOne = ButtonStatus.correct;
                                               setAllButtonActivity(false);
+                                              correctPlayer.play();
                                               await Future.delayed(
                                                   Duration(seconds: 3));
+                                              await correctPlayer.stop();
                                               addRound(guesses, user,
                                                       time / 1000, songs[round])
                                                   .then((value) {
@@ -402,14 +391,13 @@ class _SongPageState extends State<SongUI> {
                                                   });
                                                 }
                                               });
-                                              await correctPlayer.stop();
                                               progressRound(true);
                                             } else {
-                                              incorrectPlayer.play();
                                               buttonOne =
                                                   ButtonStatus.incorrect;
                                               setState(() =>
                                                   buttonOneActive = false);
+                                              incorrectPlayer.play();
                                               await Future.delayed(
                                                   Duration(seconds: 1));
                                               await incorrectPlayer.stop();
@@ -442,12 +430,13 @@ class _SongPageState extends State<SongUI> {
                                               correctAnswer) {
                                             s.stop();
                                             feedback(guesses);
-                                            correctPlayer.play();
                                             var time = s.elapsedMilliseconds;
                                             buttonTwo = ButtonStatus.correct;
                                             setAllButtonActivity(false);
+                                            correctPlayer.play();
                                             await Future.delayed(
                                                 Duration(seconds: 3));
+                                            await correctPlayer.stop();
                                             addRound(guesses, user, time / 1000,
                                                     songs[round])
                                                 .then((value) {
@@ -465,13 +454,12 @@ class _SongPageState extends State<SongUI> {
                                                 });
                                               }
                                             });
-                                            await correctPlayer.stop();
                                             progressRound(true);
                                           } else {
-                                            incorrectPlayer.play();
                                             buttonTwo = ButtonStatus.incorrect;
                                             setState(
                                                 () => buttonTwoActive = false);
+                                            incorrectPlayer.play();
                                             await Future.delayed(
                                                 Duration(seconds: 1));
                                             await incorrectPlayer.stop();
@@ -513,14 +501,15 @@ class _SongPageState extends State<SongUI> {
                                                   correctAnswer) {
                                                 s.stop();
                                                 feedback(guesses);
-                                                correctPlayer.play();
                                                 var time =
                                                     s.elapsedMilliseconds;
                                                 buttonThree =
                                                     ButtonStatus.correct;
                                                 setAllButtonActivity(false);
+                                                correctPlayer.play();
                                                 await Future.delayed(
                                                     Duration(seconds: 3));
+                                                await correctPlayer.stop();
                                                 addRound(
                                                         guesses,
                                                         user,
@@ -541,14 +530,13 @@ class _SongPageState extends State<SongUI> {
                                                     });
                                                   }
                                                 });
-                                                await correctPlayer.stop();
                                                 progressRound(true);
                                               } else {
-                                                incorrectPlayer.play();
                                                 buttonThree =
                                                     ButtonStatus.incorrect;
                                                 setState(() =>
                                                     buttonThreeActive = false);
+                                                incorrectPlayer.play();
                                                 await Future.delayed(
                                                     Duration(seconds: 1));
                                                 await incorrectPlayer.stop();
@@ -582,14 +570,15 @@ class _SongPageState extends State<SongUI> {
                                                   correctAnswer) {
                                                 s.stop();
                                                 feedback(guesses);
-                                                correctPlayer.play();
                                                 var time =
                                                     s.elapsedMilliseconds;
                                                 buttonFour =
                                                     ButtonStatus.correct;
                                                 setAllButtonActivity(false);
+                                                correctPlayer.play();
                                                 await Future.delayed(
                                                     Duration(seconds: 3));
+                                                await correctPlayer.stop();
                                                 addRound(
                                                         guesses,
                                                         user,
@@ -610,14 +599,13 @@ class _SongPageState extends State<SongUI> {
                                                     });
                                                   }
                                                 });
-                                                await correctPlayer.stop();
                                                 progressRound(true);
                                               } else {
-                                                incorrectPlayer.play();
                                                 buttonFour =
                                                     ButtonStatus.incorrect;
                                                 setState(() =>
                                                     buttonFourActive = false);
+                                                incorrectPlayer.play();
                                                 await Future.delayed(
                                                     Duration(seconds: 1));
                                                 await incorrectPlayer.stop();
@@ -657,7 +645,8 @@ class _SongPageState extends State<SongUI> {
                 // labelText: "Skip",
                 onPressed: skipActive
                     ? () async {
-                        setAllButtonActivity(true);
+                        print('skipping');
+                        setAllButtonActivity(false);
                         progressRound(true);
                       }
                     : () async {}),

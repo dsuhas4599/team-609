@@ -30,8 +30,8 @@ class SettingsUI extends StatelessWidget {
 
     return ListView(
       children: <Widget>[
-        languageListTile(context),
-        themeListTile(context),
+        // languageListTile(context),
+        // themeListTile(context),
         ListTile(
             title: Text("Create New Song in Database"),
             trailing: ElevatedButton(
