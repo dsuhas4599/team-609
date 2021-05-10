@@ -92,7 +92,7 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                 ),
                 body: Column(
                   children: <Widget>[
-                    playGameButton(customPlaylistSongs),
+                    //playGameButton(customPlaylistSongs),
                     Expanded(
                         child: ListView.builder(
                       itemCount: customPlaylistSongs.length,
@@ -127,7 +127,8 @@ class _PlaylistDisplayUIState extends State<PlaylistDisplayUI> {
                           ],
                         );
                       },
-                    ))
+                    )),
+                    playGameButton(customPlaylistSongs),
                   ],
                 ),
               );
