@@ -94,33 +94,40 @@ class _DancePageState extends State<DanceUI> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black12, //Colors.amber.shade700,
+        backgroundColor: Colors.transparent, //Colors.amber.shade700,
         title: FutureBuilder(
           future: _playlistFuture,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return Center(
                   child: Text(_songNames[round].name,
-                      textScaleFactor: 3,
+                      textScaleFactor: 2,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       )));
             } else {
               return Container();
             }
           },
         ),
-        actions: <Widget>[],
+        actions: [
+          IconButton(
+              icon: Icon(Icons.home_filled),
+              color: Colors.white,
+              onPressed: () {
+                Get.to(HomeUI());
+              }),
+        ],
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xffe9dfd4),
       body: Center(
           child: ListView(
         children: <Widget>[
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(50.0),
               child: Container(
                 height: 300,
                 child: Center(
@@ -150,12 +157,12 @@ class _DancePageState extends State<DanceUI> {
         ],
       )),
       bottomNavigationBar: BottomAppBar(
-          color: Colors.black12,
+          color: Colors.transparent,
           child: Row(children: [
             Spacer(),
             IconButton(
                 icon: Icon(Icons.skip_next_rounded),
-                iconSize: 40,
+                iconSize: 35,
                 color: Colors.white,
                 // labelText: "Skip",
                 onPressed: skipActive
@@ -168,7 +175,7 @@ class _DancePageState extends State<DanceUI> {
                     : () async {}),
           ])),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Colors.purple.shade300,
           child: FutureBuilder(
             future: _playlistFuture,
             builder: (BuildContext context, AsyncSnapshot snapshot) {

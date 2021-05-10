@@ -647,7 +647,7 @@ class _SongPageState extends State<SongUI> {
         ],
       )),
       bottomNavigationBar: BottomAppBar(
-          color: Colors.black12,
+          color: Colors.transparent,
           child: Row(children: [
             Spacer(),
             IconButton(
