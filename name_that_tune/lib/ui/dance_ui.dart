@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
-import 'package:quiver/iterables.dart';
 import 'package:get/get.dart';
 
 enum Status { playing, paused }
@@ -19,7 +17,6 @@ class _DancePageState extends State<DanceUI> {
   int round = 0;
   var songs = [];
   var data = Get.arguments;
-  String correctAnswer = "";
   PlaylistModel _playlist;
   Future<PlaylistModel> _playlistFuture;
   dynamic _image;
@@ -29,6 +26,8 @@ class _DancePageState extends State<DanceUI> {
 
   Status ppButtonStatus = Status.playing;
   bool skipActive = true;
+
+  StreamSubscription sub;
 
   @override
   void initState() {
@@ -51,6 +50,11 @@ class _DancePageState extends State<DanceUI> {
         autoPlay: true,
       ),
     );
+    sub = _controller.listen((event) {
+      if (event.playerState == PlayerState.ended) {
+        progressRound(false);
+      }
+    });
     setState(() {
       _imagesFuture = getImages();
     });
@@ -62,8 +66,7 @@ class _DancePageState extends State<DanceUI> {
     return _image;
   }
 
-  void progressRound(bool skipVideo) {
-    // print(_playlist.songs);
+  void progressRound(bool skipVideo) async {
     round++;
     // reset and update
     if (round <= 4) {
@@ -76,6 +79,7 @@ class _DancePageState extends State<DanceUI> {
         skipActive = true;
       });
     } else {
+      sub.cancel();
       Get.to(HomeUI());
     }
   }
@@ -84,18 +88,20 @@ class _DancePageState extends State<DanceUI> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent, //Colors.amber.shade700,
+        backgroundColor: Colors.transparent,
         title: FutureBuilder(
           future: _playlistFuture,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return Center(
-                  child: Text(_songNames[round],
-                      textScaleFactor: 2,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      )));
+                  child: round <= 4
+                      ? Text(_songNames[round],
+                          textScaleFactor: 2,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ))
+                      : Text(""));
             } else {
               return Container();
             }
@@ -162,7 +168,7 @@ class _DancePageState extends State<DanceUI> {
                         });
                         progressRound(true);
                       }
-                    : () async {}),
+                    : () async {})
           ])),
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.purple.shade300,

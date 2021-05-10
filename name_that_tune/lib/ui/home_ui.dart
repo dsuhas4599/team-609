@@ -19,23 +19,11 @@ class HomeUI extends StatelessWidget {
             )
           : Container(
               decoration: BoxDecoration(
-                  // gradient: LinearGradient(
-                  //     begin: Alignment.topRight,
-                  //     end: Alignment.bottomLeft,
-                  //     colors: [
-                  //   Colors.pink,
-                  //   Colors.cyan,
-                  //   Colors.lime,
-                  //   Colors.amber,
-                  //   Colors.red
-                  // ])),
                   gradient: RadialGradient(radius: 1, stops: [
-                //0.1,
                 0.4,
                 0.6,
                 1.0
               ], colors: [
-                //Colors.cyan.shade50,
                 Colors.cyan.shade100,
                 Colors.cyan.shade200,
                 Colors.lightBlue
@@ -47,6 +35,7 @@ class HomeUI extends StatelessWidget {
                   actions: [
                     IconButton(
                         icon: Icon(Icons.settings),
+                        tooltip: 'Settings',
                         color: Colors.pink.shade300,
                         onPressed: () {
                           Get.to(SettingsUI());

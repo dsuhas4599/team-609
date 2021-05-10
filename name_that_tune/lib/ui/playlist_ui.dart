@@ -11,18 +11,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PlaylistUI extends StatefulWidget {
-  // static const String _title = 'Playlists';
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     title: _title,
-  //     home: Scaffold(
-  //       body: PlaylistPage(),
-  //     ),
-  //     debugShowCheckedModeBanner: false,
-  //   );
-  // }
+  @override
   _PlaylistPageState createState() => _PlaylistPageState();
 }
 
@@ -37,7 +26,8 @@ class _PlaylistPageState extends State<PlaylistUI> {
   void initState() {
     super.initState();
     // _allPlaylists = streamCustomPlaylists(user);
-    _allPlaylists = FirebaseFirestore.instance.collection('playlists').snapshots();
+    _allPlaylists =
+        FirebaseFirestore.instance.collection('playlists').snapshots();
   }
 
   @override
@@ -46,12 +36,13 @@ class _PlaylistPageState extends State<PlaylistUI> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: 'Navigation menu',
+          tooltip: 'Back',
           onPressed: () async {
             Get.back();
           },
         ),
         title: Text('Playlists'),
+        backgroundColor: Colors.lightBlue,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
@@ -68,7 +59,9 @@ class _PlaylistPageState extends State<PlaylistUI> {
 
   Widget playlistWidget(String user) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('playlists').where('user', whereIn: [user, 'global']).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('playlists')
+          .where('user', whereIn: [user, 'global']).snapshots(),
       initialData: [],
       builder: (context, projectSnap) {
         if (projectSnap.connectionState == ConnectionState.none &&
