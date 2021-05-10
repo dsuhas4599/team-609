@@ -19,6 +19,7 @@ dependencies:
 
   youtube_player_iframe: ^1.2.0+2
   just_audio: ^0.6.15+1
+  quiver: ^2.1.5
 
   # google_sign_in:
   # apple_sign_in:
@@ -28,6 +29,7 @@ dependencies:
   # flutter_platform_widgets:
   flutter_sheet_localization: ^1.0.0
   simple_gravatar:
+  bordered_text: ^1.0.1
 
 dev_dependencies:
   flutter_test:

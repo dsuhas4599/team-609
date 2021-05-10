@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_starter/helpers/helpers.dart';
 import 'package:flutter_starter/models/models.dart';
 import 'package:flutter_starter/ui/ui.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quiver/iterables.dart';
 import 'package:get/get.dart';
 
 enum Status { playing, paused }
@@ -28,6 +28,7 @@ class _DancePageState extends State<DanceUI> {
   YoutubePlayerController _controller;
 
   Status ppButtonStatus = Status.playing;
+  bool skipActive = true;
 
   @override
   void initState() {
@@ -39,7 +40,6 @@ class _DancePageState extends State<DanceUI> {
     _playlist = await convertPlaylistToUsable(data);
     _playlist.songs.shuffle();
     _playlist.songs = _playlist.songs.sublist(0, 5);
-    print(_playlist.songs);
     songs = _playlist.songs;
     _songNames = await getSongNames(_playlist.songs);
     _controller = YoutubePlayerController(
@@ -63,7 +63,7 @@ class _DancePageState extends State<DanceUI> {
   }
 
   void progressRound(bool skipVideo) {
-    print(_playlist.songs);
+    // print(_playlist.songs);
     round++;
     // reset and update
     if (round <= 4) {
@@ -73,6 +73,7 @@ class _DancePageState extends State<DanceUI> {
       setState(() {
         _imagesFuture = getImages();
         ppButtonStatus = Status.playing;
+        skipActive = true;
       });
     } else {
       Get.to(HomeUI());
@@ -83,33 +84,40 @@ class _DancePageState extends State<DanceUI> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black12, //Colors.amber.shade700,
+        backgroundColor: Colors.transparent, //Colors.amber.shade700,
         title: FutureBuilder(
           future: _playlistFuture,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return Center(
                   child: Text(_songNames[round],
-                      textScaleFactor: 3,
+                      textScaleFactor: 2,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       )));
             } else {
               return Container();
             }
           },
         ),
-        actions: <Widget>[],
+        actions: [
+          IconButton(
+              icon: Icon(Icons.home_filled),
+              color: Colors.white,
+              onPressed: () {
+                Get.to(HomeUI());
+              }),
+        ],
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xffe9dfd4),
       body: Center(
           child: ListView(
         children: <Widget>[
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(50.0),
               child: Container(
                 height: 300,
                 child: Center(
@@ -139,20 +147,25 @@ class _DancePageState extends State<DanceUI> {
         ],
       )),
       bottomNavigationBar: BottomAppBar(
-          color: Colors.black12,
+          color: Colors.transparent,
           child: Row(children: [
             Spacer(),
             IconButton(
                 icon: Icon(Icons.skip_next_rounded),
-                iconSize: 40,
+                iconSize: 35,
                 color: Colors.white,
                 // labelText: "Skip",
-                onPressed: () async {
-                  progressRound(true);
-                }),
+                onPressed: skipActive
+                    ? () async {
+                        setState(() {
+                          skipActive = false;
+                        });
+                        progressRound(true);
+                      }
+                    : () async {}),
           ])),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Colors.purple.shade300,
           child: FutureBuilder(
             future: _playlistFuture,
             builder: (BuildContext context, AsyncSnapshot snapshot) {

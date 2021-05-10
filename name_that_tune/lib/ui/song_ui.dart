@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_starter/ui/components/components.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:just_audio/just_audio.dart' as audio;
 import 'package:flutter_starter/helpers/helpers.dart';
@@ -52,6 +51,7 @@ class _SongPageState extends State<SongUI> {
   bool buttonTwoActive = true;
   bool buttonThreeActive = true;
   bool buttonFourActive = true;
+  bool skipActive = true;
 
   StreamSubscription sub;
 
@@ -144,51 +144,52 @@ class _SongPageState extends State<SongUI> {
       buttonTwoActive = active;
       buttonThreeActive = active;
       buttonFourActive = active;
+      skipActive = active;
     });
   }
 
   Color getColorOne(Set<MaterialState> states) {
     if (buttonOne == ButtonStatus.correct) {
-      return Colors.green;
+      return Colors.lightGreenAccent.shade700;
     } else if (buttonOne == ButtonStatus.incorrect) {
       return Colors.grey.shade600;
     } else {
-      return Colors.red;
+      return Colors.pink.shade300;
     }
   }
 
   Color getColorTwo(Set<MaterialState> states) {
     if (buttonTwo == ButtonStatus.correct) {
-      return Colors.green;
+      return Colors.lightGreenAccent.shade700;
     } else if (buttonTwo == ButtonStatus.incorrect) {
       return Colors.grey.shade600;
     } else {
-      return Colors.amber.shade800;
+      return Colors.lightBlue;
     }
   }
 
   Color getColorThree(Set<MaterialState> states) {
     if (buttonThree == ButtonStatus.correct) {
-      return Colors.green;
+      return Colors.lightGreenAccent.shade700;
     } else if (buttonThree == ButtonStatus.incorrect) {
       return Colors.grey.shade600;
     } else {
-      return Colors.yellow.shade700;
+      return Colors.yellow;
     }
   }
 
   Color getColorFour(Set<MaterialState> states) {
     if (buttonFour == ButtonStatus.correct) {
-      return Colors.green;
+      return Colors.lightGreenAccent.shade700;
     } else if (buttonFour == ButtonStatus.incorrect) {
       return Colors.grey.shade600;
     } else {
-      return Colors.lightBlue.shade600;
+      return Colors.orange;
     }
   }
 
   Size buttonSizing(Set<MaterialState> states) {
-    return Size(200, 100);
+    return Size(200, 125);
   }
 
   void scoring(int g) {
@@ -256,9 +257,23 @@ class _SongPageState extends State<SongUI> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
+        // decoration: BoxDecoration(
+        //     gradient: RadialGradient(
+        //   radius: 1,
+        //   stops: [0.2, 0.5], //[0.1, 0.4, 0.6, 1.0],
+        //   colors: [
+        //     //Colors.white,
+        //     // Colors.cyan.shade100,
+        //     // Colors.cyan.shade200,
+        //     // Colors.lightBlue
+        //     Color(0xffe9dfd4)
+        //   ],
+        // )),
+        child: Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black12, //Colors.amber.shade700,
+        backgroundColor: Color(
+            0xffe9dfd4), // 0xffe9dfd4 Colors.transparent, //Colors.amber.shade700,
         title: FutureBuilder(
           future: _playlistFuture,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -268,16 +283,23 @@ class _SongPageState extends State<SongUI> {
                       textScaleFactor: 2,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       )));
             } else {
               return Container();
             }
           },
         ),
-        actions: <Widget>[],
+        actions: [
+          IconButton(
+              icon: Icon(Icons.home_filled),
+              color: Colors.white,
+              onPressed: () {
+                Get.to(HomeUI());
+              }),
+        ],
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xffe9dfd4), //Colors.transparent,
       body: Center(
           child: ListView(
         children: <Widget>[
@@ -307,6 +329,14 @@ class _SongPageState extends State<SongUI> {
                                 ),
                               );
                             } else if (snapshot.hasData) {
+                              // return Container(
+                              //   decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //       width: 5,
+                              //     ),
+                              //   ),
+                              //   child: Image.network(_image),
+                              // );
                               return Image.network(_image);
                             } else {
                               return Container();
@@ -617,20 +647,23 @@ class _SongPageState extends State<SongUI> {
         ],
       )),
       bottomNavigationBar: BottomAppBar(
-          color: Colors.black12,
+          color: Colors.transparent,
           child: Row(children: [
             Spacer(),
             IconButton(
                 icon: Icon(Icons.skip_next_rounded),
-                iconSize: 40,
+                iconSize: 35,
                 color: Colors.white,
                 // labelText: "Skip",
-                onPressed: () async {
-                  progressRound(true);
-                }),
+                onPressed: skipActive
+                    ? () async {
+                        setAllButtonActivity(true);
+                        progressRound(true);
+                      }
+                    : () async {}),
           ])),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Colors.purple.shade300,
           child: FutureBuilder(
             future: _playlistFuture,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -668,6 +701,6 @@ class _SongPageState extends State<SongUI> {
             }
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
+    ));
   }
 }
