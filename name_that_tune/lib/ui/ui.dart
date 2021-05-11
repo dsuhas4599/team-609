@@ -8,3 +8,4 @@ export 'song_display_ui.dart';
 export 'user_playlist_ui.dart';
 export 'add_song_ui.dart';
 export 'dance_ui.dart';
+export 'image_sources.dart';
