@@ -17,5 +17,6 @@ class AppRoutes {
     GetPage(name: '/game-recap', page: () => GameRecapUI()),
     GetPage(name: '/add-song', page: () => AddSongUI()),
     GetPage(name: '/dance-mode', page: () => DanceUI()),
+    GetPage(name: 'image-sources', page: () => ImageSourcesUI())
   ];
 }

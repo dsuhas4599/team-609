@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_starter/ui/add_song_ui.dart';
 import 'package:flutter_starter/ui/auth/auth.dart';
+import 'package:flutter_starter/ui/ui.dart';
 import 'package:get/get.dart';
 import 'package:flutter_starter/ui/components/segmented_selector.dart';
 import 'package:flutter_starter/localizations.dart';
@@ -39,6 +39,14 @@ class SettingsUI extends StatelessWidget {
                 Get.to(AddSongUI());
               },
               child: Text("Add"),
+            )),
+        ListTile(
+            title: Text("Images Attribution"),
+            trailing: ElevatedButton(
+              onPressed: () async {
+                Get.to(ImageSourcesUI());
+              },
+              child: Text("View"),
             )),
         ListTile(
             title: Text(labels.settings.updateProfile),
