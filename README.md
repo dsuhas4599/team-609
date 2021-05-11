@@ -2,7 +2,7 @@
 - [Game Design Document](https://docs.google.com/document/d/1y_aIvonFN3CT7ceD7wBIuLUn1hkoD6P0xbXEI8HMWLc/edit?usp=sharing)
 - [Software Design Document](https://docs.google.com/document/d/15rppqlHijRIYlfhB5DHpeEYWOsRR8tRzDyCUtMc3KyU/edit?usp=sharing)
 - [Game](https://careyaya-name-that-tune.web.app/#/) (make sure to refresh before starting to get the latest changes)
-- [Repository]()
+- [Repository](https://github.com/dsuhas4599/team-609)
 - [Video](https://drive.google.com/drive/folders/12ezy3toI8wW-_TehGvgsOHKOXN9hXoTv)
 
 ## App Link
